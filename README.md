@@ -1,2 +1,4 @@
-# ehcache3-samples
-Some examples / tutorials on using Ehcache 3.
+# Ehcache 3 Samples
+
+This repository contains examples of and tutorials about usage of Ehcache 3.
+
