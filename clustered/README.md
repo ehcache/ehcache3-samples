@@ -16,6 +16,28 @@ Finally, also demonstrated is the redirection of the *Terracotta Platform* clien
 
 ## Running this sample
 
-  - start-tc-server
+### Start the Terracotta Server
+
+https://github.com/ehcache/ehcache3/releases[Download] the full Ehcache clustering kit if you have not.  This kit contains the Terracotta Server, which enables distributed caching with Ehcache.
+
+Open a terminal and change into the directory where you have this sample.
+
+Start the Terracotta Server, using the configuration supplied with this sample:
+
+  - <path/to/ehcache-clustered-kit>/server/bin/start-tc-server.sh -f ./tc-config.xml
+
+(For Windows environments, use the .bat start script rather than the .sh one).
+
+Wait a few seconds for the Terracotta Server to start up - there will be a clear message in the terminal stating the server is "ACTIVE" and "ready for work".
+
+### Run the sample clients
+
+Open a second terminal and change into the directory where you have this sample.
+
+Run the first client, which will create a distributed cache and put data into it:
+
   - mvn exec:exec -P programmatic
+
+Run the second client, which will connect to the distributed cache and read the data written by the first client.
+
   - mvn exec:exec -P xml
