@@ -17,23 +17,22 @@ public class Basic {
   public static void main(String[] args) {
     {
       LOGGER.info("Creating cache manager programmatically");
-      CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-          .withCache("basicCache",
-              CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class,
-                  String.class,
-                  ResourcePoolsBuilder.heap(100).offheap(1, MemoryUnit.MB)))
-          .build(true);
+      try (CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+              .withCache("basicCache",
+                      CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class,
+                              String.class,
+                              ResourcePoolsBuilder.heap(100).offheap(1, MemoryUnit.MB)))
+              .build(true)) {
+        Cache<Long, String> basicCache = cacheManager.getCache("basicCache",
+                Long.class, String.class);
 
-      Cache<Long, String> basicCache = cacheManager.getCache("basicCache",
-          Long.class, String.class);
+        LOGGER.info("Putting to cache");
+        basicCache.put(1L, "da one!");
+        String value = basicCache.get(1L);
+        LOGGER.info("Retrieved '{}'", value);
 
-      LOGGER.info("Putting to cache");
-      basicCache.put(1L, "da one!");
-      String value = basicCache.get(1L);
-      LOGGER.info("Retrieved '{}'", value);
-
-      LOGGER.info("Closing cache manager");
-      cacheManager.close();
+        LOGGER.info("Closing cache manager");
+      }
     }
 
     LOGGER.info("---------------------------------------------------------------");
@@ -42,21 +41,20 @@ public class Basic {
       LOGGER.info("Creating cache manager via XML resource");
       Configuration xmlConfig = new XmlConfiguration(
           Basic.class.getResource("/ehcache.xml"));
-      CacheManager cacheManager = CacheManagerBuilder
-          .newCacheManager(xmlConfig);
+      try (CacheManager cacheManager = CacheManagerBuilder
+              .newCacheManager(xmlConfig)) {
+        cacheManager.init();
 
-      cacheManager.init();
+        Cache<Long, String> basicCache = cacheManager.getCache("basicCache",
+                Long.class, String.class);
 
-      Cache<Long, String> basicCache = cacheManager.getCache("basicCache",
-          Long.class, String.class);
+        LOGGER.info("Putting to cache");
+        basicCache.put(1L, "da one!");
+        String value = basicCache.get(1L);
+        LOGGER.info("Retrieved '{}'", value);
 
-      LOGGER.info("Putting to cache");
-      basicCache.put(1L, "da one!");
-      String value = basicCache.get(1L);
-      LOGGER.info("Retrieved '{}'", value);
-
-      LOGGER.info("Closing cache manager");
-      cacheManager.close();
+        LOGGER.info("Closing cache manager");
+      }
     }
 
     LOGGER.info("Exiting");

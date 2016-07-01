@@ -17,19 +17,18 @@ public class ClusteredXML {
     LOGGER.info("Creating clustered cache manager from XML");
     final URL myUrl = ClusteredXML.class.getResource("/ehcache.xml");
     Configuration xmlConfig = new XmlConfiguration(myUrl);
-    CacheManager cacheManager = CacheManagerBuilder.newCacheManager(xmlConfig);
-    
-    cacheManager.init();
+    try (CacheManager cacheManager = CacheManagerBuilder.newCacheManager(xmlConfig)) {
+      cacheManager.init();
+      
+      Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class,
+              String.class);
+      
+      LOGGER.info("Getting from cache");
+      String value = basicCache.get(1L);
+      LOGGER.info("Retrieved '{}'", value);
 
-    Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class,
-        String.class);
-
-    LOGGER.info("Getting from cache");
-    String value = basicCache.get(1L);
-    LOGGER.info("Retrieved '{}'", value);
-
-    LOGGER.info("Closing cache manager");
-    cacheManager.close();
+      LOGGER.info("Closing cache manager");
+    }
 
     LOGGER.info("Exiting");
   }

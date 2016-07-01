@@ -21,27 +21,26 @@ public class ClusteredProgrammatic {
     LOGGER.info("Creating clustered cache manager");
     final URI uri = URI
         .create("terracotta://localhost:9510/clustered");
-    CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-        .with(ClusteringServiceConfigurationBuilder.cluster(uri).autoCreate()
-            .defaultServerResource("default-resource"))
-        .withCache("basicCache",
-            CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class,
-                String.class,
-                ResourcePoolsBuilder.newResourcePoolsBuilder()
-                    .heap(100, EntryUnit.ENTRIES)
-                    .offheap(1, MemoryUnit.MB)
-                    .with(ClusteredResourcePoolBuilder
-                        .clusteredDedicated("default-resource", 5, MemoryUnit.MB))))
-        .build(true);
+    try (CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+            .with(ClusteringServiceConfigurationBuilder.cluster(uri).autoCreate()
+                    .defaultServerResource("default-resource"))
+            .withCache("basicCache",
+                    CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class,
+                            String.class,
+                            ResourcePoolsBuilder.newResourcePoolsBuilder()
+                                    .heap(100, EntryUnit.ENTRIES)
+                                    .offheap(1, MemoryUnit.MB)
+                                    .with(ClusteredResourcePoolBuilder
+                                            .clusteredDedicated("default-resource", 5, MemoryUnit.MB))))
+            .build(true)) {
+      Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class,
+              String.class);
 
-    Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class,
-        String.class);
+      LOGGER.info("Putting to cache");
+      basicCache.put(1L, "da one!");
 
-    LOGGER.info("Putting to cache");
-    basicCache.put(1L, "da one!");
-
-    LOGGER.info("Closing cache manager");
-    cacheManager.close();
+      LOGGER.info("Closing cache manager");
+    }
 
     LOGGER.info("Exiting");
   }
