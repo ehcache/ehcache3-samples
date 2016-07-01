@@ -7,7 +7,6 @@
 
   <properties>
     <ehcache.version>3.1.0</ehcache.version>
-    <maven-compiler-plugin.version>2.3.1</maven-compiler-plugin.version>
   </properties>
 
   <build>
@@ -15,16 +14,16 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler-plugin.version}</version>
+        <version>3.5.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
+        <version>1.5.0</version>
         <executions>
           <execution>
             <goals>
