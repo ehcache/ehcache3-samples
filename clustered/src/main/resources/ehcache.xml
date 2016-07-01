@@ -20,7 +20,7 @@
     <ehcache:resources>
       <ehcache:heap unit="entries">100</ehcache:heap>
       <ehcache:offheap unit="MB">1</ehcache:offheap>
-      <terracotta:clustered-dedicated from="default-resource" unit="MB">5</terracotta:clustered-dedicated>
+      <terracotta:clustered-dedicated unit="MB">5</terracotta:clustered-dedicated>
     </ehcache:resources>
   </ehcache:cache>
 </ehcache:config>

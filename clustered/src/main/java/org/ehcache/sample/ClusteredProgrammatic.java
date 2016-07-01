@@ -11,8 +11,7 @@ import static org.ehcache.clustered.client.config.builders.ClusteredResourcePool
 import static org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder.cluster;
 import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.config.builders.CacheManagerBuilder.newCacheManagerBuilder;
-import static org.ehcache.config.builders.ResourcePoolsBuilder.newResourcePoolsBuilder;
-import static org.ehcache.config.units.EntryUnit.ENTRIES;
+import static org.ehcache.config.builders.ResourcePoolsBuilder.heap;
 import static org.ehcache.config.units.MemoryUnit.MB;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -26,8 +25,7 @@ public class ClusteredProgrammatic {
             .with(cluster(uri).autoCreate().defaultServerResource("default-resource"))
             .withCache("basicCache",
                     newCacheConfigurationBuilder(Long.class, String.class,
-                            newResourcePoolsBuilder().heap(100, ENTRIES).offheap(1, MB)
-                                    .with(clusteredDedicated("default-resource", 5, MB))))
+                            heap(100).offheap(1, MB).with(clusteredDedicated(5, MB))))
             .build(true)) {
       Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class, String.class);
 
