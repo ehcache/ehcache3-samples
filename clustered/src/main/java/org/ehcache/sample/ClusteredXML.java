@@ -21,8 +21,7 @@ public class ClusteredXML {
     try (CacheManager cacheManager = newCacheManager(xmlConfig)) {
       cacheManager.init();
       
-      Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class,
-              String.class);
+      Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class, String.class);
       
       LOGGER.info("Getting from cache");
       String value = basicCache.get(1L);

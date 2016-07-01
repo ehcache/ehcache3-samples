@@ -21,12 +21,9 @@ public class Basic {
       LOGGER.info("Creating cache manager programmatically");
       try (CacheManager cacheManager = newCacheManagerBuilder()
               .withCache("basicCache",
-                      newCacheConfigurationBuilder(Long.class,
-                              String.class,
-                              heap(100).offheap(1, MB)))
+                      newCacheConfigurationBuilder(Long.class, String.class, heap(100).offheap(1, MB)))
               .build(true)) {
-        Cache<Long, String> basicCache = cacheManager.getCache("basicCache",
-                Long.class, String.class);
+        Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class, String.class);
 
         LOGGER.info("Putting to cache");
         basicCache.put(1L, "da one!");
@@ -41,13 +38,11 @@ public class Basic {
     
     {
       LOGGER.info("Creating cache manager via XML resource");
-      Configuration xmlConfig = new XmlConfiguration(
-          Basic.class.getResource("/ehcache.xml"));
+      Configuration xmlConfig = new XmlConfiguration(Basic.class.getResource("/ehcache.xml"));
       try (CacheManager cacheManager = newCacheManager(xmlConfig)) {
         cacheManager.init();
 
-        Cache<Long, String> basicCache = cacheManager.getCache("basicCache",
-                Long.class, String.class);
+        Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class, String.class);
 
         LOGGER.info("Putting to cache");
         basicCache.put(1L, "da one!");
