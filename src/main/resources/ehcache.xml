@@ -37,5 +37,9 @@
            timeToLiveSeconds="3600">
     </cache>
     
+    <cache name="org.terracotta.demo.domain.Actor"
+                               timeToLiveSeconds="3600">
+                        </cache>
+                        
     <!-- jhipster-needle-ehcache-add-entry -->
 </ehcache>
