@@ -3,6 +3,7 @@ package org.terracotta.inno;
 import spark.ModelAndView;
 
 import static spark.Spark.get;
+import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
 
 /**
@@ -14,8 +15,8 @@ public class Main {
 
     staticFileLocation("/");
 
-    get("/single/:number", (request, response) -> {
-      return "Hello " + request.params(":number");
+    post("/start", (request, response) -> {
+      return "Hello " + request.body();
     });
   }
 

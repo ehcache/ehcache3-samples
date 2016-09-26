@@ -20,11 +20,12 @@
                 <hr class="light">
                 <p class="text-faded">
                     Please choose the dataset size and the cache configuration.<br/>
-                    Then press the 'Start' button to execute the demo. The performance of fetching data will be displayed below
+                    Then press the 'Start' button to execute the demo. The performance of fetching data will be
+                    displayed below
                 </p>
                 <hr class="light">
                 <p>
-
+                <form name="form" id="form">
                     <label>
                         Dataset size:
                         <select>
@@ -51,7 +52,8 @@
                         <input type="text" name="heapSize"/>
                     </label>
 
-                    <a href="#" class="page-scroll btn btn-default btn-xl sr-button">Start</a>
+                    <input type="submit" id="start" value="Start" class="page-scroll btn btn-default btn-xl sr-button"/>
+                </form>
                 </p>
             </div>
         </div>
@@ -69,5 +71,21 @@
 
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+        $('#form').submit(function (event) {
+            var data = $('form').serializeArray();
+            $.post("/start", JSON.stringify(data), "json")
+                    .fail(function () {
+                        alert("error");
+                    })
+                    .done(function () {
+                        // init graph
+                        alert("finished");
+                    });
+            event.preventDefault();
+        });
+    });
+</script>
 </body>
 </html>
