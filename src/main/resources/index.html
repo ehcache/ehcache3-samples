@@ -1,10 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Scale continuum</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
 </head>
 <body>
-   hello
+
+<section class="bg-primary" id="controls">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <h2 class="section-heading">Scale continuum Demo</h2>
+                <hr class="light">
+                <p class="text-faded">
+                    Please choose the dataset size and the cache configuration.<br/>
+                    Then press the 'Start' button to execute the demo. The performance of fetching data will be displayed below
+                </p>
+                <hr class="light">
+                <p>
+
+                    <label>
+                        Dataset size:
+                        <select>
+                            <option value="100MB">100 MB</option>
+                            <option value="1GB">1 GB</option>
+                            <option value="10GB">10 GB</option>
+                            <option value="100GB">100 GB</option>
+                        </select>
+                    </label>
+
+
+                    <label>
+                        Enable cache:
+                        <input type="checkbox" name="cacheEnabled"/>
+                    </label>
+
+                    <label>
+                        Enable Heap:
+                        <input type="checkbox" name="heapEnabled"/>
+                    </label>
+
+                    <label>
+                        Heap size:
+                        <input type="text" name="heapSize"/>
+                    </label>
+
+                    <a href="#" class="page-scroll btn btn-default btn-xl sr-button">Start</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="graphs">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center" id="tps">
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 </body>
 </html>
