@@ -1,45 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
-         name="CM1"
-         updateCheck="false"
-         maxBytesLocalHeap="16M">
+<config xmlns="http://www.ehcache.org/v3" xmlns:jsr107="http://www.ehcache.org/v3/jsr107"
+        xmlns:mnm="http://www.ehcache.org/v3/management">
 
-    <!--
-      This is a default configuration, it is re-configured by the CacheConfiguration Spring Bean, using the
-      properties from the resources/config/*.yml files.
-    -->
+    <service>
+        <jsr107:defaults enable-management="true" enable-statistics="true"/>
+    </service>
 
-    <diskStore path="java.io.tmpdir"/>
+    <service>
+        <mnm:management cache-manager-alias="CM1"/>
+    </service>
 
-    <defaultCache
-            eternal="false"
-            overflowToDisk="false"
-            />
+    <cache-template name="simple">
+        <expiry>
+            <ttl unit="seconds">3600</ttl>
+        </expiry>
+        <heap>100</heap>
+    </cache-template>
 
-    <cache name="org.terracotta.demo.domain.User"
-           timeToLiveSeconds="3600">
-    </cache>
+    <cache alias="org.terracotta.demo.domain.User" uses-template="simple"/>
 
-    <cache name="org.terracotta.demo.domain.Authority"
-           timeToLiveSeconds="3600">
-    </cache>
+    <cache alias="org.terracotta.demo.domain.Authority" uses-template="simple"/>
 
-    <cache name="org.terracotta.demo.domain.User.authorities"
-           timeToLiveSeconds="3600">
-    </cache>
+    <cache alias="org.terracotta.demo.domain.User.authorities" uses-template="simple"/>
 
-    <cache name="org.terracotta.demo.domain.PersistentToken"
-           timeToLiveSeconds="3600">
-    </cache>
+    <cache alias="org.terracotta.demo.domain.PersistentToken" uses-template="simple"/>
 
-    <cache name="org.terracotta.demo.domain.User.persistentTokens"
-           timeToLiveSeconds="3600">
-    </cache>
-    
-    <cache name="org.terracotta.demo.domain.Actor"
-                               timeToLiveSeconds="3600">
-                        </cache>
-                        
-    <!-- jhipster-needle-ehcache-add-entry -->
-</ehcache>
+    <cache alias="org.terracotta.demo.domain.User.persistentTokens" uses-template="simple"/>
+
+    <cache alias="org.terracotta.demo.domain.PersistentAuditEvent" uses-template="simple"/>
+
+    <cache alias="org.terracotta.demo.domain.Actor" uses-template="simple"/>
+
+</config>
