@@ -36,12 +36,13 @@ import org.terracotta.inno.dao.SoRDao;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 
-import static io.rainfall.configuration.ReportingConfig.text;
 import static io.rainfall.execution.Executions.during;
 
 /**
@@ -49,7 +50,7 @@ import static io.rainfall.execution.Executions.during;
  */
 public class ExecutionService {
 
-  private static final String OPERATION_NAME = "load";
+  static final String OPERATION_NAME = "load";
   private static final int OBJECT_SIZE = 1024;
 
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -65,6 +66,8 @@ public class ExecutionService {
       this.datasetSizeInBytes = datasetSizeInBytes;
     }
   }
+
+  private final Queue<QueueReporter.Result> resultQueue = new LinkedBlockingQueue<>();
 
 
   public Future<StatisticsPeekHolder> spawn(Config config) throws Exception {
@@ -96,10 +99,14 @@ public class ExecutionService {
             }
         ))
         .executed(during(10, TimeDivision.minutes))
-        .config(concurrency, ReportingConfig.report(DaoResult.class).log(text()))
+        .config(concurrency, ReportingConfig.report(DaoResult.class).log(new QueueReporter(resultQueue)))
         .start();
 
     return executorService.submit(callable);
+  }
+
+  public QueueReporter.Result poll() {
+    return resultQueue.poll();
   }
 
 }

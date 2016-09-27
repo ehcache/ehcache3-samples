@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import io.rainfall.statistics.StatisticsPeekHolder;
 import org.ehcache.impl.internal.store.offheap.MemorySizeParser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -56,7 +58,20 @@ public class Main {
     });
 
     get("/stats", (request, response) -> {
-      return "Done.";
+      List<QueueReporter.Result> data = new ArrayList<>();
+
+      while (true) {
+        QueueReporter.Result result = executionService.poll();
+        if (result == null) {
+          break;
+        }
+        data.add(result);
+      }
+
+      GsonBuilder builder = new GsonBuilder();
+      Gson gson = builder.create();
+
+      return gson.toJson(data);
     });
   }
 
