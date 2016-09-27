@@ -33,7 +33,7 @@ spring:
     jpa:
         database-platform: org.terracotta.demo.domain.util.FixedH2Dialect
         database: H2
-        show-sql: true
+        show-sql: false
         properties:
             hibernate.cache.use_second_level_cache: true
             hibernate.cache.use_query_cache: false
@@ -95,3 +95,5 @@ jhipster:
             host: localhost
             port: 5000
             queueSize: 512
+# from ftp://ftp.fu-berlin.de/pub/misc/movies/database/
+biographiesLocation: /Users/adah/Downloads/biographies.list.gz

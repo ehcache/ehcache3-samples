@@ -1,25 +1,46 @@
 package org.terracotta.demo;
 
-import org.terracotta.demo.config.Constants;
-import org.terracotta.demo.config.DefaultProfileUtil;
-import org.terracotta.demo.config.JHipsterProperties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.*;
+import org.springframework.boot.actuate.autoconfigure.MetricFilterAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.MetricRepositoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.terracotta.demo.config.Constants;
+import org.terracotta.demo.config.DefaultProfileUtil;
+import org.terracotta.demo.config.JHipsterProperties;
+import org.terracotta.demo.domain.Actor;
+import org.terracotta.demo.repository.ActorRepository;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.Reader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.channels.Channels;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+import java.util.zip.GZIPInputStream;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = { MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class })
@@ -27,6 +48,9 @@ import java.util.Collection;
 public class DemoApp {
 
     private static final Logger log = LoggerFactory.getLogger(DemoApp.class);
+
+    @Value("${biographiesLocation}")
+    private String biographiesLocation;
 
     @Inject
     private Environment env;
@@ -72,4 +96,75 @@ public class DemoApp {
             env.getProperty("server.port"));
 
     }
+
+    @Bean
+    public CommandLineRunner demo(ActorRepository repository) {
+        return (args) -> {
+
+            System.out.println("YO!!!" + repository.count());
+            System.out.println("biographiesLocation : " + biographiesLocation);
+
+
+            if (repository.findOne(1L) == null) {
+                // hum the db seems to be empty
+                System.out.println(biographiesLocation);
+                CharsetDecoder dec = StandardCharsets.ISO_8859_1.newDecoder()
+                    .onMalformedInput(CodingErrorAction.IGNORE);
+
+
+//                Reader r = Channels.newReader(Channels.newChannel(new GZIPInputStream(new FileInputStream(Paths.get(biographiesLocation).toString()))), StandardCharsets.ISO_8859_1.newDecoder(), -1);
+
+                try (Reader r = Channels.newReader(Channels.newChannel(new GZIPInputStream(new FileInputStream(Paths.get(biographiesLocation).toString()))), StandardCharsets.ISO_8859_1.newDecoder(), -1); BufferedReader br = new BufferedReader(r)) {
+                    Stream<String> lines = br.lines()
+                        .filter(s -> s.startsWith("NM:") && s.matches("^.*,.*$") || (s.startsWith("DB:") && s.matches("^.*\\s[0-9]{1,2}\\s.*\\s[0-9]{4}.*$")));
+                    AtomicReference<Actor> currentActor = new AtomicReference<>();
+                    lines.forEach(s -> {
+                        try {
+                            if (s.startsWith("NM:")) {
+                                currentActor.set(new Actor());
+                                currentActor.get().setLastName(s.substring(4, s.indexOf(",")));
+                                currentActor.get().setFirstName(s.split(",")[1].substring(1));
+                            } else {
+                                Pattern birthDatePattern = Pattern.compile("^.*\\s([0-9]{1,2})\\s(.*)\\s([0-9]{4})(.*)$");
+                                Matcher birthDateMatcher = birthDatePattern.matcher(s);
+
+                                if (birthDateMatcher.find()) {
+                                    String day = birthDateMatcher.group(1);
+                                    String month = birthDateMatcher.group(2);
+                                    String year = birthDateMatcher.group(3);
+//                                    DateFormat fmt = new SimpleDateFormat("dd MMMM yyyy", Locale.US);
+                                    try {
+                                        LocalDate birthDate = LocalDate.parse(day + " " + month + " " + year, DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.US));
+//                                        LocalDate birthDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
+                                        currentActor.get().setBirthDate(birthDate);
+                                        if (birthDateMatcher.group(4) != null && birthDateMatcher.group(4).length() > 2) {
+                                            currentActor.get().setBirthLocation(birthDateMatcher.group(4).substring(2));
+                                        }
+//                  System.out.println(currentActor.get());
+                                        repository.save(currentActor.get());
+                                    } catch (NumberFormatException e) {
+                                        log.debug("Could not parse birthDate for " + currentActor.get().getFirstName() + " " + currentActor.get().getLastName(), e);
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.warn("Error loading : " + s, e);
+                        }
+
+                    });
+
+                }
+
+                // fetch an individual actor by ID
+                Actor actor = repository.findOne(1L);
+                log.info("Actor found with findOne(1L):");
+                log.info("--------------------------------");
+                log.info(actor.toString());
+                log.info("");
+
+                log.info("Number of actors in the database : " + repository.count());
+            }
+        };
+    }
+
 }
