@@ -63,7 +63,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
-                <canvas id="tps" width="960" height="350"></canvas><br/>
+                <canvas id="tps" width="1000" height="350"></canvas><br/>
                 <canvas id="latencies" width="1000" height="350"></canvas>
             </div>
         </div>
@@ -87,18 +87,10 @@
                         alert("error");
                     })
                     .done(function () {
-                        var tpsSmoothie = new SmoothieChart({
-                            grid: { strokeStyle:'rgb(125, 0, 0)', fillStyle:'rgb(60, 0, 0)',
-                                lineWidth: 1, millisPerLine: 1000, verticalSections: 6, },
-                            labels: { fillStyle:'rgb(60, 0, 0)' }
-                        });
+                        var tpsSmoothie = new SmoothieChart({millisPerPixel:64});
                         tpsSmoothie.streamTo(document.getElementById("tps"));
 
-                        var latenciesSmoothie = new SmoothieChart({
-                            grid: { strokeStyle:'rgb(125, 0, 0)', fillStyle:'rgb(0, 60, 0)',
-                                lineWidth: 1, millisPerLine: 1000, verticalSections: 6, },
-                            labels: { fillStyle:'rgb(60, 0, 0)' }
-                        });
+                        var latenciesSmoothie = new SmoothieChart({millisPerPixel:64});
                         latenciesSmoothie.streamTo(document.getElementById("latencies"));
 
                         setInterval(function () {
@@ -109,8 +101,8 @@
                                 })
                             })
                         }, 1000);
-                        tpsSmoothie.addTimeSeries(tpsLine, 1000, { strokeStyle:'rgb(0, 255, 0)', fillStyle:'rgba(0, 255, 0, 0.4)', lineWidth:3 } );
-                        latenciesSmoothie.addTimeSeries(latenciesLine, 1000, { strokeStyle:'rgb(0, 255, 0)', fillStyle:'rgba(0, 255, 0, 0.4)', lineWidth:3 } );
+                        tpsSmoothie.addTimeSeries(tpsLine, { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 }, 1000);
+                        latenciesSmoothie.addTimeSeries(latenciesLine, {lineWidth:5, strokeStyle:'#0055c9', fillStyle:'rgba(0,0,255,0.30)'}, 1000 );
                     });
             event.preventDefault();
         });
