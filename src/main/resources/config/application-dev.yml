@@ -95,5 +95,7 @@ jhipster:
             host: localhost
             port: 5000
             queueSize: 512
-# from ftp://ftp.fu-berlin.de/pub/misc/movies/database/
-biographiesLocation: /Users/adah/Downloads/biographies.list.gz
+
+demo:
+    # local downlaod target of from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
+    biographiesLocation: target/biographies.list.gz

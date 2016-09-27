@@ -19,8 +19,6 @@ import org.terracotta.demo.config.JHipsterProperties;
 import org.terracotta.demo.domain.Actor;
 import org.terracotta.demo.repository.ActorRepository;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -43,6 +41,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 @ComponentScan
 @EnableAutoConfiguration(exclude = { MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class })
 @EnableConfigurationProperties({ JHipsterProperties.class, LiquibaseProperties.class })
@@ -50,7 +51,7 @@ public class DemoApp {
 
     private static final Logger log = LoggerFactory.getLogger(DemoApp.class);
 
-    @Value("${biographiesLocation}")
+    @Value("${demo.biographiesLocation}")
     private String biographiesLocation;
 
     @Inject
