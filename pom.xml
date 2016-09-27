@@ -35,7 +35,7 @@
         <javax.inject.version>1</javax.inject.version>
         <liquibase.version>3.4.2</liquibase.version>
         <liquibase-slf4j.version>2.0.0</liquibase-slf4j.version>
-        <liquibase-hibernate5.version>3.6-SNAPSHOT</liquibase-hibernate5.version>
+        <liquibase-hibernate5.version>3.5</liquibase-hibernate5.version>
         <mapstruct.version>1.0.0.Final</mapstruct.version>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
@@ -615,7 +615,7 @@
                     <dependency>
                         <groupId>org.liquibase.ext</groupId>
                         <artifactId>liquibase-hibernate4</artifactId>
-                        <version>${liquibase-hibernate4.version}</version>
+                        <version>${liquibase-hibernate5.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.springframework.boot</groupId>
