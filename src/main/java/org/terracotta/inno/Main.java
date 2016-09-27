@@ -1,9 +1,13 @@
 package org.terracotta.inno;
 
+import io.rainfall.statistics.StatisticsPeekHolder;
+import org.terracotta.inno.collector.Config;
+import org.terracotta.inno.collector.Entry;
+import org.terracotta.inno.collector.PerformanceMetricsCollector;
+import org.terracotta.inno.collector.QueueReporter;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.rainfall.statistics.StatisticsPeekHolder;
-import org.ehcache.impl.internal.store.offheap.MemorySizeParser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +26,7 @@ public class Main {
   public static void main(String[] args) {
     AtomicReference<Future<StatisticsPeekHolder>> futureRef = new AtomicReference<>();
 
-
-    ExecutionService executionService = new ExecutionService();
+    PerformanceMetricsCollector metricsCollector = new PerformanceMetricsCollector();
 
     staticFileLocation("/");
 
@@ -33,13 +36,11 @@ public class Main {
       Gson gson = builder.create();
       Entry[] entries = gson.fromJson(body, Entry[].class);
 
-      long datasetSize = MemorySizeParser.parse(findEntry(entries, "datasetSize"));
-
       if (futureRef.get() != null) {
         throw new RuntimeException("job already is in progress");
       }
 
-      Future<StatisticsPeekHolder> f = executionService.spawn(new ExecutionService.Config(datasetSize));
+      Future<StatisticsPeekHolder> f = metricsCollector.start(new Config(entries));
       if (!futureRef.compareAndSet(null, f)) {
         throw new RuntimeException("job already is in progress");
       }
@@ -71,15 +72,15 @@ public class Main {
       response.type("application/json");
       List<QueueReporter.Result> data = new ArrayList<>();
 
-      while (executionService.isRunning()) {
-        QueueReporter.Result result = executionService.pollStats();
+      while (metricsCollector.isRunning()) {
+        QueueReporter.Result result = metricsCollector.pollStats();
         if (result == null) {
           break;
         }
         data.add(result);
       }
 
-      if (data.isEmpty() && !executionService.isRunning()) {
+      if (data.isEmpty() && !metricsCollector.isRunning()) {
         // marker value to signify the end of the data
         data.add(new QueueReporter.Result(-1, null, null));
       }
@@ -91,43 +92,5 @@ public class Main {
     });
   }
 
-  private static String findEntry(Entry[] entries, String name) {
-    for (Entry entry : entries) {
-      if (entry.getName().equals(name)) {
-        return entry.getValue();
-      }
-    }
-    throw new RuntimeException("Entry not found : " + name);
-  }
-
-  static class Entry {
-
-    private String name;
-    private String value;
-
-    public Entry() {
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public void setName(String name) {
-      this.name = name;
-    }
-
-    public String getValue() {
-      return value;
-    }
-
-    public void setValue(String value) {
-      this.value = value;
-    }
-
-    @Override
-    public String toString() {
-      return name + "->" + value;
-    }
-  }
 
 }

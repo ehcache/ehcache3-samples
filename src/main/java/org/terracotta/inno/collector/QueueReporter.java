@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terracotta.inno;
+package org.terracotta.inno.collector;
 
 import io.rainfall.Reporter;
 import io.rainfall.statistics.StatisticsHolder;
@@ -23,13 +23,13 @@ import io.rainfall.statistics.StatisticsPeekHolder;
 import java.util.List;
 import java.util.Queue;
 
-import static org.terracotta.inno.ExecutionService.DaoResult.LOAD;
-import static org.terracotta.inno.ExecutionService.OPERATION_NAME;
+import static org.terracotta.inno.collector.PerformanceMetricsCollector.DaoResult.LOAD;
+import static org.terracotta.inno.collector.PerformanceMetricsCollector.OPERATION_NAME;
 
 /**
  * @author Ludovic Orban
  */
-public class QueueReporter extends Reporter<ExecutionService.DaoResult> {
+public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResult> {
 
   public static class Result {
     private final long timestamp;
@@ -66,8 +66,8 @@ public class QueueReporter extends Reporter<ExecutionService.DaoResult> {
   }
 
   @Override
-  public void report(StatisticsPeekHolder<ExecutionService.DaoResult> statisticsPeekHolder) {
-    StatisticsPeek<ExecutionService.DaoResult> statisticsPeek = statisticsPeekHolder.getStatisticsPeeks(OPERATION_NAME);
+  public void report(StatisticsPeekHolder<PerformanceMetricsCollector.DaoResult> statisticsPeekHolder) {
+    StatisticsPeek<PerformanceMetricsCollector.DaoResult> statisticsPeek = statisticsPeekHolder.getStatisticsPeeks(OPERATION_NAME);
 
     Double periodicAverageLatencyInMs = statisticsPeek.getPeriodicAverageLatencyInMs(LOAD);
     Long periodicTps = statisticsPeek.getPeriodicTps(LOAD);
@@ -80,7 +80,7 @@ public class QueueReporter extends Reporter<ExecutionService.DaoResult> {
   }
 
   @Override
-  public void summarize(StatisticsHolder<ExecutionService.DaoResult> statisticsHolder) {
+  public void summarize(StatisticsHolder<PerformanceMetricsCollector.DaoResult> statisticsHolder) {
   }
 
 }

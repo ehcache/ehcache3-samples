@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terracotta.inno;
+package org.terracotta.inno.collector;
 
 import io.rainfall.AssertionEvaluator;
 import io.rainfall.Configuration;
@@ -31,7 +31,9 @@ import io.rainfall.generator.sequence.Distribution;
 import io.rainfall.statistics.StatisticsHolder;
 import io.rainfall.statistics.StatisticsPeekHolder;
 import io.rainfall.unit.TimeDivision;
-import org.terracotta.inno.dao.SoRDao;
+import org.terracotta.inno.service.CachedDataService;
+import org.terracotta.inno.service.DataService;
+import org.terracotta.inno.service.UncachedDataService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,39 +53,36 @@ import static io.rainfall.execution.Executions.during;
 /**
  * @author Ludovic Orban
  */
-public class ExecutionService {
+public class PerformanceMetricsCollector {
 
-  static final String OPERATION_NAME = "load";
+  public static final String OPERATION_NAME = "load";
   private static final int OBJECT_SIZE = 1024;
 
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-  enum DaoResult {
+  public enum DaoResult {
     LOAD
-  }
-
-  static class Config {
-    private final long datasetSizeInBytes;
-
-    public Config(long datasetSizeInBytes) {
-      this.datasetSizeInBytes = datasetSizeInBytes;
-    }
   }
 
   private volatile Queue<QueueReporter.Result> resultQueue;
 
 
-  public Future<StatisticsPeekHolder> spawn(Config config) throws Exception {
+  public Future<StatisticsPeekHolder> start(Config config) throws Exception {
     if (resultQueue != null) {
       throw new RuntimeException("Execution is in progress");
     }
     ConcurrencyConfig concurrency = ConcurrencyConfig.concurrencyConfig().threads(4);
 
-    long objectCount = config.datasetSizeInBytes / OBJECT_SIZE;
+    long objectCount = config.getDatasetSizeInBytes() / OBJECT_SIZE;
 
     ObjectGenerator<Long> keyGenerator = new LongGenerator();
     ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLength(OBJECT_SIZE);
-    SoRDao<byte[]> soRDao = new SoRDao<>(valueGenerator);
+    DataService<byte[]> dataService;
+    if (config.isCacheEnabled()) {
+      dataService = new CachedDataService(valueGenerator);
+    } else {
+      dataService = new UncachedDataService<>(valueGenerator);
+    }
     RandomSequenceGenerator randomSequenceGenerator = new RandomSequenceGenerator(Distribution.SLOW_GAUSSIAN, 0, objectCount, objectCount / 10);
 
     resultQueue = new LinkedBlockingQueue<>();
@@ -94,7 +93,7 @@ public class ExecutionService {
               public void exec(StatisticsHolder statisticsHolder, Map<Class<? extends Configuration>, Configuration> map, List<AssertionEvaluator> list) throws TestException {
                 Long key = keyGenerator.generate(randomSequenceGenerator.next());
                 long before = getTimeInNs();
-                byte[] bytes = soRDao.loadData(key);
+                byte[] bytes = dataService.loadData(key);
                 long after = getTimeInNs();
                 statisticsHolder.record(OPERATION_NAME, (after - before), DaoResult.LOAD);
               }
