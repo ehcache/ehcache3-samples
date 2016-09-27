@@ -38,10 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static io.rainfall.execution.Executions.during;
 
@@ -67,10 +70,13 @@ public class ExecutionService {
     }
   }
 
-  private final Queue<QueueReporter.Result> resultQueue = new LinkedBlockingQueue<>();
+  private volatile Queue<QueueReporter.Result> resultQueue;
 
 
   public Future<StatisticsPeekHolder> spawn(Config config) throws Exception {
+    if (resultQueue != null) {
+      throw new RuntimeException("Execution is in progress");
+    }
     ConcurrencyConfig concurrency = ConcurrencyConfig.concurrencyConfig().threads(4);
 
     long objectCount = config.datasetSizeInBytes / OBJECT_SIZE;
@@ -80,6 +86,7 @@ public class ExecutionService {
     SoRDao<byte[]> soRDao = new SoRDao<>(valueGenerator);
     RandomSequenceGenerator randomSequenceGenerator = new RandomSequenceGenerator(Distribution.SLOW_GAUSSIAN, 0, objectCount, objectCount / 10);
 
+    resultQueue = new LinkedBlockingQueue<>();
     Callable<StatisticsPeekHolder> callable = () -> Runner.setUp(
         Scenario.scenario("Scaling demo").exec(
             new Operation() {
@@ -102,11 +109,45 @@ public class ExecutionService {
         .config(concurrency, ReportingConfig.report(DaoResult.class).log(new QueueReporter(resultQueue)))
         .start();
 
-    return executorService.submit(callable);
+    Future<StatisticsPeekHolder> future = executorService.submit(callable);
+    return new Future<StatisticsPeekHolder>() {
+      @Override
+      public boolean cancel(boolean mayInterruptIfRunning) {
+        resultQueue = null;
+        return future.cancel(true);
+      }
+
+      @Override
+      public boolean isCancelled() {
+        return future.isCancelled();
+      }
+
+      @Override
+      public boolean isDone() {
+        return future.isDone();
+      }
+
+      @Override
+      public StatisticsPeekHolder get() throws InterruptedException, ExecutionException {
+        return future.get();
+      }
+
+      @Override
+      public StatisticsPeekHolder get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return future.get(timeout, unit);
+      }
+    };
   }
 
-  public QueueReporter.Result poll() {
+  public QueueReporter.Result pollStats() {
+    if (resultQueue == null) {
+      return null;
+    }
     return resultQueue.poll();
+  }
+
+  public boolean isRunning() {
+    return resultQueue != null;
   }
 
 }

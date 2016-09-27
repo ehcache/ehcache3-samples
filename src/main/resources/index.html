@@ -62,7 +62,7 @@
 <section id="graphs">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12 text-center">
+            <div id="canvasContainer" class="col-lg-12 text-center">
                 <canvas id="tps" width="1000" height="350"></canvas><br/>
                 <canvas id="latencies" width="1000" height="350"></canvas>
             </div>
@@ -74,30 +74,50 @@
 <script src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/smoothie.js"></script>
 <script type="application/javascript">
+    var started = false;
     $(document).ready(function () {
-
-        var tpsLine = new TimeSeries();
-        var latenciesLine = new TimeSeries();
 
 //        bind submit button to call Rest start command
         $('#form').submit(function (event) {
+            if (started) {
+                $.get('/cancel');
+                return;
+            }
             var data = $('form').serializeArray();
             $.post("/start", JSON.stringify(data), "json")
                     .fail(function () {
                         alert("error");
                     })
                     .done(function () {
+                        $('#start').val('Stop');
+                        started = true;
+
+                        $('#canvasContainer').append('<canvas id="tps" width="1000" height="350"></canvas><br/> <canvas id="latencies" width="1000" height="350"></canvas>');
+                        var tpsLine = new TimeSeries();
+                        var latenciesLine = new TimeSeries();
+
                         var tpsSmoothie = new SmoothieChart({millisPerPixel:64});
                         tpsSmoothie.streamTo(document.getElementById("tps"));
 
                         var latenciesSmoothie = new SmoothieChart({millisPerPixel:64});
                         latenciesSmoothie.streamTo(document.getElementById("latencies"));
 
-                        setInterval(function () {
+                        var intervalFunction = setInterval(function () {
                             $.get('/stats', function(data) {
                                 $.each(data, function() {
-                                    tpsLine.append(this['timestamp'], this['periodicTps']);
-                                    latenciesLine.append(this['timestamp'], this['periodicAverageLatencyInMs']);
+                                    if (this['timestamp'] === -1) {
+                                        clearInterval(intervalFunction);
+                                        tpsSmoothie.stop();
+                                        latenciesSmoothie.stop();
+                                        $('#canvasContainer').empty();
+
+                                        $('#start').val('Start');
+                                        started = false;
+                                        //alert('ok, stop');
+                                    } else {
+                                        tpsLine.append(this['timestamp'], this['periodicTps']);
+                                        latenciesLine.append(this['timestamp'], this['periodicAverageLatencyInMs']);
+                                    }
                                 })
                             })
                         }, 1000);

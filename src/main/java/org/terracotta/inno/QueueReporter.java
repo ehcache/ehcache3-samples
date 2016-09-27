@@ -69,10 +69,13 @@ public class QueueReporter extends Reporter<ExecutionService.DaoResult> {
   public void report(StatisticsPeekHolder<ExecutionService.DaoResult> statisticsPeekHolder) {
     StatisticsPeek<ExecutionService.DaoResult> statisticsPeek = statisticsPeekHolder.getStatisticsPeeks(OPERATION_NAME);
 
-    Long periodicTps = statisticsPeek.getPeriodicTps(LOAD);
     Double periodicAverageLatencyInMs = statisticsPeek.getPeriodicAverageLatencyInMs(LOAD);
+    Long periodicTps = statisticsPeek.getPeriodicTps(LOAD);
     long timestamp = statisticsPeek.getTimestamp();
 
+    if (periodicAverageLatencyInMs.isNaN()) {
+      return;
+    }
     resultQueue.offer(new Result(timestamp, periodicTps, periodicAverageLatencyInMs));
   }
 

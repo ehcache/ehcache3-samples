@@ -57,16 +57,31 @@ public class Main {
       return "Done.";
     });
 
+    get("/cancel", (request, response) -> {
+      Future<StatisticsPeekHolder> future = futureRef.get();
+      if (future == null) {
+        throw new RuntimeException("no job started");
+      }
+      future.cancel(true);
+      futureRef.set(null);
+      return "Done.";
+    });
+
     get("/stats", (request, response) -> {
       response.type("application/json");
       List<QueueReporter.Result> data = new ArrayList<>();
 
-      while (true) {
-        QueueReporter.Result result = executionService.poll();
+      while (executionService.isRunning()) {
+        QueueReporter.Result result = executionService.pollStats();
         if (result == null) {
           break;
         }
         data.add(result);
+      }
+
+      if (data.isEmpty() && !executionService.isRunning()) {
+        // marker value to signify the end of the data
+        data.add(new QueueReporter.Result(-1, null, null));
       }
 
       GsonBuilder builder = new GsonBuilder();
