@@ -17,12 +17,15 @@ package org.terracotta.inno.dao;
 
 import io.rainfall.ObjectGenerator;
 
+import java.util.Random;
+
 /**
  * @author Ludovic Orban
  */
 public class SoRDao<T> {
 
   private final ObjectGenerator<T> generator;
+  private final Random random = new Random();
 
   public SoRDao(ObjectGenerator<T> generator) {
     this.generator = generator;
@@ -30,7 +33,7 @@ public class SoRDao<T> {
 
   public T loadData(Long key) {
     try {
-      Thread.sleep(30);
+      Thread.sleep(random.nextInt(50));
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }

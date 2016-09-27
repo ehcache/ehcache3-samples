@@ -58,6 +58,7 @@ public class Main {
     });
 
     get("/stats", (request, response) -> {
+      response.type("application/json");
       List<QueueReporter.Result> data = new ArrayList<>();
 
       while (true) {

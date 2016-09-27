@@ -17,13 +17,13 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 text-center">
                 <h2 class="section-heading">Scale continuum Demo</h2>
-                <hr class="light">
+                <hr class="light"/>
                 <p class="text-faded">
                     Please choose the dataset size and the cache configuration.<br/>
                     Then press the 'Start' button to execute the demo. The performance of fetching data will be
                     displayed below
                 </p>
-                <hr class="light">
+                <hr class="light"/>
                 <p>
                 <form name="form" id="form">
                     <label>
@@ -35,7 +35,6 @@
                             <option value="100G">100 GB</option>
                         </select>
                     </label>
-
 
                     <label>
                         Enable cache:
@@ -63,7 +62,9 @@
 <section id="graphs">
     <div class="container">
         <div class="row">
-            <div class="col-lg-12 text-center" id="tps">
+            <div class="col-lg-12 text-center">
+                <canvas id="tps" width="960" height="300"></canvas>
+                <canvas id="latencies" width="960" height="300"></canvas>
             </div>
         </div>
     </div>
@@ -71,8 +72,13 @@
 
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/smoothie.js"></script>
 <script type="application/javascript">
     $(document).ready(function () {
+
+        var tpsLine = new TimeSeries();
+
+//        bind submit button to call Rest start command
         $('#form').submit(function (event) {
             var data = $('form').serializeArray();
             $.post("/start", JSON.stringify(data), "json")
@@ -80,11 +86,22 @@
                         alert("error");
                     })
                     .done(function () {
-                        // init graph
-                        alert("finished");
+                        smoothie.streamTo(document.getElementById("tps"));
+                        setInterval(function () {
+                            $.get('/stats', function(data) {
+                                $.each(data, function() {
+                                    tpsLine.append(this['timestamp'], this['periodicTps']);
+//                                    alert(this['timestamp'] + ', ' + this['periodicTps']+ ', '+ this['periodicAverageLatencyInMs'])
+                                })
+                            })
+                        }, 1000);
+                        smoothie.addTimeSeries(tpsLine, 1000 );
                     });
             event.preventDefault();
         });
+
+//        create graphs
+        var smoothie = new SmoothieChart();
     });
 </script>
 </body>
