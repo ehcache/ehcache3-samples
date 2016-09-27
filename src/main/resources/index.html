@@ -63,7 +63,8 @@
     <div class="container">
         <div class="row">
             <div id="canvasContainer" class="col-lg-12 text-center">
-                <canvas id="tps" width="1000" height="350"></canvas><br/>
+                <canvas id="tps" width="1000" height="350"></canvas>
+                <br/>
                 <canvas id="latencies" width="1000" height="350"></canvas>
             </div>
         </div>
@@ -74,60 +75,71 @@
 <script src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/smoothie.js"></script>
 <script type="application/javascript">
-    var started = false;
     $(document).ready(function () {
+        var started = false;
+        var intervalFunction;
+        var tpsSmoothie;
+        var latenciesSmoothie;
 
 //        bind submit button to call Rest start command
         $('#form').submit(function (event) {
             if (started) {
-                $.get('/cancel');
-                return;
-            }
-            var data = $('form').serializeArray();
-            $.post("/start", JSON.stringify(data), "json")
-                    .fail(function () {
-                        alert("error");
-                    })
-                    .done(function () {
-                        $('#start').val('Stop');
-                        started = true;
+                $.get('/cancel').done(function () {
+                            clearInterval(intervalFunction);
+                            if (tpsSmoothie !== null) {
+                                tpsSmoothie.stop();
+                            }
+                            if (latenciesSmoothie !== null) {
+                                latenciesSmoothie.stop();
+                            }
+                            $('#start').val('Start');
+                            started = false;
+                            event.preventDefault();
+                        }
+                );
+            } else {
+                var data = $('form').serializeArray();
+                $.post("/start", JSON.stringify(data), "json")
+                        .fail(function () {
+                            alert("error");
+                        })
+                        .done(function () {
+                            $('#start').val('Stop');
+                            started = true;
 
-                        $('#canvasContainer').append('<canvas id="tps" width="1000" height="350"></canvas><br/> <canvas id="latencies" width="1000" height="350"></canvas>');
-                        var tpsLine = new TimeSeries();
-                        var latenciesLine = new TimeSeries();
+                            $('#canvasContainer').empty().append('<canvas id="tps" width="1000" height="350"></canvas><br/> <canvas id="latencies" width="1000" height="350"></canvas>');
+                            var tpsLine = new TimeSeries();
+                            var latenciesLine = new TimeSeries();
 
-                        var tpsSmoothie = new SmoothieChart({millisPerPixel:64});
-                        tpsSmoothie.streamTo(document.getElementById("tps"));
+                            tpsSmoothie = new SmoothieChart({millisPerPixel: 64});
+                            tpsSmoothie.streamTo(document.getElementById("tps"));
 
-                        var latenciesSmoothie = new SmoothieChart({millisPerPixel:64});
-                        latenciesSmoothie.streamTo(document.getElementById("latencies"));
+                            latenciesSmoothie = new SmoothieChart({millisPerPixel: 64});
+                            latenciesSmoothie.streamTo(document.getElementById("latencies"));
 
-                        var intervalFunction = setInterval(function () {
-                            $.get('/stats', function(data) {
-                                $.each(data, function() {
-                                    if (this['timestamp'] === -1) {
-                                        clearInterval(intervalFunction);
-                                        tpsSmoothie.stop();
-                                        latenciesSmoothie.stop();
-                                        $('#canvasContainer').empty();
-
-                                        $('#start').val('Start');
-                                        started = false;
-                                        //alert('ok, stop');
-                                    } else {
+                            intervalFunction = setInterval(function () {
+                                $.get('/stats', function (data) {
+                                    $.each(data, function () {
                                         tpsLine.append(this['timestamp'], this['periodicTps']);
                                         latenciesLine.append(this['timestamp'], this['periodicAverageLatencyInMs']);
-                                    }
+                                    })
                                 })
-                            })
-                        }, 1000);
-                        tpsSmoothie.addTimeSeries(tpsLine, { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 }, 1000);
-                        latenciesSmoothie.addTimeSeries(latenciesLine, {lineWidth:5, strokeStyle:'#0055c9', fillStyle:'rgba(0,0,255,0.30)'}, 1000 );
-                    });
-            event.preventDefault();
-        });
-
-    });
+                            }, 1000);
+                            tpsSmoothie.addTimeSeries(tpsLine, {
+                                strokeStyle: 'rgba(0, 255, 0, 1)',
+                                fillStyle: 'rgba(0, 255, 0, 0.2)',
+                                lineWidth: 4
+                            }, 1000);
+                            latenciesSmoothie.addTimeSeries(latenciesLine, {
+                                lineWidth: 5,
+                                strokeStyle: '#0055c9',
+                                fillStyle: 'rgba(0,0,255,0.30)'
+                            }, 1000);
+                        });
+                event.preventDefault();
+            }
+        })
+    })
 </script>
 </body>
 </html>
