@@ -23,13 +23,14 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.Reader;
 import java.net.InetAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.channels.Channels;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -101,20 +102,18 @@ public class DemoApp {
     public CommandLineRunner demo(ActorRepository repository) {
         return (args) -> {
 
-            System.out.println("YO!!!" + repository.count());
-            System.out.println("biographiesLocation : " + biographiesLocation);
-
-
-            if (repository.findOne(1L) == null) {
-                // hum the db seems to be empty
-                System.out.println(biographiesLocation);
-                CharsetDecoder dec = StandardCharsets.ISO_8859_1.newDecoder()
-                    .onMalformedInput(CodingErrorAction.IGNORE);
-
-
-//                Reader r = Channels.newReader(Channels.newChannel(new GZIPInputStream(new FileInputStream(Paths.get(biographiesLocation).toString()))), StandardCharsets.ISO_8859_1.newDecoder(), -1);
-
-                try (Reader r = Channels.newReader(Channels.newChannel(new GZIPInputStream(new FileInputStream(Paths.get(biographiesLocation).toString()))), StandardCharsets.ISO_8859_1.newDecoder(), -1); BufferedReader br = new BufferedReader(r)) {
+            if (repository.count() == 0) {
+                log.info("The Actor repository is empty, let's fill it up !");
+                InputStream inputStream;
+                if(Files.exists(Paths.get(biographiesLocation))) {
+                    log.info("We could find a local copy of biographies.gz at : " +  biographiesLocation);
+                    inputStream = new FileInputStream(Paths.get(biographiesLocation).toString());
+                } else {
+                    log.info("We could NOT find a local copy of biographies.gz at : " +  biographiesLocation);
+                    log.info("Downloading it from  : ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz");
+                    inputStream = new URL("ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz").openStream();
+                }
+                try (Reader r = Channels.newReader(Channels.newChannel(new GZIPInputStream(inputStream)), StandardCharsets.ISO_8859_1.newDecoder(), -1); BufferedReader br = new BufferedReader(r)) {
                     Stream<String> lines = br.lines()
                         .filter(s -> s.startsWith("NM:") && s.matches("^.*,.*$") || (s.startsWith("DB:") && s.matches("^.*\\s[0-9]{1,2}\\s.*\\s[0-9]{4}.*$")));
                     AtomicReference<Actor> currentActor = new AtomicReference<>();
