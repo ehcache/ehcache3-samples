@@ -36,7 +36,9 @@ import org.terracotta.inno.dao.SoRDao;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static io.rainfall.configuration.ReportingConfig.text;
@@ -50,6 +52,8 @@ public class ExecutionService {
   private static final String OPERATION_NAME = "load";
   private static final int OBJECT_SIZE = 1024;
 
+  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
   enum DaoResult {
     LOAD
   }
@@ -60,7 +64,6 @@ public class ExecutionService {
     public Config(long datasetSizeInBytes) {
       this.datasetSizeInBytes = datasetSizeInBytes;
     }
-
   }
 
 
@@ -74,44 +77,29 @@ public class ExecutionService {
     SoRDao<byte[]> soRDao = new SoRDao<>(valueGenerator);
     RandomSequenceGenerator randomSequenceGenerator = new RandomSequenceGenerator(Distribution.SLOW_GAUSSIAN, 0, objectCount, objectCount / 10);
 
+    Callable<StatisticsPeekHolder> callable = () -> Runner.setUp(
+        Scenario.scenario("Scaling demo").exec(
+            new Operation() {
+              @Override
+              public void exec(StatisticsHolder statisticsHolder, Map<Class<? extends Configuration>, Configuration> map, List<AssertionEvaluator> list) throws TestException {
+                Long key = keyGenerator.generate(randomSequenceGenerator.next());
+                long before = getTimeInNs();
+                byte[] bytes = soRDao.loadData(key);
+                long after = getTimeInNs();
+                statisticsHolder.record(OPERATION_NAME, (after - before), DaoResult.LOAD);
+              }
 
-    CompletableFuture<StatisticsPeekHolder> completableFuture = new CompletableFuture<>();
-    Thread thread = new Thread() {
-      @Override
-      public void run() {
-        try {
-          StatisticsPeekHolder statisticsPeekHolder = Runner.setUp(
-              Scenario.scenario("Scale showoff").exec(
-                  new Operation() {
-                    @Override
-                    public void exec(StatisticsHolder statisticsHolder, Map<Class<? extends Configuration>, Configuration> map, List<AssertionEvaluator> list) throws TestException {
-                      Long key = keyGenerator.generate(randomSequenceGenerator.next());
-                      long before = getTimeInNs();
-                      byte[] bytes = soRDao.loadData(key);
-                      long after = getTimeInNs();
-                      statisticsHolder.record(OPERATION_NAME, (after - before), DaoResult.LOAD);
-                    }
+              @Override
+              public List<String> getDescription() {
+                return Arrays.asList("Service get");
+              }
+            }
+        ))
+        .executed(during(10, TimeDivision.minutes))
+        .config(concurrency, ReportingConfig.report(DaoResult.class).log(text()))
+        .start();
 
-                    @Override
-                    public List<String> getDescription() {
-                      return Arrays.asList("Service get");
-                    }
-                  }
-              ))
-              .executed(during(10, TimeDivision.minutes))
-              .config(concurrency, ReportingConfig.report(DaoResult.class).log(text()))
-              .start();
-
-          completableFuture.complete(statisticsPeekHolder);
-        } catch (Exception e) {
-          completableFuture.complete(null);
-        }
-      }
-    };
-
-    thread.start();
-
-    return completableFuture;
+    return executorService.submit(callable);
   }
 
 }
