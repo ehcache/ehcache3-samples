@@ -19,6 +19,8 @@ import org.terracotta.demo.config.JHipsterProperties;
 import org.terracotta.demo.domain.Actor;
 import org.terracotta.demo.repository.ActorRepository;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -41,9 +43,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 @ComponentScan
 @EnableAutoConfiguration(exclude = { MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class })
 @EnableConfigurationProperties({ JHipsterProperties.class, LiquibaseProperties.class })
@@ -53,6 +52,13 @@ public class DemoApp {
 
     @Value("${demo.biographiesLocation}")
     private String biographiesLocation;
+
+    @Value("${googleApiKey}")
+    private String googleApiKey;
+
+    @Value("${darkSkyApiKey}")
+    private String darkSkyApiKey;
+
 
     @Inject
     private Environment env;
@@ -102,6 +108,12 @@ public class DemoApp {
     @Bean
     public CommandLineRunner demo(ActorRepository repository) {
         return (args) -> {
+            // check for mandatory API keys
+            if ("${darkSkyApiKey}".equals(darkSkyApiKey) || "${googleApiKey}".equals(googleApiKey)) {
+                throw new RuntimeException("You need to specify API keys for geolocation (using Google Geocode API)" +
+                    " and for weather reports (using DarkSkyApi).\n" +
+                    "Please re run the app with --googleApiKey=API_KEY --darkSkyApiKey=API_KEY ");
+            }
 
             if (repository.count() == 0) {
                 log.info("The Actor repository is empty, let's fill it up !");

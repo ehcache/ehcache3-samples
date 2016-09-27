@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+
+
+<p>Choose your actor : </p>
+
+
+<form action="#" th:action="@{/stars}" th:object="${actor}" method="post">
+    <p>Actor Name: <input type="text" th:field="*{lastName}"/></p>
+    <p><input type="submit" value="Submit"/>
+        <input type="reset" value="Reset"/>
+    </p>
+</form>
+<p style="font-size: larger">Please try a last name that won't return too many actors, such as : tautou, de niro,
+    tarantino, dujardin, poelvoorde</p>
+</body>
+</html>

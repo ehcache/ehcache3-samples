@@ -1,8 +1,7 @@
 package org.terracotta.demo.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.terracotta.demo.domain.Actor;
-
-import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
 
@@ -11,5 +10,5 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public interface ActorRepository extends JpaRepository<Actor,Long> {
-
+    List<Actor> findByLastNameIgnoreCase(String lastName);
 }
