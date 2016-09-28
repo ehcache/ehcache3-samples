@@ -31,14 +31,8 @@ public class CacheConfiguration {
 
     private final Logger log = LoggerFactory.getLogger(CacheConfiguration.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Inject
     private MetricRegistry metricRegistry;
-
-    @Inject
-    private JCacheCacheManager cacheManager;
 
     @PreDestroy
     public void destroy() {
