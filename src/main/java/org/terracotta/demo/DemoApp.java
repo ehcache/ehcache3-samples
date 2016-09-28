@@ -125,7 +125,7 @@ public class DemoApp {
 
             // If the file isn't present locally, download it
             if(!Files.exists(localBiographiesPath)) {
-                log.info("We could find a local copy of biographies.gz at {}, so let's download it from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz", biographiesLocation);
+                log.info("We could NOT find a local copy of biographies.gz at {}, so let's download it from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz", biographiesLocation);
                 try(InputStream inputStream = new URL("ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz").openStream()) {
                     Files.copy(inputStream, localBiographiesPath);
                 }

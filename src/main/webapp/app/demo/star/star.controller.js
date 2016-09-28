@@ -2,12 +2,12 @@
     'use strict';
 
     angular
-        .module('demoApp')``
+        .module('demoApp')
         .controller('StarController', StarController);
 
     StarController.$inject = ['$scope', '$state', 'Star', 'ParseLinks', 'AlertService'];
 
-    function ActorController ($scope, $state, Star, ParseLinks, AlertService) {
+    function StarController ($scope, $state, Star, ParseLinks, AlertService) {
         var vm = this;
 
         vm.actors = [];

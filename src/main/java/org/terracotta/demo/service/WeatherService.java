@@ -98,7 +98,7 @@ public class WeatherService {
       }
 
       long retrieveEndTime = Clock.systemDefaultZone().millis();
-      getResourceCallReports().add(new ResourceCallReport(location, retrieveEndTime - retrieveStartTime, this.getClass().getSimpleName() + "retrieveWeatherReport", ResourceCallReport.ResourceType.WEB_SERVICE, "Darksky Rest API"));
+      getResourceCallReports().add(new ResourceCallReport(location, retrieveEndTime - retrieveStartTime, this.getClass().getSimpleName() + ".retrieveWeatherReport", ResourceCallReport.ResourceType.WEB_SERVICE, "Darksky Rest API"));
       return weatherReport;
 
     } catch (Exception e) {

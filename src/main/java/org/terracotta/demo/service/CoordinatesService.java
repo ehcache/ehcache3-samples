@@ -47,7 +47,7 @@ public class CoordinatesService {
       String longitude = locationNode.get("lng").asText();
 
       long retrieveEndTime = Clock.systemDefaultZone().millis();
-      getResourceCallReports().add(new ResourceCallReport(location, retrieveEndTime - retrieveStartTime, this.getClass().getSimpleName() + "retrieveCoordinates", ResourceCallReport.ResourceType.WEB_SERVICE, "Google Geocode Rest API"));
+      getResourceCallReports().add(new ResourceCallReport(location, retrieveEndTime - retrieveStartTime, this.getClass().getSimpleName() + ".retrieveCoordinates", ResourceCallReport.ResourceType.WEB_SERVICE, "Google Geocode Rest API"));
 
       return new Coordinates(latitude, longitude);
     } catch (Exception e) {

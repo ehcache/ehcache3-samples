@@ -79,3 +79,8 @@ jhipster:
         contactEmail:
         license:
         licenseUrl:
+demo:
+    # local downlaod target of from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
+    biographiesLocation: target/test-classes/biographies.test.list.gz
+googleApiKey: ""
+darkSkyApiKey: ""
