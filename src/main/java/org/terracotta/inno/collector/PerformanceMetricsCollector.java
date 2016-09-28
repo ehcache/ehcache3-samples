@@ -33,6 +33,7 @@ import io.rainfall.statistics.StatisticsPeekHolder;
 import io.rainfall.unit.TimeDivision;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
 import org.terracotta.inno.dao.SoRDao;
 import org.terracotta.inno.dao.SorLoaderWriter;
@@ -64,7 +65,6 @@ import static org.ehcache.config.builders.ResourcePoolsBuilder.newResourcePoolsB
 public class PerformanceMetricsCollector {
 
   public static final String OPERATION_NAME = "load";
-  private static final int OBJECT_SIZE = 1024;
 
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -75,21 +75,20 @@ public class PerformanceMetricsCollector {
   private volatile Queue<QueueReporter.Result> resultQueue;
   private CacheManager cacheManager;
 
-
   public Future<StatisticsPeekHolder> start(Config config) throws Exception {
     if (resultQueue != null) {
       throw new RuntimeException("Execution is in progress");
     }
-    ConcurrencyConfig concurrency = ConcurrencyConfig.concurrencyConfig().threads(4);
+    ConcurrencyConfig concurrency = ConcurrencyConfig.concurrencyConfig().threads(config.getClientCount());
 
-    long objectCount = config.getDatasetSizeInBytes() / OBJECT_SIZE;
+    long objectCount = config.getDatasetCount();
 
     ObjectGenerator<Long> keyGenerator = new LongGenerator();
-    ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLength(OBJECT_SIZE);
+    ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLength((int)config.getValueSizeInBytes());
     DataService<byte[]> dataService;
     if (config.isCacheEnabled()) {
       CacheConfigurationBuilder<Long, byte[]> builder = newCacheConfigurationBuilder(Long.class, byte[].class,
-          newResourcePoolsBuilder().heap(config.getHeapSizeInBytes(), MemoryUnit.B))
+          newResourcePoolsBuilder().heap(config.getHeapSizeCount(), EntryUnit.ENTRIES))
           .withLoaderWriter(new SorLoaderWriter(new SoRDao<byte[]>(valueGenerator)));
 
       cacheManager = newCacheManagerBuilder()

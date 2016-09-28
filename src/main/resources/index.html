@@ -9,6 +9,12 @@
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <style>
+        input, textarea, select {
+            background-color: #FFF;
+            color: #337AB7;
+        }
+    </style>
 </head>
 <body>
 
@@ -27,12 +33,27 @@
                 <form name="form" id="form">
                     <label>
                         Dataset size:
-                        <select name="datasetSize">
-                            <option value="100M">100 MB</option>
-                            <option value="1G">1 GB</option>
-                            <option value="10G">10 GB</option>
-                            <option value="100G">100 GB</option>
+                        <select name="datasetCount">
+                            <option value="100">100</option>
+                            <option value="10000">10000</option>
+                            <option value="1000000">1000000</option>
+                            <option value="100000000">10000000</option>
                         </select>
+                    </label>
+
+                    <label>
+                        Value size:
+                        <select name="valueSize">
+                            <option value="100">100 B</option>
+                            <option value="1K">1 K8</option>
+                            <option value="32K">32 KB</option>
+                            <option value="1M">1 MB</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Client count:
+                        <input type="text" name="clientCount" value="16"/>
                     </label>
 
                     <label>
