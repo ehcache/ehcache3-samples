@@ -19,18 +19,15 @@ import org.terracotta.demo.config.JHipsterProperties;
 import org.terracotta.demo.domain.Actor;
 import org.terracotta.demo.repository.ActorRepository;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.Reader;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.nio.channels.Channels;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -42,6 +39,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 @ComponentScan
 @EnableAutoConfiguration(exclude = { MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class })
@@ -82,6 +82,12 @@ public class DemoApp {
             log.error("You have misconfigured your application! It should not" +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
+        // check for mandatory API keys
+//            if ("${darkSkyApiKey}".equals(darkSkyApiKey) || "${googleApiKey}".equals(googleApiKey)) {
+//                throw new RuntimeException("You need to specify API keys for geolocation (using Google Geocode API)" +
+//                    " and for weather reports (using DarkSkyApi).\n" +
+//                    "Please re run the app with --googleApiKey=API_KEY --darkSkyApiKey=API_KEY ");
+//            }
     }
 
     /**
@@ -106,76 +112,72 @@ public class DemoApp {
     }
 
     @Bean
-    public CommandLineRunner demo(ActorRepository repository) {
+    public CommandLineRunner demo(ActorRepository actorRepository) {
         return (args) -> {
-            // check for mandatory API keys
-            if ("${darkSkyApiKey}".equals(darkSkyApiKey) || "${googleApiKey}".equals(googleApiKey)) {
-                throw new RuntimeException("You need to specify API keys for geolocation (using Google Geocode API)" +
-                    " and for weather reports (using DarkSkyApi).\n" +
-                    "Please re run the app with --googleApiKey=API_KEY --darkSkyApiKey=API_KEY ");
+            // Assume that if we already have entries in the DB, that we already read the full file
+            if (actorRepository.count() != 0) {
+                return;
             }
 
-            if (repository.count() == 0) {
-                log.info("The Actor repository is empty, let's fill it up !");
-                InputStream inputStream;
-                if(Files.exists(Paths.get(biographiesLocation))) {
-                    log.info("We could find a local copy of biographies.gz at : " +  biographiesLocation);
-                    inputStream = new FileInputStream(Paths.get(biographiesLocation).toString());
-                } else {
-                    log.info("We could NOT find a local copy of biographies.gz at : " +  biographiesLocation);
-                    log.info("Downloading it from  : ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz");
-                    inputStream = new URL("ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz").openStream();
-                }
-                try (Reader r = Channels.newReader(Channels.newChannel(new GZIPInputStream(inputStream)), StandardCharsets.ISO_8859_1.newDecoder(), -1); BufferedReader br = new BufferedReader(r)) {
-                    Stream<String> lines = br.lines()
-                        .filter(s -> s.startsWith("NM:") && s.matches("^.*,.*$") || (s.startsWith("DB:") && s.matches("^.*\\s[0-9]{1,2}\\s.*\\s[0-9]{4}.*$")));
-                    AtomicReference<Actor> currentActor = new AtomicReference<>();
-                    lines.forEach(s -> {
-                        try {
-                            if (s.startsWith("NM:")) {
-                                currentActor.set(new Actor());
-                                currentActor.get().setLastName(s.substring(4, s.indexOf(",")));
-                                currentActor.get().setFirstName(s.split(",")[1].substring(1));
-                            } else {
-                                Pattern birthDatePattern = Pattern.compile("^.*\\s([0-9]{1,2})\\s(.*)\\s([0-9]{4})(.*)$");
-                                Matcher birthDateMatcher = birthDatePattern.matcher(s);
+            log.info("The Actor table is empty, let's fill it up!");
 
-                                if (birthDateMatcher.find()) {
-                                    String day = birthDateMatcher.group(1);
-                                    String month = birthDateMatcher.group(2);
-                                    String year = birthDateMatcher.group(3);
-//                                    DateFormat fmt = new SimpleDateFormat("dd MMMM yyyy", Locale.US);
-                                    try {
-                                        LocalDate birthDate = LocalDate.parse(day + " " + month + " " + year, DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.US));
-//                                        LocalDate birthDate = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
-                                        currentActor.get().setBirthDate(birthDate);
-                                        if (birthDateMatcher.group(4) != null && birthDateMatcher.group(4).length() > 2) {
-                                            currentActor.get().setBirthLocation(birthDateMatcher.group(4).substring(2));
-                                        }
-//                  System.out.println(currentActor.get());
-                                        repository.save(currentActor.get());
-                                    } catch (NumberFormatException e) {
-                                        log.debug("Could not parse birthDate for " + currentActor.get().getFirstName() + " " + currentActor.get().getLastName(), e);
+            Path localBiographiesPath = Paths.get(biographiesLocation);
+
+            // If the file isn't present locally, download it
+            if(!Files.exists(localBiographiesPath)) {
+                log.info("We could find a local copy of biographies.gz at {}, so let's download it from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz", biographiesLocation);
+                try(InputStream inputStream = new URL("ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz").openStream()) {
+                    Files.copy(inputStream, localBiographiesPath);
+                }
+                log.info("Download complete");
+            }
+
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(Files.newInputStream(localBiographiesPath)), StandardCharsets.ISO_8859_1))) {
+                Stream<String> lines = br.lines()
+                        .filter(s -> s.startsWith("NM:") && s.matches("^.*,.*$") || (s.startsWith("DB:") && s.matches("^.*\\s[0-9]{1,2}\\s.*\\s[0-9]{4}.*$")));
+
+                Pattern birthDatePattern = Pattern.compile("^.*\\s([0-9]{1,2})\\s(.*)\\s([0-9]{4})(.*)$");
+
+                AtomicReference<Actor> currentActor = new AtomicReference<>();
+
+                lines.forEachOrdered(s -> {
+                    try {
+                        if (s.startsWith("NM:")) {
+                            Actor actor = new Actor();
+                            actor.setLastName(s.substring(4, s.indexOf(",")));
+                            actor.setFirstName(s.split(",")[1].substring(1));
+                            currentActor.set(actor);
+                        } else {
+                            Matcher birthDateMatcher = birthDatePattern.matcher(s);
+
+                            if (birthDateMatcher.find()) {
+                                String day = birthDateMatcher.group(1);
+                                String month = birthDateMatcher.group(2);
+                                String year = birthDateMatcher.group(3);
+
+                                Actor actor = currentActor.get();
+                                try {
+                                    LocalDate birthDate = LocalDate.parse(day + " " + month + " " + year, DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.US));
+                                    actor.setBirthDate(birthDate);
+                                    if (birthDateMatcher.group(4) != null && birthDateMatcher.group(4).length() > 2) {
+                                        actor.setBirthLocation(birthDateMatcher.group(4).substring(2));
                                     }
+                                    actorRepository.save(actor);
+                                } catch (NumberFormatException e) {
+                                    log.warn("Could not parse birthDate for " + currentActor.get().getFirstName() + " " + currentActor.get().getLastName(), e);
                                 }
                             }
-                        } catch (Exception e) {
-                            log.warn("Error loading : " + s, e);
                         }
+                    } catch (Exception e) {
+                        log.warn("Error loading : " + s, e);
+                    }
 
-                    });
+                });
 
-                }
-
-                // fetch an individual actor by ID
-                Actor actor = repository.findOne(1L);
-                log.info("Actor found with findOne(1L):");
-                log.info("--------------------------------");
-                log.info(actor.toString());
-                log.info("");
-
-                log.info("Number of actors in the database : " + repository.count());
             }
+
+
+            log.info("Number of actors in the database: {}", actorRepository.count());
         };
     }
 
