@@ -40,7 +40,7 @@ spring:
             hibernate.generate_statistics: true
             hibernate.javax.cache.provider: org.ehcache.jsr107.EhcacheCachingProvider
             hibernate.javax.cache.uri: ${spring.cache.jcache.config}
-            hibernate.cache.region.factory_class: org.terracotta.demo.SpringJCacheRegionFactory
+            hibernate.cache.region.factory_class: org.terracotta.demo.config.jcache.SpringCacheRegionFactory
     cache:
         jcache:
             config: ehcache.xml
