@@ -2,14 +2,6 @@
 <config xmlns="http://www.ehcache.org/v3" xmlns:jsr107="http://www.ehcache.org/v3/jsr107"
         xmlns:mnm="http://www.ehcache.org/v3/management">
 
-    <service>
-        <jsr107:defaults enable-management="true" enable-statistics="true"/>
-    </service>
-
-    <service>
-        <mnm:management cache-manager-alias="CM1"/>
-    </service>
-
     <cache-template name="simple">
         <expiry>
             <ttl unit="seconds">3600</ttl>
