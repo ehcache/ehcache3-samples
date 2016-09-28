@@ -53,6 +53,9 @@ public class DemoApp {
     @Value("${demo.biographiesLocation}")
     private String biographiesLocation;
 
+    @Value("${biographiesRemoteLocation}")
+    private String biographiesRemoteLocation;
+
     @Value("${googleApiKey}")
     private String googleApiKey;
 
@@ -114,6 +117,13 @@ public class DemoApp {
     @Bean
     public CommandLineRunner demo(ActorRepository actorRepository) {
         return (args) -> {
+            if(googleApiKey == null || googleApiKey.equals("${googleApiKey}") || googleApiKey.trim().equals("")) {
+                log.error("The googleApiKey is not defined, CoordinatesService will NOT work !");
+            }
+            if(darkSkyApiKey == null || darkSkyApiKey.equals("${darkSkyApiKey}") || darkSkyApiKey.trim().equals("")) {
+                log.error("The darkSkyApiKey is not defined, WeatherService will NOT work !");
+            }
+
             // Assume that if we already have entries in the DB, that we already read the full file
             if (actorRepository.count() != 0) {
                 return;
@@ -125,8 +135,8 @@ public class DemoApp {
 
             // If the file isn't present locally, download it
             if(!Files.exists(localBiographiesPath)) {
-                log.info("We could NOT find a local copy of biographies.gz at {}, so let's download it from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz", biographiesLocation);
-                try(InputStream inputStream = new URL("ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz").openStream()) {
+                log.info("We could NOT find a local copy of biographies.gz at {}, so let's download it from {}", biographiesLocation, biographiesRemoteLocation);
+                try(InputStream inputStream = new URL(biographiesRemoteLocation).openStream()) {
                     Files.copy(inputStream, localBiographiesPath);
                 }
                 log.info("Download complete");

@@ -76,5 +76,5 @@ jhipster:
         # comma seperated list of profiles to show a ribbon on the GUI
         displayOnActiveProfiles: dev
 demo:
-    # local downlaod target of from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
+    biographiesRemoteLocation: ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
     biographiesLocation: biographies.list.gz
