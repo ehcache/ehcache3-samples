@@ -30,8 +30,7 @@ public class StarsBirthdayWeatherController {
   public static List<ResourceCallReport> getResourceCallReports() {
     return resourceCallReports.get();
   }
-
-  private static final ThreadLocal<List<ResourceCallReport>> resourceCallReports =
+    static final ThreadLocal<List<ResourceCallReport>> resourceCallReports =
       new ThreadLocal<List<ResourceCallReport>>().withInitial(() -> new ArrayList());
 
   @Autowired
