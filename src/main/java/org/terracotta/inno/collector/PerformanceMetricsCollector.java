@@ -31,6 +31,9 @@ import io.rainfall.generator.sequence.Distribution;
 import io.rainfall.statistics.StatisticsHolder;
 import io.rainfall.statistics.StatisticsPeekHolder;
 import io.rainfall.unit.TimeDivision;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.units.MemoryUnit;
 import org.terracotta.inno.service.CachedDataService;
 import org.terracotta.inno.service.DataService;
 import org.terracotta.inno.service.UncachedDataService;
@@ -49,6 +52,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static io.rainfall.execution.Executions.during;
+import static org.ehcache.config.builders.CacheManagerBuilder.newCacheManagerBuilder;
+import static org.ehcache.config.builders.ResourcePoolsBuilder.newResourcePoolsBuilder;
 
 /**
  * @author Ludovic Orban
@@ -65,6 +70,7 @@ public class PerformanceMetricsCollector {
   }
 
   private volatile Queue<QueueReporter.Result> resultQueue;
+  private CacheManager cacheManager;
 
 
   public Future<StatisticsPeekHolder> start(Config config) throws Exception {
@@ -79,7 +85,16 @@ public class PerformanceMetricsCollector {
     ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLength(OBJECT_SIZE);
     DataService<byte[]> dataService;
     if (config.isCacheEnabled()) {
-      dataService = new CachedDataService(valueGenerator);
+      CacheConfigurationBuilder<Long, byte[]> builder = CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, byte[].class,
+          newResourcePoolsBuilder()
+              .heap(config.getHeapSizeInBytes(), MemoryUnit.B)
+              .build());
+
+      cacheManager = newCacheManagerBuilder()
+          .withCache("cache", builder.build())
+          .build(true);
+
+      dataService = new CachedDataService(cacheManager.getCache("cache", Long.class, byte[].class), valueGenerator);
     } else {
       dataService = new UncachedDataService<>(valueGenerator);
     }
@@ -112,8 +127,12 @@ public class PerformanceMetricsCollector {
     return new Future<StatisticsPeekHolder>() {
       @Override
       public boolean cancel(boolean mayInterruptIfRunning) {
+        boolean cancel = future.cancel(true);
+        if (cacheManager != null) {
+          cacheManager.close();
+        }
         resultQueue = null;
-        return future.cancel(true);
+        return cancel;
       }
 
       @Override

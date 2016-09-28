@@ -13,11 +13,10 @@
 <body>
 
 <section class="bg-primary" id="controls">
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 text-center">
                 <h2 class="section-heading">Scale continuum Demo</h2>
-                <hr class="light"/>
                 <p class="text-faded">
                     Please choose the dataset size and the cache configuration.<br/>
                     Then press the 'Start' button to execute the demo. The performance of fetching data will be
@@ -51,7 +50,9 @@
                         <input type="text" name="heapSize"/>
                     </label>
 
-                    <input type="submit" id="start" value="Start" class="page-scroll btn btn-default btn-xl sr-button"/>
+                    <div style="float:left;padding: 10px;">
+                        <div id="taskButton" class="btn btn-primary btn-success">Start</div>
+                    </div>
                 </form>
                 </p>
             </div>
@@ -82,7 +83,7 @@
         var latenciesSmoothie;
 
 //        bind submit button to call Rest start command
-        $('#form').submit(function (event) {
+        $('#taskButton').click(function () {
             if (started) {
                 $.get('/cancel').done(function () {
                             clearInterval(intervalFunction);
@@ -92,9 +93,8 @@
                             if (latenciesSmoothie !== null) {
                                 latenciesSmoothie.stop();
                             }
-                            $('#start').val('Start');
+                            $('#taskButton').html('Start');
                             started = false;
-                            event.preventDefault();
                         }
                 );
             } else {
@@ -104,7 +104,7 @@
                             alert("error");
                         })
                         .done(function () {
-                            $('#start').val('Stop');
+                            $('#taskButton').html('Stop');
                             started = true;
 
                             $('#canvasContainer').empty().append('<canvas id="tps" width="1000" height="350"></canvas><br/> <canvas id="latencies" width="1000" height="350"></canvas>');
@@ -136,7 +136,6 @@
                                 fillStyle: 'rgba(0,0,255,0.30)'
                             }, 1000);
                         });
-                event.preventDefault();
             }
         })
     })
