@@ -8,12 +8,12 @@
     stateConfig.$inject = ['$stateProvider'];
 
     function stateConfig($stateProvider) {
-        $stateProvider.state('cacheSettings', {
+        $stateProvider.state('cache-settings', {
             parent: 'demo',
             url: '/cachesettings',
             data: {
                 authorities: ['ROLE_USER'],
-                pageTitle: 'Demo Settings'
+                pageTitle: 'Cache Settings'
             },
             views: {
                 'content@': {
@@ -21,7 +21,10 @@
                     controller: 'CacheSettingsController',
                     controllerAs: 'vm'
                 }
+            },
+            resolve: {
             }
         });
+        console.log($stateProvider);
     }
 })();
