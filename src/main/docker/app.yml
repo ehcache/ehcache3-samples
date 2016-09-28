@@ -4,6 +4,7 @@ services:
         image: demo
         external_links:
             - demo-postgresql:postgresql
+            - demo-terracotta-server:terracotta-server
         environment:
             - SPRING_PROFILES_ACTIVE=prod,swagger
             - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/demo
@@ -18,3 +19,7 @@ services:
         extends:
             file: postgresql.yml
             service: demo-postgresql
+    demo-terracotta-server:
+        extends:
+            file: terracotta-server.yml
+            service: demo-terracotta-server

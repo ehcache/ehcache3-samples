@@ -36,7 +36,7 @@ spring:
             hibernate.cache.region.factory_class: org.terracotta.demo.config.jcache.SpringCacheRegionFactory
     cache:
         jcache:
-            config: ehcache.xml
+            config: ehcache-clustered.xml
     mail:
         host: localhost
         port: 25
