@@ -1,0 +1,19 @@
+<div>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h2>Cache Settings</b>]</h2>
+
+            <div class="alert alert-success" ng-show="vm.success">
+                <strong>Settings saved!</strong>
+            </div>
+
+           <jhi-alert-error></jhi-alert-error>
+
+            <form name="form" role="form" novalidate ng-submit="vm.save()" show-validation>
+
+                <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Save</button>
+            </form>
+        </div>
+    </div>
+
+</div>
