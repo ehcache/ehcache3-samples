@@ -10,6 +10,7 @@ import org.terracotta.demo.ResourceCallReport;
 import org.terracotta.demo.domain.Coordinates;
 import org.terracotta.demo.domain.WeatherReport;
 
+import javax.cache.annotation.CacheResult;
 import java.net.URLEncoder;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -40,6 +41,7 @@ public class WeatherService {
   @Autowired
   private ObjectMapper objectMapper;
 
+  @CacheResult(cacheName = "weatherReports")
   public WeatherReport retrieveWeatherReport(String location, LocalDate date) {
     try {
 

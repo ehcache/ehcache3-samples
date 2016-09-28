@@ -31,4 +31,6 @@
 
     <cache alias="org.terracotta.demo.domain.Actor" uses-template="simple"/>
 
+    <cache alias="weatherReports" uses-template="simple"/>
+
 </config>
