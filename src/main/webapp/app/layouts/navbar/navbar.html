@@ -20,7 +20,7 @@
                         <span class="hidden-sm">Home</span>
                     </a>
                 </li>
-                <li ng-class="{active: vm.$state.includes('demo')}" uib-dropdown class="dropdown pointer">
+                <li ng-class="{active: vm.$state.includes('demo')}" ng-switch-when="true" uib-dropdown class="dropdown pointer">
                     <a class="dropdown-toggle" uib-dropdown-toggle href="" id="demo-menu">
                         <span>
                             <span class="glyphicon glyphicon-film"></span>
@@ -31,13 +31,13 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu" uib-dropdown-menu>
-                        <li ui-sref-active="active" ng-switch-when="true">
+                        <li ui-sref-active="active">
                             <a ui-sref="cachesettings" ng-click="vm.collapseNavbar()">
                                 <span class="glyphicon glyphicon-wrench"></span>&nbsp;
                                 <span>Cache Settings</span>
                             </a>
                         </li>
-                        <li ui-sref-active="active" ng-switch-when="true">
+                        <li ui-sref-active="active">
                             <a ui-sref="star" ng-click="vm.collapseNavbar()">
                                 <span class="glyphicon glyphicon-pawn"></span>&nbsp;
                                 <span>Stars</span>
