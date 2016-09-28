@@ -29,8 +29,20 @@
                     displayed below
                 </p>
                 <hr class="light"/>
-                <p>
-                <form name="form" id="form">
+            </div>
+        </div>
+
+        <form name="form" id="form">
+            <div class="row">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-1">
+                    <div style="float:left;padding: 10px;">
+                        <div id="taskButton" class="btn btn-primary btn-success">Start</div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
                     <label>
                         Dataset size:
                         <select name="datasetCount">
@@ -40,7 +52,9 @@
                             <option value="100000000">10000000</option>
                         </select>
                     </label>
+                </div>
 
+                <div class="col-md-1">
                     <label>
                         Value size:
                         <select name="valueSize">
@@ -50,34 +64,44 @@
                             <option value="1M">1 MB</option>
                         </select>
                     </label>
+                </div>
 
+                <div class="col-md-1">
                     <label>
                         Client count:
                         <input type="text" name="clientCount" value="16"/>
                     </label>
-                    <br/>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-1">
                     <label>
                         Enable cache:
                         <input id="enableCache" type="checkbox" name="cacheEnabled"/>
                     </label>
+                </div>
 
+                <div class="col-md-1">
                     <label id="enableHeapLabel">
                         Enable Heap:
                         <input id="enableHeap" type="checkbox" name="heapEnabled"/>
                     </label>
+                </div>
 
+                <div class="col-md-1">
                     <label id="heapSizeLabel">
                         Heap size:
                         <input type="text" name="heapSize"/>
                     </label>
+                </div>
 
-                    <div style="float:left;padding: 10px;">
-                        <div id="taskButton" class="btn btn-primary btn-success">Start</div>
-                    </div>
-                </form>
-                </p>
+                <div class="col-md-2"></div>
             </div>
-        </div>
+        </form>
     </div>
 </section>
 
@@ -163,11 +187,11 @@
         $("#enableHeapLabel").hide();
         $("#heapSizeLabel").hide();
 
-        $("#enableCache").click(function() {
+        $("#enableCache").click(function () {
             $("#enableHeapLabel").toggle();
         });
 
-        $("#enableHeap").click(function() {
+        $("#enableHeap").click(function () {
             $("#heapSizeLabel").toggle();
         });
     })
