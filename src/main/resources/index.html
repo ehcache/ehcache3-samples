@@ -78,6 +78,7 @@
             <div class="row">
                 <div class="col-md-2"></div>
 
+                <!--Enable cache-->
                 <div class="col-md-1">
                     <label>
                         Enable cache:
@@ -85,6 +86,7 @@
                     </label>
                 </div>
 
+                <!--Heap-->
                 <div class="col-md-1">
                     <label id="enableHeapLabel">
                         Enable Heap:
@@ -95,11 +97,39 @@
                 <div class="col-md-1">
                     <label id="heapSizeLabel">
                         Heap size:
-                        <input type="text" name="heapSize"/>
+                        <input type="text" name="heapSize" size="6">
                     </label>
                 </div>
 
-                <div class="col-md-2"></div>
+                <!--Offheap-->
+                <div class="col-md-1">
+                    <label id="enableOffheapLabel">
+                        Enable Offheap:
+                        <input id="enableOffheap" type="checkbox" name="offheapEnabled"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="offheapSizeLabel">
+                        Offheap size:
+                        <input type="text" name="offheapSize" size="6"/>
+                    </label>
+                </div>
+
+                <!--Terracotta-->
+                <div class="col-md-1">
+                    <label id="enableTerracottaLabel">
+                        Enable Terracotta:
+                        <input id="enableTerracotta" type="checkbox" name="enableTerracotta"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="terracottaUrlLabel">
+                        Terracotta&nbsp;URL:
+                        <input type="text" name="terracottaUrl" size="18"/>
+                    </label>
+                </div>
             </div>
         </form>
     </div>
@@ -156,10 +186,10 @@
                             var tpsLine = new TimeSeries();
                             var latenciesLine = new TimeSeries();
 
-                            tpsSmoothie = new SmoothieChart({millisPerPixel: 64});
+                            tpsSmoothie = new SmoothieChart({labels: {fontSize: 20}, millisPerPixel: 64});
                             tpsSmoothie.streamTo(document.getElementById("tps"));
 
-                            latenciesSmoothie = new SmoothieChart({millisPerPixel: 64});
+                            latenciesSmoothie = new SmoothieChart({labels: {fontSize: 20}, millisPerPixel: 64});
                             latenciesSmoothie.streamTo(document.getElementById("latencies"));
 
                             intervalFunction = setInterval(function () {
@@ -185,14 +215,29 @@
         });
 
         $("#enableHeapLabel").hide();
+        $("#enableOffheapLabel").hide();
+        $("#enableTerracottaLabel").hide();
+
         $("#heapSizeLabel").hide();
+        $("#offheapSizeLabel").hide();
+        $("#terracottaUrlLabel").hide();
 
         $("#enableCache").click(function () {
             $("#enableHeapLabel").toggle();
+            $("#enableOffheapLabel").toggle();
+            $("#enableTerracottaLabel").toggle();
         });
 
         $("#enableHeap").click(function () {
             $("#heapSizeLabel").toggle();
+        });
+
+        $("#enableOffheap").click(function () {
+            $("#offheapSizeLabel").toggle();
+        });
+
+        $("#enableTerracotta").click(function () {
+            $("#terracottaUrlLabel").toggle();
         });
     })
 </script>
