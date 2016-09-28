@@ -55,18 +55,18 @@
                         Client count:
                         <input type="text" name="clientCount" value="16"/>
                     </label>
-
+                    <br/>
                     <label>
                         Enable cache:
-                        <input type="checkbox" name="cacheEnabled"/>
+                        <input id="enableCache" type="checkbox" name="cacheEnabled"/>
                     </label>
 
-                    <label>
+                    <label id="enableHeapLabel">
                         Enable Heap:
-                        <input type="checkbox" name="heapEnabled"/>
+                        <input id="enableHeap" type="checkbox" name="heapEnabled"/>
                     </label>
 
-                    <label>
+                    <label id="heapSizeLabel">
                         Heap size:
                         <input type="text" name="heapSize"/>
                     </label>
@@ -158,7 +158,18 @@
                             }, 1000);
                         });
             }
-        })
+        });
+
+        $("#enableHeapLabel").hide();
+        $("#heapSizeLabel").hide();
+
+        $("#enableCache").click(function() {
+            $("#enableHeapLabel").toggle();
+        });
+
+        $("#enableHeap").click(function() {
+            $("#heapSizeLabel").toggle();
+        });
     })
 </script>
 </body>
