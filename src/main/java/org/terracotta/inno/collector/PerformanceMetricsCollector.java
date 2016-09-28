@@ -34,6 +34,8 @@ import io.rainfall.unit.TimeDivision;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.units.MemoryUnit;
+import org.terracotta.inno.dao.SoRDao;
+import org.terracotta.inno.dao.SorLoaderWriter;
 import org.terracotta.inno.service.CachedDataService;
 import org.terracotta.inno.service.DataService;
 import org.terracotta.inno.service.UncachedDataService;
@@ -52,6 +54,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static io.rainfall.execution.Executions.during;
+import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.config.builders.CacheManagerBuilder.newCacheManagerBuilder;
 import static org.ehcache.config.builders.ResourcePoolsBuilder.newResourcePoolsBuilder;
 
@@ -85,16 +88,15 @@ public class PerformanceMetricsCollector {
     ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLength(OBJECT_SIZE);
     DataService<byte[]> dataService;
     if (config.isCacheEnabled()) {
-      CacheConfigurationBuilder<Long, byte[]> builder = CacheConfigurationBuilder.newCacheConfigurationBuilder(Long.class, byte[].class,
-          newResourcePoolsBuilder()
-              .heap(config.getHeapSizeInBytes(), MemoryUnit.B)
-              .build());
+      CacheConfigurationBuilder<Long, byte[]> builder = newCacheConfigurationBuilder(Long.class, byte[].class,
+          newResourcePoolsBuilder().heap(config.getHeapSizeInBytes(), MemoryUnit.B))
+          .withLoaderWriter(new SorLoaderWriter(new SoRDao<byte[]>(valueGenerator)));
 
       cacheManager = newCacheManagerBuilder()
           .withCache("cache", builder.build())
           .build(true);
 
-      dataService = new CachedDataService(cacheManager.getCache("cache", Long.class, byte[].class), valueGenerator);
+      dataService = new CachedDataService(cacheManager.getCache("cache", Long.class, byte[].class));
     } else {
       dataService = new UncachedDataService<>(valueGenerator);
     }
