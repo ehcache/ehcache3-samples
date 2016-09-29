@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SoRDao<T> {
 
   private final static int INTERVAL_MS = 10;
-  private final static int MAX_TPS = 200000;
+  private final static int MAX_TPS = 80000;
 
   private volatile int tps = 1;
   private final AtomicInteger loads = new AtomicInteger();

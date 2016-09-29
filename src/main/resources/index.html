@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <style>
+        body {
+            background-image: url(graphics/2-format2403.jpg);
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
         input, textarea, select {
             background-color: #FFF;
             color: #337AB7;
@@ -18,166 +24,178 @@
 </head>
 <body>
 
-<div id="switchButton" class="btn btn-primary btn-success" style="position: fixed; top: 10px; left: 10px">Switch configuration panel</div>
-
-
-<div id="menu">
-    <section class="bg-primary">
-        <div class="container-fluid" id="title">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 text-center">
-                    <h2 class="section-heading">Scale continuum Demo</h2>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="bg-primary" id="controls">
-        <div class="container-fluid">
-            <form name="form" id="form">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
-                        Please choose the dataset size and the cache configuration.<br/>
-                        Then press the 'Start' button to execute the demo. The performance of fetching data will be
-                        displayed below
-                        <hr class="light"/>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-2"></div>
-
-                    <div class="col-md-1">
-                        <div style="float:left;padding: 10px;">
-                            <div id="taskButton" class="btn btn-primary btn-success">Start</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label>
-                            Dataset size:
-                            <select name="datasetCount">
-                                <option value="100">100</option>
-                                <option value="10000">10000</option>
-                                <option value="1000000">1000000</option>
-                                <option value="100000000">10000000</option>
-                            </select>
-                        </label>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label>
-                            Value size:
-                            <select name="valueSize">
-                                <option value="100">100 B</option>
-                                <option value="1K">1 K8</option>
-                                <option value="32K">32 KB</option>
-                                <option value="1M">1 MB</option>
-                            </select>
-                        </label>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label>
-                            Client count:
-                            <input type="text" name="clientCount" value="16" size="6"/>
-                        </label>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label id="heapGaugeLabel">
-                            Heap usage :
-                            <meter id="heapGauge" value="0" min="0" max="10000"></meter>
-                        </label>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label id="offheapGaugeLabel">
-                            Offheap usage :
-                            <meter id="offheapGauge" value="0" min="0" max="10000"></meter>
-                        </label>
-                    </div>
-
-                    <div class="col-md-1"></div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-2"></div>
-
-                    <!--Enable cache-->
-                    <div class="col-md-1">
-                        <label>
-                            Enable cache:
-                            <input id="enableCache" type="checkbox" name="cacheEnabled"/>
-                        </label>
-                    </div>
-
-                    <!--Heap-->
-                    <div class="col-md-1">
-                        <label id="enableHeapLabel">
-                            Enable Heap:
-                            <input id="enableHeap" type="checkbox" name="heapEnabled"/>
-                        </label>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label id="heapSizeLabel">
-                            Heap size:
-                            <input id="heapSize" type="text" name="heapSize" size="6">
-                        </label>
-                    </div>
-
-                    <!--Offheap-->
-                    <div class="col-md-1">
-                        <label id="enableOffheapLabel">
-                            Enable Offheap:
-                            <input id="enableOffheap" type="checkbox" name="offheapEnabled"/>
-                        </label>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label id="offheapSizeLabel">
-                            Offheap size:
-                            <input id="offheapSize" type="text" name="offheapSize" size="6"/> MB
-                        </label>
-                    </div>
-
-                    <!--Terracotta-->
-                    <div class="col-md-1">
-                        <label id="enableTerracottaLabel">
-                            Enable Terracotta:
-                            <input id="enableTerracotta" type="checkbox" name="TerracottaEnabled"/>
-                        </label>
-                    </div>
-
-                    <div class="col-md-1">
-                        <label id="terracottaUrlLabel">
-                            Terracotta&nbsp;URL:
-                            <input type="text" name="terracottaUrl" size="18"/>
-                        </label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
-                        <br/>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </section>
+<div id="switchButton" class="btn btn-primary btn-success" style="position: fixed; top: 10px; left: 10px">Switch
+    configuration panel
 </div>
 
-<section id="graphs">
-    <div class="container">
+<section class="bg-primary">
+    <div class="container-fluid" id="title">
         <div class="row">
-            <div id="canvasContainer" class="col-lg-12 text-center">
-                <canvas id="tps" width="1000" height="350"></canvas>
-                <br/>
-                <canvas id="latencies" width="1000" height="350"></canvas>
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <h2 class="section-heading">Scale continuum Demo</h2>
             </div>
         </div>
     </div>
 </section>
+
+<section class="bg-primary" id="controls">
+    <div class="container-fluid">
+        <form name="form" id="form">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    Please choose the dataset size and the cache configuration.<br/>
+                    Then press the 'Start' button to execute the demo. The performance of fetching data will be
+                    displayed below
+                    <hr class="light"/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-1">
+                    <div style="float:left;padding: 10px;">
+                        <div id="taskButton" class="btn btn-primary btn-success">Start</div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <label>
+                        Dataset size:
+                        <select name="datasetCount">
+                            <option value="100">100</option>
+                            <option value="10000">10000</option>
+                            <option value="1000000">1000000</option>
+                            <option value="100000000">10000000</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label>
+                        Value size:
+                        <select name="valueSize">
+                            <option value="100">100 B</option>
+                            <option value="1K">1 K8</option>
+                            <option value="32K">32 KB</option>
+                            <option value="1M">1 MB</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label>
+                        Client count:
+                        <input type="text" name="clientCount" value="16" size="6"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="heapGaugeLabel">
+                        Heap usage :
+                        <meter id="heapGauge" value="0" min="0" max="10000"></meter>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="offheapGaugeLabel">
+                        Offheap usage :
+                        <meter id="offheapGauge" value="0" min="0" max="10000"></meter>
+                    </label>
+                </div>
+
+                <div class="col-md-1"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2"></div>
+
+                <!--Enable cache-->
+                <div class="col-md-1">
+                    <label>
+                        Enable cache:
+                        <input id="enableCache" type="checkbox" name="cacheEnabled"/>
+                    </label>
+                </div>
+
+                <!--Heap-->
+                <div class="col-md-1">
+                    <label id="enableHeapLabel">
+                        Enable Heap:
+                        <input id="enableHeap" type="checkbox" name="heapEnabled"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="heapSizeLabel">
+                        Heap size:
+                        <input id="heapSize" type="text" name="heapSize" size="6">
+                    </label>
+                </div>
+
+                <!--Offheap-->
+                <div class="col-md-1">
+                    <label id="enableOffheapLabel">
+                        Enable Offheap:
+                        <input id="enableOffheap" type="checkbox" name="offheapEnabled"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="offheapSizeLabel">
+                        Offheap size:
+                        <input id="offheapSize" type="text" name="offheapSize" size="6"/> MB
+                    </label>
+                </div>
+
+                <!--Terracotta-->
+                <div class="col-md-1">
+                    <label id="enableTerracottaLabel">
+                        Enable Terracotta:
+                        <input id="enableTerracotta" type="checkbox" name="TerracottaEnabled"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="terracottaUrlLabel">
+                        Terracotta&nbsp;URL:
+                        <input type="text" name="terracottaUrl" size="18"/>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <br/>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section id="graphs">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1" style="z-index: 10;">
+                <span id="tpsLabel" style="font-size: 1800%; opacity: 0.4; color: #fff">&nbsp;</span>
+            </div>
+            <div id="tpsCanvas" class="col-lg-10 text-center" style="position: relative; top:10px;z-index: 5;">
+                <canvas id="tps" width="960" height="350"></canvas>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-1" style="z-index: 10;">
+                <span id="latencyLabel" style="font-size: 1800%; opacity: 0.4; color: #fff">&nbsp;</span>
+            </div>
+            <div id="latencyCanvas" class="col-lg-10 text-center" style="position: relative; top:10px;z-index: 5;">
+                <canvas id="latencies" width="960" height="350"></canvas>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+    </div>
+</section>
+
+<
 
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -228,7 +246,9 @@
                                 $('#offheapGaugeLabel').hide();
                             }
 
-                            $('#canvasContainer').empty().append('<canvas id="tps" width="1000" height="350"></canvas><br/> <canvas id="latencies" width="1000" height="350"></canvas>');
+                            $('#tpsCanvas').empty().append('<canvas id="tps" width="1000" height="350"></canvas>');
+                            $('#latencyCanvas').empty().append('<canvas id="latencies" width="1000" height="350"></canvas>');
+
                             var tpsLine = new TimeSeries();
                             var latenciesLine = new TimeSeries();
 
@@ -245,6 +265,8 @@
                                         latenciesLine.append(this['timestamp'], this['periodicAverageLatencyInMs']);
                                         $('#heapGauge').val(this['onHeapCount']);
                                         $('#offheapGauge').val(this['offHeapSizeInMegabytes']);
+                                        $('#tpsLabel').text('' + this['periodicTps'] + '/s');
+                                        $('#latencyLabel').text('' + this['periodicAverageLatencyInMs'].toFixed(2) + 'ms');
                                     })
                                 })
                             }, 1000);
