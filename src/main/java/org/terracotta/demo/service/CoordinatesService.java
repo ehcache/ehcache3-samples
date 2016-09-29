@@ -39,7 +39,6 @@ public class CoordinatesService {
         URLEncoder.encode(location, "UTF-8") +
         "&key=" + googleAPiKey;
 
-//    String responseAsString = restTemplate.getForObject(url, String.class);
       String responseAsString = "";
       try {
       responseAsString = httpService.sendGet(url);

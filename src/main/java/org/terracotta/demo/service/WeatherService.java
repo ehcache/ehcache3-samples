@@ -32,9 +32,6 @@ public class WeatherService {
   @Autowired
   private HttpService httpService;
 
-//  @Autowired
-//  private RestTemplate restTemplate;
-
   @Autowired
   private CoordinatesService coordinatesService;
 
@@ -46,10 +43,13 @@ public class WeatherService {
       String responseAsString = "";
       try {
 
-      long retrieveStartTime = Clock.systemDefaultZone().millis();
-
       WeatherReport weatherReport;
+
+      // resource call report gathered in the retrieveCoordinates service
       Coordinates coordinates = coordinatesService.retrieveCoordinates(location);
+
+
+      long retrieveStartTime = Clock.systemDefaultZone().millis();
       String url = "https://api.darksky.net/forecast/" +
           darkSkyApiKey + "/" +
           coordinates.getLatitude() +
@@ -57,31 +57,6 @@ public class WeatherService {
           coordinates.getLongitude() +
           URLEncoder.encode(",", "UTF-8") +
           date.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli() / 1000 + "?units=si";
-
-//    restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
-
-
-//      HttpHeaders headers = new HttpHeaders();
-//      headers.setContentType(MediaType.APPLICATION_JSON);
-//      headers.setAccept(new ArrayList() {{
-//        add(MediaType.APPLICATION_JSON);
-//      }});
-//
-//
-//      UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-//
-//      HttpEntity<?> entity = new HttpEntity<>(headers);
-//
-//      HttpEntity<String> response = restTemplate.exchange(
-//          builder.build().encode().toUri(),
-//          HttpMethod.GET,
-//          entity,
-//          String.class);
-//
-//      String responseAsString = response.getBody();
-
-//      String responseAsString = restTemplate.getForObject(url, String.class);
-//      restTemplate.getForObject("http://requestb.in/14anvfh1", Object.class);
 
       responseAsString = httpService.sendGet(url);
       JsonNode daily = objectMapper.readTree(responseAsString).findValue("daily");
