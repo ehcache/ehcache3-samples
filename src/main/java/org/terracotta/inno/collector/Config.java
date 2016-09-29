@@ -9,6 +9,8 @@ public class Config {
   private final long datasetCount;
   private final boolean cacheEnabled;
   private final Long heapSizeCount;
+  private final Long offheapSizeCount;
+  private final String terracottaUrl;
   private final int clientCount;
   private final long valueSizeInBytes;
 
@@ -22,6 +24,16 @@ public class Config {
     } else {
       this.heapSizeCount = null;
     }
+    if ("on".equalsIgnoreCase(findEntry(entries, "offheapEnabled"))) {
+      this.offheapSizeCount = Long.parseLong(findEntry(entries, "offheapSize"));
+    } else {
+      this.offheapSizeCount = null;
+    }
+    if ("on".equalsIgnoreCase(findEntry(entries, "TerracottaEnabled"))) {
+      this.terracottaUrl = findEntry(entries, "terracottaUrl");
+    } else {
+      this.terracottaUrl = null;
+    }
   }
 
   public long getDatasetCount() {
@@ -34,6 +46,14 @@ public class Config {
 
   public Long getHeapSizeCount() {
     return heapSizeCount;
+  }
+
+  public Long getOffheapSizeCount() {
+    return offheapSizeCount;
+  }
+
+  public String getTerracottaUrl() {
+    return terracottaUrl;
   }
 
   public int getClientCount() {

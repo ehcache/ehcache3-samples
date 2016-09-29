@@ -33,6 +33,7 @@ import io.rainfall.statistics.StatisticsPeekHolder;
 import io.rainfall.unit.TimeDivision;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
 import org.terracotta.inno.dao.SoRDao;
@@ -87,9 +88,16 @@ public class PerformanceMetricsCollector {
     ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLength((int)config.getValueSizeInBytes());
     DataService<byte[]> dataService;
     if (config.isCacheEnabled()) {
+      ResourcePoolsBuilder poolsBuilder = newResourcePoolsBuilder();
+      if (config.getHeapSizeCount()!=null) {
+        poolsBuilder = poolsBuilder.heap(config.getHeapSizeCount(), EntryUnit.ENTRIES);
+      }
+      if (config.getOffheapSizeCount()!=null) {
+        poolsBuilder = poolsBuilder.offheap(config.getOffheapSizeCount(), MemoryUnit.MB);
+      }
       CacheConfigurationBuilder<Long, byte[]> builder = newCacheConfigurationBuilder(Long.class, byte[].class,
-          newResourcePoolsBuilder().heap(config.getHeapSizeCount(), EntryUnit.ENTRIES))
-          .withLoaderWriter(new SorLoaderWriter(new SoRDao<byte[]>(valueGenerator)));
+          poolsBuilder)
+          .withLoaderWriter(new SorLoaderWriter(new SoRDao<>(valueGenerator)));
 
       cacheManager = newCacheManagerBuilder()
           .withCache("cache", builder.build())
