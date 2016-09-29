@@ -11,9 +11,11 @@
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <style>
         body {
-            background-image: url(graphics/2-format2403.jpg);
-            background-repeat: no-repeat;
-            background-position: center;
+            background: url(graphics/Hd-Blue-Wallpaper-9.jpg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
         }
 
         input, textarea, select {
@@ -176,7 +178,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-1" style="z-index: 10;">
-                <span id="tpsLabel" style="font-size: 1800%; opacity: 0.4; color: #fff">&nbsp;</span>
+                <span id="tpsLabel" style="font-size: 1800%; opacity: 0.70; color: #fff">&nbsp;</span>
             </div>
             <div id="tpsCanvas" class="col-lg-10 text-center" style="position: relative; top:10px;z-index: 5;">
                 <canvas id="tps" width="960" height="350"></canvas>
@@ -185,7 +187,7 @@
         </div>
         <div class="row">
             <div class="col-lg-1" style="z-index: 10;">
-                <span id="latencyLabel" style="font-size: 1800%; opacity: 0.4; color: #fff">&nbsp;</span>
+                <span id="latencyLabel" style="font-size: 1800%; opacity: 0.70; color: #fff">&nbsp;</span>
             </div>
             <div id="latencyCanvas" class="col-lg-10 text-center" style="position: relative; top:10px;z-index: 5;">
                 <canvas id="latencies" width="960" height="350"></canvas>
@@ -252,10 +254,10 @@
                             var tpsLine = new TimeSeries();
                             var latenciesLine = new TimeSeries();
 
-                            tpsSmoothie = new SmoothieChart({labels: {fontSize: 20}, millisPerPixel: 64});
+                            tpsSmoothie = new SmoothieChart({labels: {fontSize: 20}, millisPerPixel: 64, grid:{millisPerLine:5000}});
                             tpsSmoothie.streamTo(document.getElementById("tps"));
 
-                            latenciesSmoothie = new SmoothieChart({labels: {fontSize: 20}, millisPerPixel: 64});
+                            latenciesSmoothie = new SmoothieChart({labels: {fontSize: 20}, millisPerPixel: 64, grid:{millisPerLine:5000}});
                             latenciesSmoothie.streamTo(document.getElementById("latencies"));
 
                             intervalFunction = setInterval(function () {
