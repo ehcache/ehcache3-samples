@@ -25,6 +25,5 @@
             resolve: {
             }
         });
-        console.log($stateProvider);
     }
 })();
