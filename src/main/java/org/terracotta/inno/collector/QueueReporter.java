@@ -95,8 +95,8 @@ public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResul
     Number onHeapCount = null;
     Number offHeapSizeInBytes = null;
     if (cache != null) {
-      onHeapCount = findValueStat(cache, "mappingsCount", "onheap-store").value();
-      offHeapSizeInBytes = findValueStat(cache, "occupiedMemory", "local-offheap").value();
+      try { onHeapCount = findValueStat(cache, "mappingsCount", "onheap-store").value(); } catch (Exception e) { /* ignore, not present */ }
+      try { offHeapSizeInBytes = findValueStat(cache, "occupiedMemory", "local-offheap").value(); } catch (Exception e) { /* ignore, not present */ }
     }
 
     if (periodicAverageLatencyInMs.isNaN()) {
