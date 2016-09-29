@@ -35,7 +35,7 @@
         <javax.inject.version>1</javax.inject.version>
         <liquibase.version>3.5.2</liquibase.version>
         <liquibase-slf4j.version>2.0.0</liquibase-slf4j.version>
-        <liquibase-hibernate5.version>3.5</liquibase-hibernate5.version>
+        <liquibase-hibernate5.version>3.6-SNAPSHOT</liquibase-hibernate5.version>
         <mapstruct.version>1.0.0.Final</mapstruct.version>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
@@ -614,13 +614,28 @@
                     </dependency>
                     <dependency>
                         <groupId>org.liquibase.ext</groupId>
-                        <artifactId>liquibase-hibernate4</artifactId>
+                        <artifactId>liquibase-hibernate5</artifactId>
                         <version>${liquibase-hibernate5.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-starter-data-jpa</artifactId>
                         <version>${project.parent.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-core</artifactId>
+                        <version>${hibernate.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-validator</artifactId>
+                        <version>${hibernate.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>javax.el</groupId>
+                        <artifactId>el-api</artifactId>
+                        <version>2.2</version>
                     </dependency>
                 </dependencies>
             </plugin>
