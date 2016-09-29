@@ -11,6 +11,8 @@ import org.terracotta.demo.domain.WeatherReport;
 import org.terracotta.demo.repository.ActorRepository;
 import org.terracotta.demo.service.WeatherService;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,7 @@ public class StarsBirthdayWeatherRestController {
     WeatherService weatherService;
 
     @RequestMapping(value = "/actors/{id}", produces = "application/json")
-    public ActorAndWeatherAndCallReports actorsList(@PathVariable("id") long id) {
+    public ActorAndWeatherAndCallReports actorsList(@PathVariable("id") long id) throws UnknownHostException {
         long findStartTime = Clock.systemDefaultZone().millis();
         Actor foundActor = actorRepository.findOne(id);
         long findEndTime = Clock.systemDefaultZone().millis();
@@ -52,7 +54,7 @@ public class StarsBirthdayWeatherRestController {
 
         long sum = getResourceCallReports().stream().mapToLong(resourceCallReport -> resourceCallReport.getTimeSpentMillis()).sum();
         ActorAndWeatherAndCallReports actorAndWeatherAndCallReports =
-            new ActorAndWeatherAndCallReports(foundActor, weatherReports, getResourceCallReports(), sum);
+            new ActorAndWeatherAndCallReports(foundActor, weatherReports, getResourceCallReports(), sum, InetAddress.getLocalHost().getHostName());
 
 
         resourceCallReports.remove();

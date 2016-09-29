@@ -12,12 +12,14 @@ public class ActorAndWeatherAndCallReports {
     private List<WeatherReport> weatherReports;
     private List<ResourceCallReport> resourceCallReports;
     private long totalTimeSpent;
+    private String hostname;
 
-    public ActorAndWeatherAndCallReports(Actor actor, List<WeatherReport> weatherReports, List<ResourceCallReport> resourceCallReports, long totalTimeSpent) {
+    public ActorAndWeatherAndCallReports(Actor actor, List<WeatherReport> weatherReports, List<ResourceCallReport> resourceCallReports, long totalTimeSpent, String hostname) {
         this.actor = actor;
         this.weatherReports = weatherReports;
         this.resourceCallReports = resourceCallReports;
         this.totalTimeSpent = totalTimeSpent;
+        this.hostname = hostname;
     }
 
     public Actor getActor() {
@@ -52,6 +54,14 @@ public class ActorAndWeatherAndCallReports {
         this.totalTimeSpent = totalTimeSpent;
     }
 
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -63,7 +73,9 @@ public class ActorAndWeatherAndCallReports {
         if (actor != null ? !actor.equals(that.actor) : that.actor != null) return false;
         if (weatherReports != null ? !weatherReports.equals(that.weatherReports) : that.weatherReports != null)
             return false;
-        return resourceCallReports != null ? resourceCallReports.equals(that.resourceCallReports) : that.resourceCallReports == null;
+        if (resourceCallReports != null ? !resourceCallReports.equals(that.resourceCallReports) : that.resourceCallReports != null)
+            return false;
+        return hostname != null ? hostname.equals(that.hostname) : that.hostname == null;
 
     }
 
@@ -73,6 +85,7 @@ public class ActorAndWeatherAndCallReports {
         result = 31 * result + (weatherReports != null ? weatherReports.hashCode() : 0);
         result = 31 * result + (resourceCallReports != null ? resourceCallReports.hashCode() : 0);
         result = 31 * result + (int) (totalTimeSpent ^ (totalTimeSpent >>> 32));
+        result = 31 * result + (hostname != null ? hostname.hashCode() : 0);
         return result;
     }
 
@@ -83,6 +96,7 @@ public class ActorAndWeatherAndCallReports {
             ", weatherReports=" + weatherReports +
             ", resourceCallReports=" + resourceCallReports +
             ", totalTimeSpent=" + totalTimeSpent +
+            ", hostname='" + hostname + '\'' +
             '}';
     }
 }
