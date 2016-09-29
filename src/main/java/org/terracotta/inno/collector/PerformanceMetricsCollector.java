@@ -31,6 +31,7 @@ import io.rainfall.generator.sequence.Distribution;
 import io.rainfall.statistics.StatisticsHolder;
 import io.rainfall.statistics.StatisticsPeekHolder;
 import io.rainfall.unit.TimeDivision;
+import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -87,6 +88,7 @@ public class PerformanceMetricsCollector {
     ObjectGenerator<Long> keyGenerator = new LongGenerator();
     ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLength((int)config.getValueSizeInBytes());
     DataService<byte[]> dataService;
+    final Cache<Long, byte[]> cache;
     if (config.isCacheEnabled()) {
       ResourcePoolsBuilder poolsBuilder = newResourcePoolsBuilder();
       if (config.getHeapSizeCount()!=null) {
@@ -103,9 +105,11 @@ public class PerformanceMetricsCollector {
           .withCache("cache", builder.build())
           .build(true);
 
-      dataService = new CachedDataService(cacheManager.getCache("cache", Long.class, byte[].class));
+      cache = cacheManager.getCache("cache", Long.class, byte[].class);
+      dataService = new CachedDataService(cache);
     } else {
       dataService = new UncachedDataService<>(valueGenerator);
+      cache = null;
     }
     RandomSequenceGenerator randomSequenceGenerator = new RandomSequenceGenerator(Distribution.SLOW_GAUSSIAN, 0, objectCount, objectCount / 10);
 
@@ -129,7 +133,7 @@ public class PerformanceMetricsCollector {
             }
         ))
         .executed(during(10, TimeDivision.minutes))
-        .config(concurrency, ReportingConfig.report(DaoResult.class).log(new QueueReporter(resultQueue)))
+        .config(concurrency, ReportingConfig.report(DaoResult.class).log(new QueueReporter(resultQueue, cache)))
         .start();
 
     Future<StatisticsPeekHolder> future = executorService.submit(callable);

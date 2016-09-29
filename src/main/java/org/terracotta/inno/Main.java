@@ -84,7 +84,7 @@ public class Main {
 
       if (data.isEmpty() && !metricsCollector.isRunning()) {
         // marker value to signify the end of the data
-        data.add(new QueueReporter.Result(-1, null, null));
+        data.add(new QueueReporter.Result(-1));
       }
 
       GsonBuilder builder = new GsonBuilder();
@@ -105,6 +105,5 @@ public class Main {
     });
 
   }
-
 
 }

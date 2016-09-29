@@ -19,10 +19,12 @@ import io.rainfall.Reporter;
 import io.rainfall.statistics.StatisticsHolder;
 import io.rainfall.statistics.StatisticsPeek;
 import io.rainfall.statistics.StatisticsPeekHolder;
+import org.ehcache.Cache;
 
 import java.util.List;
 import java.util.Queue;
 
+import static org.terracotta.inno.collector.Ehcache3Stats.findValueStat;
 import static org.terracotta.inno.collector.PerformanceMetricsCollector.DaoResult.LOAD;
 import static org.terracotta.inno.collector.PerformanceMetricsCollector.OPERATION_NAME;
 
@@ -35,11 +37,19 @@ public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResul
     private final long timestamp;
     private final Long periodicTps;
     private final Double periodicAverageLatencyInMs;
+    private final Number onHeapCount;
+    private final Number offHeapSizeInBytes;
 
-    public Result(long timestamp, Long periodicTps, Double periodicAverageLatencyInMs) {
+    public Result(long timestamp) {
+      this(timestamp, null, null, null, null);
+    }
+
+    public Result(long timestamp, Long periodicTps, Double periodicAverageLatencyInMs, Number onHeapCount, Number offHeapSizeInBytes) {
       this.timestamp = timestamp;
       this.periodicTps = periodicTps;
       this.periodicAverageLatencyInMs = periodicAverageLatencyInMs;
+      this.onHeapCount = onHeapCount;
+      this.offHeapSizeInBytes = offHeapSizeInBytes;
     }
 
     public long getTimestamp() {
@@ -53,12 +63,22 @@ public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResul
     public Double getPeriodicAverageLatencyInMs() {
       return periodicAverageLatencyInMs;
     }
+
+    public Number getOnHeapCount() {
+      return onHeapCount;
+    }
+
+    public Number getOffHeapSizeInBytes() {
+      return offHeapSizeInBytes;
+    }
   }
 
   private final Queue<Result> resultQueue;
+  private final Cache<?, ?> cache;
 
-  public QueueReporter(Queue<Result> resultQueue) {
+  public QueueReporter(Queue<Result> resultQueue, Cache<?, ?> cache) {
     this.resultQueue = resultQueue;
+    this.cache = cache;
   }
 
   @Override
@@ -72,11 +92,17 @@ public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResul
     Double periodicAverageLatencyInMs = statisticsPeek.getPeriodicAverageLatencyInMs(LOAD);
     Long periodicTps = statisticsPeek.getPeriodicTps(LOAD);
     long timestamp = statisticsPeek.getTimestamp();
+    Number onHeapCount = null;
+    Number offHeapSizeInBytes = null;
+    if (cache != null) {
+      onHeapCount = findValueStat(cache, "mappingsCount", "onheap-store").value();
+      offHeapSizeInBytes = findValueStat(cache, "occupiedMemory", "local-offheap").value();
+    }
 
     if (periodicAverageLatencyInMs.isNaN()) {
       return;
     }
-    resultQueue.offer(new Result(timestamp, periodicTps, periodicAverageLatencyInMs));
+    resultQueue.offer(new Result(timestamp, periodicTps, periodicAverageLatencyInMs, onHeapCount, offHeapSizeInBytes));
   }
 
   @Override
