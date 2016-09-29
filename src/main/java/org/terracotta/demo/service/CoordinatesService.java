@@ -40,8 +40,9 @@ public class CoordinatesService {
         "&key=" + googleAPiKey;
 
 //    String responseAsString = restTemplate.getForObject(url, String.class);
-    try {
-      String responseAsString = httpService.sendGet(url);
+      String responseAsString = "";
+      try {
+      responseAsString = httpService.sendGet(url);
       JsonNode locationNode = objectMapper.readTree(responseAsString).findValue("location");
       String latitude = locationNode.get("lat").asText();
       String longitude = locationNode.get("lng").asText();
@@ -51,7 +52,8 @@ public class CoordinatesService {
 
       return new Coordinates(latitude, longitude);
     } catch (Exception e) {
-      throw new RuntimeException("Can't find coordinates for " + location, e);
+      throw new RuntimeException("Can't find coordinates for " + location + "\n" +
+          "google response was : " + responseAsString, e);
     }
 
   }

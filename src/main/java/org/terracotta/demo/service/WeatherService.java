@@ -43,7 +43,8 @@ public class WeatherService {
 
   @CacheResult(cacheName = "weatherReports")
   public WeatherReport retrieveWeatherReport(String location, LocalDate date) {
-    try {
+      String responseAsString = "";
+      try {
 
       long retrieveStartTime = Clock.systemDefaultZone().millis();
 
@@ -82,7 +83,7 @@ public class WeatherService {
 //      String responseAsString = restTemplate.getForObject(url, String.class);
 //      restTemplate.getForObject("http://requestb.in/14anvfh1", Object.class);
 
-      String responseAsString = httpService.sendGet(url);
+      responseAsString = httpService.sendGet(url);
       JsonNode daily = objectMapper.readTree(responseAsString).findValue("daily");
       if (daily != null) {
 
@@ -102,7 +103,8 @@ public class WeatherService {
       return weatherReport;
 
     } catch (Exception e) {
-      throw new RuntimeException(e);
+        throw new RuntimeException("Can't find weather report for " + location + " for this date : " + date +"\n" +
+            "darkskyapi response was : " + responseAsString, e);
     }
 
   }
