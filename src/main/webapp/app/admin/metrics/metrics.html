@@ -170,33 +170,45 @@
             </tbody>
         </table>
     </div>
-    
-    <h3>Ehcache statistics</h3>
+
+    <h3>JCache statistics</h3>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
             <tr>
                 <th>Cache name</th>
-                <th class="text-right">Objects</th>
-                <th class="text-right">Hits</th>
-                <th class="text-right">Misses</th>
-                <th class="text-right">Eviction count</th>
-                <th class="text-right">Mean get time (ms)</th>
+                <th class="text-right">Cache Hits</th>
+                <th class="text-right">Cache Misses</th>
+                <th class="text-right">Cache Gets</th>
+                <th class="text-right">Cache Puts</th>
+                <th class="text-right">Cache Removals</th>
+                <th class="text-right">Cache Evictions</th>
+                <th class="text-right">Cache Hit %</th>
+                <th class="text-right">Cache Miss %</th>
+                <th class="text-right">Average get time (µs)</th>
+                <th class="text-right">Average put time (µs)</th>
+                <th class="text-right">Average remove time (µs)</th>
             </tr>
             </thead>
             <tbody>
             <tr ng-repeat="(k, v) in vm.cachesStats" ng-once>
                 <td>{{v.name}}</td>
-                <td class="text-right">{{vm.metrics.gauges[k + '.objects'].value}}</td>
-                <td class="text-right">{{vm.metrics.gauges[k + '.hits'].value}}</td>
-                <td class="text-right">{{vm.metrics.gauges[k + '.misses'].value}}</td>
-                <td class="text-right">{{vm.metrics.gauges[k + '.eviction-count'].value}}</td>
-                <td class="text-right">{{vm.metrics.gauges[k + '.mean-get-time'].value | number:2}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.cache-hits'].value}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.cache-misses'].value}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.cache-gets'].value}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.cache-puts'].value}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.cache-removals'].value}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.cache-evictions'].value}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.cache-hit-percentage'].value}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.cache-miss-percentage'].value}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.average-get-time'].value | number:2}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.average-put-time'].value | number:2}}</td>
+                <td class="text-right">{{vm.metrics.gauges[k + '.average-remove-time'].value | number:2}}</td>
             </tr>
             </tbody>
         </table>
     </div>
-    
+
     <h3 ng-show="vm.metrics.gauges['HikariPool-1.pool.TotalConnections'].value > 0">DataSource statistics (time in millisecond)</h3>
     <div class="table-responsive" ng-show="vm.metrics.gauges['HikariPool-1.pool.TotalConnections'].value > 0">
         <table class="table table-striped">

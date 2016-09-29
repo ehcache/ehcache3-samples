@@ -34,6 +34,7 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
     private static final String PROP_METRIC_REG_JVM_THREADS = "jvm.threads";
     private static final String PROP_METRIC_REG_JVM_FILES = "jvm.files";
     private static final String PROP_METRIC_REG_JVM_BUFFERS = "jvm.buffers";
+    private static final String PROP_METRIC_REG_JCACHE_STATISTICS = "jcache.statistics";
 
     private final Logger log = LoggerFactory.getLogger(MetricsConfiguration.class);
 
@@ -63,6 +64,7 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
     public void init() {
         log.debug("Registering JVM gauges");
         metricRegistry.register(PROP_METRIC_REG_JVM_MEMORY, new MemoryUsageGaugeSet());
+        metricRegistry.register(PROP_METRIC_REG_JCACHE_STATISTICS, new JCacheGaugeSet());
         metricRegistry.register(PROP_METRIC_REG_JVM_GARBAGE, new GarbageCollectorMetricSet());
         metricRegistry.register(PROP_METRIC_REG_JVM_THREADS, new ThreadStatesGaugeSet());
         metricRegistry.register(PROP_METRIC_REG_JVM_FILES, new FileDescriptorRatioGauge());
