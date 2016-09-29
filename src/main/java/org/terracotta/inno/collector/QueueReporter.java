@@ -38,18 +38,18 @@ public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResul
     private final Long periodicTps;
     private final Double periodicAverageLatencyInMs;
     private final Number onHeapCount;
-    private final Number offHeapSizeInBytes;
+    private final Number offHeapSizeInMegabytes;
 
     public Result(long timestamp) {
       this(timestamp, null, null, null, null);
     }
 
-    public Result(long timestamp, Long periodicTps, Double periodicAverageLatencyInMs, Number onHeapCount, Number offHeapSizeInBytes) {
+    public Result(long timestamp, Long periodicTps, Double periodicAverageLatencyInMs, Number onHeapCount, Number offHeapSizeInMegabytes) {
       this.timestamp = timestamp;
       this.periodicTps = periodicTps;
       this.periodicAverageLatencyInMs = periodicAverageLatencyInMs;
       this.onHeapCount = onHeapCount;
-      this.offHeapSizeInBytes = offHeapSizeInBytes;
+      this.offHeapSizeInMegabytes = offHeapSizeInMegabytes;
     }
 
     public long getTimestamp() {
@@ -68,8 +68,8 @@ public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResul
       return onHeapCount;
     }
 
-    public Number getOffHeapSizeInBytes() {
-      return offHeapSizeInBytes;
+    public Number getOffHeapSizeInMegabytes() {
+      return offHeapSizeInMegabytes;
     }
   }
 
@@ -93,16 +93,20 @@ public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResul
     Long periodicTps = statisticsPeek.getPeriodicTps(LOAD);
     long timestamp = statisticsPeek.getTimestamp();
     Number onHeapCount = null;
-    Number offHeapSizeInBytes = null;
+    Number offHeapSizeInMegabytes = null;
     if (cache != null) {
-      try { onHeapCount = findValueStat(cache, "mappingsCount", "onheap-store").value(); } catch (Exception e) { /* ignore, not present */ }
-      try { offHeapSizeInBytes = findValueStat(cache, "occupiedMemory", "local-offheap").value(); } catch (Exception e) { /* ignore, not present */ }
+      try {
+        onHeapCount = findValueStat(cache, "mappingsCount", "onheap-store").value();
+      } catch (Exception e) { /* ignore, not present */ }
+      try {
+        offHeapSizeInMegabytes = ((Long)findValueStat(cache, "occupiedMemory", "local-offheap").value()) / 1024 / 1024;
+      } catch (Exception e) { /* ignore, not present */ }
     }
 
     if (periodicAverageLatencyInMs.isNaN()) {
       return;
     }
-    resultQueue.offer(new Result(timestamp, periodicTps, periodicAverageLatencyInMs, onHeapCount, offHeapSizeInBytes));
+    resultQueue.offer(new Result(timestamp, periodicTps, periodicAverageLatencyInMs, onHeapCount, offHeapSizeInMegabytes));
   }
 
   @Override

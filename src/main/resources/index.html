@@ -18,6 +18,9 @@
 </head>
 <body>
 
+<div id="switchButton" class="btn btn-primary btn-success" style="position: fixed; top: 10px; left: 10px">Switch configuration panel</div>
+
+
 <div id="menu">
     <section class="bg-primary">
         <div class="container-fluid" id="title">
@@ -82,8 +85,17 @@
                     </div>
 
                     <div class="col-md-1">
-                        Heap usage :
-                        <meter id="heapGauge" value="10" min="0" max="10000"></meter>
+                        <label id="heapGaugeLabel">
+                            Heap usage :
+                            <meter id="heapGauge" value="0" min="0" max="10000"></meter>
+                        </label>
+                    </div>
+
+                    <div class="col-md-1">
+                        <label id="offheapGaugeLabel">
+                            Offheap usage :
+                            <meter id="offheapGauge" value="0" min="0" max="10000"></meter>
+                        </label>
                     </div>
 
                     <div class="col-md-1"></div>
@@ -111,7 +123,7 @@
                     <div class="col-md-1">
                         <label id="heapSizeLabel">
                             Heap size:
-                            <input type="text" name="heapSize" size="6">
+                            <input id="heapSize" type="text" name="heapSize" size="6">
                         </label>
                     </div>
 
@@ -126,7 +138,7 @@
                     <div class="col-md-1">
                         <label id="offheapSizeLabel">
                             Offheap size:
-                            <input type="text" name="offheapSize" size="6"/>
+                            <input id="offheapSize" type="text" name="offheapSize" size="6"/> MB
                         </label>
                     </div>
 
@@ -202,6 +214,20 @@
                             $('#taskButton').html('Stop');
                             started = true;
 
+                            if ($('#enableCache').is(":checked") && $('#enableHeap').is(":checked")) {
+                                $('#heapGaugeLabel').show();
+                                $('#heapGauge').attr('max', $('#heapSize').val());
+                            } else {
+                                $('#heapGaugeLabel').hide();
+                            }
+
+                            if ($('#enableCache').is(":checked") && $('#enableOffheap').is(":checked")) {
+                                $('#offheapGaugeLabel').show();
+                                $('#offheapGauge').attr('max', $('#offheapSize').val());
+                            } else {
+                                $('#offheapGaugeLabel').hide();
+                            }
+
                             $('#canvasContainer').empty().append('<canvas id="tps" width="1000" height="350"></canvas><br/> <canvas id="latencies" width="1000" height="350"></canvas>');
                             var tpsLine = new TimeSeries();
                             var latenciesLine = new TimeSeries();
@@ -217,7 +243,8 @@
                                     $.each(data, function () {
                                         tpsLine.append(this['timestamp'], this['periodicTps']);
                                         latenciesLine.append(this['timestamp'], this['periodicAverageLatencyInMs']);
-                                        $('#heapGauge').val(10000 * Math.random());
+                                        $('#heapGauge').val(this['onHeapCount']);
+                                        $('#offheapGauge').val(this['offHeapSizeInMegabytes']);
                                     })
                                 })
                             }, 1000);
@@ -261,16 +288,13 @@
             $('#terracottaUrlLabel').toggle();
         });
 
-        $('#title').mouseover(function () {
-            $('#controls').slideDown(450);
-        });
-
-        $('#controls').mouseover(function () {
-            $(this).stop();
-        }).mouseout(function () {
-            $(this).stop().slideUp(400);
+        $('#switchButton').click(function () {
+            $('#controls').slideToggle();
         });
         $('#controls').hide();
+
+        $('#heapGaugeLabel').hide();
+        $('#offheapGaugeLabel').hide();
     })
 </script>
 </body>

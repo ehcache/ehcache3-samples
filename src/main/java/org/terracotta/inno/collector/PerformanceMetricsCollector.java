@@ -33,7 +33,11 @@ import io.rainfall.statistics.StatisticsPeekHolder;
 import io.rainfall.unit.TimeDivision;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
+import org.ehcache.clustered.client.config.ClusteredStoreConfiguration;
+import org.ehcache.clustered.client.config.ClusteringServiceConfiguration;
+import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
@@ -43,6 +47,7 @@ import org.terracotta.inno.service.CachedDataService;
 import org.terracotta.inno.service.DataService;
 import org.terracotta.inno.service.UncachedDataService;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -91,17 +96,24 @@ public class PerformanceMetricsCollector {
     final Cache<Long, byte[]> cache;
     if (config.isCacheEnabled()) {
       ResourcePoolsBuilder poolsBuilder = newResourcePoolsBuilder();
-      if (config.getHeapSizeCount()!=null) {
+      if (config.getHeapSizeCount() != null) {
         poolsBuilder = poolsBuilder.heap(config.getHeapSizeCount(), EntryUnit.ENTRIES);
       }
-      if (config.getOffheapSizeCount()!=null) {
+      if (config.getOffheapSizeCount() != null) {
         poolsBuilder = poolsBuilder.offheap(config.getOffheapSizeCount(), MemoryUnit.MB);
       }
       CacheConfigurationBuilder<Long, byte[]> builder = newCacheConfigurationBuilder(Long.class, byte[].class,
           poolsBuilder)
           .withLoaderWriter(new SorLoaderWriter(new SoRDao<>(valueGenerator)));
 
-      cacheManager = newCacheManagerBuilder()
+      CacheManagerBuilder<CacheManager> cacheManagerCacheManagerBuilder = newCacheManagerBuilder();
+      if (config.getTerracottaUrl() != null) {
+        cacheManagerCacheManagerBuilder.with(ClusteringServiceConfigurationBuilder.cluster(URI.create(
+            "terracotta://" + config.getTerracottaUrl() + "/clusterExample"))
+            .autoCreate());
+        builder.add(new ClusteredStoreConfiguration());
+      }
+      cacheManager = cacheManagerCacheManagerBuilder
           .withCache("cache", builder.build())
           .build(true);
 

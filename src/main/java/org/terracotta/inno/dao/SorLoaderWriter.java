@@ -1,6 +1,5 @@
 package org.terracotta.inno.dao;
 
-import io.rainfall.ObjectGenerator;
 import org.ehcache.spi.loaderwriter.BulkCacheLoadingException;
 import org.ehcache.spi.loaderwriter.BulkCacheWritingException;
 import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
