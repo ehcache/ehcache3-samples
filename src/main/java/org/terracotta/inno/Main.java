@@ -1,19 +1,21 @@
 package org.terracotta.inno;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.rainfall.statistics.StatisticsPeekHolder;
 import org.terracotta.inno.collector.Config;
 import org.terracotta.inno.collector.Entry;
 import org.terracotta.inno.collector.PerformanceMetricsCollector;
 import org.terracotta.inno.collector.QueueReporter;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static spark.Spark.exception;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
@@ -90,6 +92,18 @@ public class Main {
 
       return gson.toJson(data);
     });
+
+    exception(Exception.class, (exception, request, response) -> {
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      exception.printStackTrace(pw);
+      pw.close();
+      String stackTrace = sw.toString();
+
+      response.status(500);
+      response.body(stackTrace);
+    });
+
   }
 
 
