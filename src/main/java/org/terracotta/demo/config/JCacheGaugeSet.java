@@ -1,25 +1,31 @@
 package org.terracotta.demo.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codahale.metrics.JmxAttributeGauge;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricSet;
 
-import javax.cache.management.CacheStatisticsMXBean;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static com.codahale.metrics.MetricRegistry.name;
+import javax.cache.management.CacheStatisticsMXBean;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+
+import static com.codahale.metrics.MetricRegistry.*;
 
 public class JCacheGaugeSet implements MetricSet {
+
+    private final Logger log = LoggerFactory.getLogger(JCacheGaugeSet.class);
 
     private static final String M_BEAN_COORDINATES = "javax.cache:type=CacheStatistics,CacheManager=*,Cache=*";
 
@@ -29,7 +35,7 @@ public class JCacheGaugeSet implements MetricSet {
         try {
             this.objectInstances = ManagementFactory.getPlatformMBeanServer().queryMBeans(ObjectName.getInstance(M_BEAN_COORDINATES), null);
         } catch (MalformedObjectNameException e) {
-            e.printStackTrace();
+            log.error("Failed to retrieve JCache statistics", e);
         }
     }
 
@@ -53,15 +59,11 @@ public class JCacheGaugeSet implements MetricSet {
     }
 
     private List<String> retrieveStatsNames() {
-        List<String> availableStatsNames = new ArrayList<>();
-        Class c = CacheStatisticsMXBean.class;
-        for (Method method : c.getDeclaredMethods()) {
-            String methodName = method.getName();
-            if(methodName.startsWith("get")) {
-                availableStatsNames.add(methodName.substring(3,methodName.length()));
-            }
-        }
-        return availableStatsNames;
+        Class<?> c = CacheStatisticsMXBean.class;
+        return Arrays.stream(c.getMethods())
+            .filter(method -> method.getName().startsWith("get"))
+            .map(method -> method.getName().substring(3))
+            .collect(Collectors.toList());
     }
 
     private String toDashCase(String camelCase) {
