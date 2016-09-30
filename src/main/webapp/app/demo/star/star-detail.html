@@ -2,16 +2,57 @@
 <div>
     <h2>{{vm.dto.actor.firstName}} {{vm.dto.actor.lastName}}</h2>
     <hr>
-    <p>
-        Was born on <b>{{vm.dto.actor.birthDate | date:'longDate'}}</b> in <b>{{vm.dto.actor.birthLocation}}</b>.
-    </p>
-
+    <div class="container-fluid">
+        <div class="row">
+            Was born on <b>{{vm.dto.actor.birthDate | date:'longDate'}}</b> in <b>{{vm.dto.actor.birthLocation}}</b>.
+        </div>
+    </div>
+    <br>
     <h3>The weather in the world at that moment</h3>
-    <hr>
-    <dl class="dl-horizontal" ng-repeat="report in vm.dto.weatherReports">
+    <dl ng-repeat="report in vm.dto.weatherReports">
         <dt>{{report.location}}</dt>
         <dd>{{report.summary}} Minimum {{report.temperatureMin}}. Maximum {{report.temperatureMax}}</dd>
     </dl>
+    <br>
+    <h3>Performance of resources</h3>
+
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+            <tr>
+                <th><span>Resource Name</span></th>
+                <th><span>Type</span></th>
+                <th><span>Param</span></th>
+                <th><span>Time spent</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="resource in vm.dto.resourceCallReports">
+                <td>{{resource.resourceName}}</td>
+                <td>{{resource.resourceType}}</td>
+                <td>{{resource.param}}</td>
+                <td>{{resource.elapsed}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+            <tr>
+                <th><span>Time spent in resources</span></th>
+                <th><span>Hostname</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{vm.dto.totalTimeSpent}} ms</td>
+                <td>{{vm.dto.hostname}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <button type="submit"
             ui-sref="{{ vm.previousState }}"

@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DemoApp.class)
-public class StarResourceTest {
+public class StarResourceIntTest {
 
     private static final String DEFAULT_FIRST_NAME = "Alain";
     private static final String DEFAULT_LAST_NAME = "Delon";
