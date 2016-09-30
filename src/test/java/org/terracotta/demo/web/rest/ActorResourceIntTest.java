@@ -1,34 +1,33 @@
 package org.terracotta.demo.web.rest;
 
-import org.terracotta.demo.DemoApp;
-
-import org.terracotta.demo.domain.Actor;
-import org.terracotta.demo.repository.ActorRepository;
-import org.terracotta.demo.service.ActorService;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.hamcrest.Matchers.hasItem;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.terracotta.demo.DemoApp;
+import org.terracotta.demo.domain.Actor;
+import org.terracotta.demo.repository.ActorRepository;
+import org.terracotta.demo.service.ActorService;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -168,7 +167,7 @@ public class ActorResourceIntTest {
     @Transactional
     public void updateActor() throws Exception {
         // Initialize the database
-        actorService.save(actor);
+        actorRepository.save(actor);
 
         int databaseSizeBeforeUpdate = actorRepository.findAll().size();
 
@@ -199,7 +198,7 @@ public class ActorResourceIntTest {
     @Transactional
     public void deleteActor() throws Exception {
         // Initialize the database
-        actorService.save(actor);
+        actorRepository.save(actor);
 
         int databaseSizeBeforeDelete = actorRepository.findAll().size();
 
