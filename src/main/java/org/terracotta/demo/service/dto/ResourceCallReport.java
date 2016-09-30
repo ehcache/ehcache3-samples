@@ -27,6 +27,10 @@ public class ResourceCallReport {
         return resourceType;
     }
 
+    public String getParam() {
+        return param;
+    }
+
     public long getElapsed() {
         return elapsed;
     }
