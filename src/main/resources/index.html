@@ -65,7 +65,7 @@
                 <div class="col-md-1">
                     <label>
                         Dataset size:
-                        <select name="datasetCount">
+                        <select id="datasetCount" name="datasetCount">
                             <option value="100">100</option>
                             <option value="10000">10000</option>
                             <option value="1000000">1000000</option>
@@ -77,12 +77,18 @@
                 <div class="col-md-1">
                     <label>
                         Value size:
-                        <select name="valueSize">
+                        <select id="valueSize" name="valueSize">
                             <option value="100">100 B</option>
-                            <option value="1K">1 KB</option>
-                            <option value="16K">16 KB</option>
-                            <option value="1M">1 MB</option>
+                            <option value="1024">1 KB</option>
+                            <option value="16384">16 KB</option>
+                            <option value="1048576">1 MB</option>
                         </select>
+                    </label>
+                </div>
+
+                <div class="col-md-1" style="padding-top: 21px; padding-left: 0px;" >
+                    <label>
+                        <span class="bg-primary" id="totalDatasetSize">0 MB</span>
                     </label>
                 </div>
 
@@ -106,8 +112,6 @@
                         <meter id="offheapGauge" value="0" min="0" max="10000"></meter>
                     </label>
                 </div>
-
-                <div class="col-md-1"></div>
             </div>
 
             <div id="control2ndRow" class="row">
@@ -132,7 +136,7 @@
                 <div class="col-md-1">
                     <label id="heapSizeLabel">
                         Heap size:
-                        <input id="heapSize" type="text" name="heapSize" size="6">
+                        <input id="heapSize" type="text" name="heapSize" size="6" value="1000">
                     </label>
                 </div>
 
@@ -147,7 +151,7 @@
                 <div class="col-md-1">
                     <label id="offheapSizeLabel">
                         Offheap size:
-                        <input id="offheapSize" type="text" name="offheapSize" size="6"/> MB
+                        <input id="offheapSize" type="text" name="offheapSize" size="6" value="100"/> MB
                     </label>
                 </div>
 
@@ -333,7 +337,22 @@
         $('#spinner').hide();
 
         $.get('/cancelNoFail');
+
+        calculateTotalDatasetSize();
+        $('#datasetCount').click(function() {
+            calculateTotalDatasetSize();
+        });
+        $('#valueSize').click(function() {
+            calculateTotalDatasetSize();
+        });
     })
+
+    function calculateTotalDatasetSize() {
+        datasetCount = $('#datasetCount').val();
+        valueSize = $('#valueSize').val();
+        totalDatasetSize = datasetCount * valueSize / 1024 / 1024;
+        $('#totalDatasetSize').text(totalDatasetSize.toFixed(2) + ' MB');
+    }
 </script>
 </body>
 </html>
