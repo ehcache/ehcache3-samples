@@ -63,7 +63,7 @@ public class StarResource {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        resourceCallService.addCall("ActorRepository.findOne", ResourceCallReport.ResourceType.DATABASE, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        resourceCallService.addCall("ActorRepository.findOne", ResourceCallReport.ResourceType.DATABASE, Long.toString(id), stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
         List<WeatherReport> weatherReports = new ArrayList<>(5);
         weatherReports.add(foundActor.getBirthLocation() == null ? new WeatherReport() : weatherService.retrieveWeatherReport(foundActor.getBirthLocation(), foundActor.getBirthDate()));

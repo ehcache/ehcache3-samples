@@ -9,11 +9,13 @@ public class ResourceCallReport {
 
     private String resourceName;
     private ResourceType resourceType;
+    private String param;
     private long elapsed;
 
-    public ResourceCallReport(String resourceName, ResourceType resourceType, long elapsed) {
+    public ResourceCallReport(String resourceName, ResourceType resourceType, String param, long elapsed) {
         this.resourceName = resourceName;
         this.resourceType = resourceType;
+        this.param = param;
         this.elapsed = elapsed;
     }
 

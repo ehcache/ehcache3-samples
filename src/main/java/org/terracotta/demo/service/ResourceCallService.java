@@ -16,8 +16,8 @@ public class ResourceCallService {
 
     private List<ResourceCallReport> reports = new ArrayList<>();
 
-    public void addCall(String resourceName, ResourceCallReport.ResourceType type, long elapsed) {
-        reports.add(new ResourceCallReport(resourceName, type, elapsed));
+    public void addCall(String resourceName, ResourceCallReport.ResourceType type, String param, long elapsed) {
+        reports.add(new ResourceCallReport(resourceName, type, param, elapsed));
     }
 
     public long currentElapsed() {

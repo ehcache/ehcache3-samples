@@ -58,7 +58,7 @@ public class CoordinatesService {
             throw new RuntimeException("Can't find coordinates for " + location + "\n call to " + url + " with google response : " + responseAsString, e);
         }
         finally {
-            resourceCallService.addCall("Google Geocode Rest API", ResourceCallReport.ResourceType.WEB_SERVICE, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            resourceCallService.addCall("Google Geocode Rest API", ResourceCallReport.ResourceType.WEB_SERVICE, location, stopwatch.elapsed(TimeUnit.MILLISECONDS));
         }
 
     }

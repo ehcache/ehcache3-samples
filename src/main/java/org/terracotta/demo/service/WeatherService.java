@@ -80,7 +80,7 @@ public class WeatherService {
                                        url + " with darkskyapi response was : " + responseAsString, e);
         }
         finally {
-            resourceCallService.addCall("Darksky Rest API", ResourceCallReport.ResourceType.WEB_SERVICE, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            resourceCallService.addCall("Darksky Rest API", ResourceCallReport.ResourceType.WEB_SERVICE, location + " on " + date, stopwatch.elapsed(TimeUnit.MILLISECONDS));
         }
     }
 
