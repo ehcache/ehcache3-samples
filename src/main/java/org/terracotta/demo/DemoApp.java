@@ -53,13 +53,13 @@ public class DemoApp {
     @Value("${demo.biographiesLocation}")
     private String biographiesLocation;
 
-    @Value("${biographiesRemoteLocation}")
+    @Value("${demo.biographiesRemoteLocation}")
     private String biographiesRemoteLocation;
 
-    @Value("${googleApiKey}")
+    @Value("${demo.googleApiKey}")
     private String googleApiKey;
 
-    @Value("${darkSkyApiKey}")
+    @Value("${demo.darkSkyApiKey}")
     private String darkSkyApiKey;
 
 

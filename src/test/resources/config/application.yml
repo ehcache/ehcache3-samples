@@ -35,6 +35,9 @@ spring:
             hibernate.cache.use_query_cache: false
             hibernate.generate_statistics: true
             hibernate.hbm2ddl.auto: validate
+    cache:
+        jcache:
+            config: ehcache.xml
     mail:
         host: localhost
     mvc:
@@ -80,7 +83,7 @@ jhipster:
         license:
         licenseUrl:
 demo:
-    # local downlaod target of from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
+    biographiesRemoteLocation: ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
     biographiesLocation: target/test-classes/biographies.test.list.gz
-googleApiKey: ""
-darkSkyApiKey: ""
+    googleApiKey: ""
+    darkSkyApiKey: ""

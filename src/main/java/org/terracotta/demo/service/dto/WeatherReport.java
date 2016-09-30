@@ -1,4 +1,4 @@
-package org.terracotta.demo.domain;
+package org.terracotta.demo.service.dto;
 
 import java.time.LocalDate;
 

@@ -1,18 +1,18 @@
 package org.terracotta.demo.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.terracotta.demo.ResourceCallReport;
 import org.terracotta.demo.domain.Coordinates;
+import org.terracotta.demo.service.dto.ResourceCallReport;
+import org.terracotta.demo.service.util.HttpUtil;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.time.Clock;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Stopwatch;
 
-import static org.terracotta.demo.controller.StarsBirthdayWeatherController.getResourceCallReports;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 /**
  * Created by Anthony Dahanne on 2016-09-23.
@@ -20,41 +20,47 @@ import static org.terracotta.demo.controller.StarsBirthdayWeatherController.getR
 @Service
 public class CoordinatesService {
 
-  @Value("${googleApiKey}")
-  private String googleAPiKey;
+    @Value("${demo.googleApiKey}")
+    private String googleAPiKey;
 
-//  @Autowired
-//  private RestTemplate restTemplate;
+    @Inject
+    private HttpService httpService;
 
-  @Autowired
-  private HttpService httpService;
+    @Inject
+    private ObjectMapper objectMapper;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+    @Inject
+    private ResourceCallService resourceCallService;
 
-  public Coordinates retrieveCoordinates(String location) throws IOException {
-    long retrieveStartTime = Clock.systemDefaultZone().millis();
+    public Coordinates retrieveCoordinates(String location) {
 
-    String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" +
-        URLEncoder.encode(location, "UTF-8") +
-        "&key=" + googleAPiKey;
+        Stopwatch stopwatch = Stopwatch.createStarted();
 
-      String responseAsString = "";
-      try {
-      responseAsString = httpService.sendGet(url);
-      JsonNode locationNode = objectMapper.readTree(responseAsString).findValue("location");
-      String latitude = locationNode.get("lat").asText();
-      String longitude = locationNode.get("lng").asText();
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+                     HttpUtil.utf8Encode(location) +
+                     "&key=" + googleAPiKey;
 
-      long retrieveEndTime = Clock.systemDefaultZone().millis();
-      getResourceCallReports().add(new ResourceCallReport(location, retrieveEndTime - retrieveStartTime, this.getClass().getSimpleName() + ".retrieveCoordinates", ResourceCallReport.ResourceType.WEB_SERVICE, "Google Geocode Rest API"));
+        String responseAsString = "Not received";
+        try {
+            responseAsString = httpService.sendGet(url);
+            JsonNode locationNode = objectMapper.readTree(responseAsString).findValue("location");
+            if(locationNode != null) {
+                String latitude = locationNode.get("lat").asText();
+                String longitude = locationNode.get("lng").asText();
 
-      return new Coordinates(latitude, longitude);
-    } catch (Exception e) {
-      throw new RuntimeException("Can't find coordinates for " + location + "\n" +
-          "google response was : " + responseAsString, e);
+                return new Coordinates(latitude, longitude);
+            }
+            else {
+                return new Coordinates("0", "0");
+            }
+        }
+        catch(Exception e) {
+            throw new RuntimeException("Can't find coordinates for " + location + "\n call to " + url + " with google response : " + responseAsString, e);
+        }
+        finally {
+            resourceCallService.addCall("Google Geocode Rest API", ResourceCallReport.ResourceType.WEB_SERVICE, stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        }
+
     }
-
-  }
 
 }

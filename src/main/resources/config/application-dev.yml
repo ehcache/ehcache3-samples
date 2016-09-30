@@ -97,5 +97,5 @@ jhipster:
             queueSize: 512
 
 demo:
-    # local downlaod target of from ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
+    biographiesRemoteLocation: ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
     biographiesLocation: target/biographies.list.gz

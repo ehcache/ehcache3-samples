@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.terracotta.demo.DemoApp;
 import org.terracotta.demo.domain.Actor;
 import org.terracotta.demo.repository.ActorRepository;
-import org.terracotta.demo.service.ActorService;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -54,9 +53,6 @@ public class ActorResourceIntTest {
     private ActorRepository actorRepository;
 
     @Inject
-    private ActorService actorService;
-
-    @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Inject
@@ -73,7 +69,7 @@ public class ActorResourceIntTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         ActorResource actorResource = new ActorResource();
-        ReflectionTestUtils.setField(actorResource, "actorService", actorService);
+        ReflectionTestUtils.setField(actorResource, "actorRepository", actorRepository);
         this.restActorMockMvc = MockMvcBuilders.standaloneSetup(actorResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();
