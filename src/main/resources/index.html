@@ -230,6 +230,7 @@
                 var data = $('form').serializeArray();
                 $('#spinner').toggle();
                 $('#taskButton').toggle();
+                $.get('/cancelNoFail').done(function() {
                 $.post("/start", JSON.stringify(data), "json")
                         .fail(function (jqXHR) {
                             $('#spinner').toggle();
@@ -292,6 +293,7 @@
                                 fillStyle: 'rgba(0,0,255,0.30)'
                             }, 1000);
                         });
+                });
             }
         });
 
