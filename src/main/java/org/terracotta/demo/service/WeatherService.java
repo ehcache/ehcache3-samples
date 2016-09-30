@@ -72,7 +72,7 @@ public class WeatherService {
                     dataNode.get(0).get("temperatureMax").asDouble());
             }
             else {
-                return new WeatherReport();
+                return new WeatherReport(date, location, "unknown", "Unknown.", Double.NaN, Double.NaN);
             }
         }
         catch(Exception e) {
