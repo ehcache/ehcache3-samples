@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://www.ehcache.org/v3" xmlns:jsr107="http://www.ehcache.org/v3/jsr107"
-        xmlns:mnm="http://www.ehcache.org/v3/management">
+<config xmlns="http://www.ehcache.org/v3">
 
     <cache-template name="simple">
         <expiry>
