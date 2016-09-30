@@ -1,11 +1,12 @@
 package org.terracotta.demo.service.dto;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
  * Created by Anthony Dahanne on 2016-09-23.
  */
-public class WeatherReport {
+public class WeatherReport implements Serializable {
   private LocalDate date;
   private String location;
   private String icon;
