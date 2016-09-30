@@ -33,8 +33,6 @@ import io.rainfall.statistics.StatisticsPeekHolder;
 import io.rainfall.unit.TimeDivision;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.ehcache.clustered.client.config.ClusteredStoreConfiguration;
-import org.ehcache.clustered.client.config.ClusteringServiceConfiguration;
 import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
@@ -62,9 +60,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static io.rainfall.execution.Executions.during;
+import static org.ehcache.clustered.client.config.builders.ClusteredResourcePoolBuilder.clusteredDedicated;
 import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.config.builders.CacheManagerBuilder.newCacheManagerBuilder;
 import static org.ehcache.config.builders.ResourcePoolsBuilder.newResourcePoolsBuilder;
+import static org.ehcache.config.units.MemoryUnit.GB;
 
 /**
  * @author Ludovic Orban
@@ -95,26 +95,28 @@ public class PerformanceMetricsCollector {
     DataService<byte[]> dataService;
     final Cache<Long, byte[]> cache;
     if (config.isCacheEnabled()) {
-      ResourcePoolsBuilder poolsBuilder = newResourcePoolsBuilder();
+      ResourcePoolsBuilder resourcePoolsBuilder = newResourcePoolsBuilder();
       if (config.getHeapSizeCount() != null) {
-        poolsBuilder = poolsBuilder.heap(config.getHeapSizeCount(), EntryUnit.ENTRIES);
+        resourcePoolsBuilder = resourcePoolsBuilder.heap(config.getHeapSizeCount(), EntryUnit.ENTRIES);
       }
       if (config.getOffheapSizeCount() != null) {
-        poolsBuilder = poolsBuilder.offheap(config.getOffheapSizeCount(), MemoryUnit.MB);
+        resourcePoolsBuilder = resourcePoolsBuilder.offheap(config.getOffheapSizeCount(), MemoryUnit.MB);
       }
-      CacheConfigurationBuilder<Long, byte[]> builder = newCacheConfigurationBuilder(Long.class, byte[].class,
-          poolsBuilder)
+      if (config.getTerracottaUrl() != null) {
+        resourcePoolsBuilder = resourcePoolsBuilder.with(clusteredDedicated("primary-server-resource", 1, GB));
+      }
+      CacheConfigurationBuilder<Long, byte[]> cacheConfigurationBuilder = newCacheConfigurationBuilder(Long.class, byte[].class,
+          resourcePoolsBuilder)
           .withLoaderWriter(new SorLoaderWriter(new SoRDao<>(valueGenerator)));
 
-      CacheManagerBuilder<CacheManager> cacheManagerCacheManagerBuilder = newCacheManagerBuilder();
+      CacheManagerBuilder cacheManagerBuilder = newCacheManagerBuilder();
       if (config.getTerracottaUrl() != null) {
-        cacheManagerCacheManagerBuilder.with(ClusteringServiceConfigurationBuilder.cluster(URI.create(
-            "terracotta://" + config.getTerracottaUrl() + "/clusterExample"))
-            .autoCreate());
-        builder.add(new ClusteredStoreConfiguration());
+        cacheManagerBuilder = cacheManagerBuilder.with(ClusteringServiceConfigurationBuilder.cluster(
+            URI.create("terracotta://" + config.getTerracottaUrl() + "/clusterExample"))
+            .autoCreate().build());
       }
-      cacheManager = cacheManagerCacheManagerBuilder
-          .withCache("cache", builder.build())
+      cacheManager = cacheManagerBuilder
+          .withCache("cache", cacheConfigurationBuilder.build())
           .build(true);
 
       cache = cacheManager.getCache("cache", Long.class, byte[].class);
