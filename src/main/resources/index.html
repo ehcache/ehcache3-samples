@@ -57,6 +57,7 @@
 
                 <div class="col-md-1">
                     <div style="float:left;padding: 10px;">
+                        <img id="spinner" src="graphics/ajax-loader.gif">
                         <div id="taskButton" class="btn btn-primary btn-success">Start</div>
                     </div>
                 </div>
@@ -226,11 +227,17 @@
                 );
             } else {
                 var data = $('form').serializeArray();
+                $('#spinner').toggle();
+                $('#taskButton').toggle();
                 $.post("/start", JSON.stringify(data), "json")
                         .fail(function (jqXHR) {
+                            $('#spinner').toggle();
+                            $('#taskButton').toggle();
                             alert("error: " + jqXHR.responseText);
                         })
                         .done(function () {
+                            $('#spinner').toggle();
+                            $('#taskButton').toggle();
                             $('#taskButton').html('Stop');
                             started = true;
 
@@ -319,6 +326,7 @@
 
         $('#heapGaugeLabel').hide();
         $('#offheapGaugeLabel').hide();
+        $('#spinner').hide();
     })
 </script>
 </body>
