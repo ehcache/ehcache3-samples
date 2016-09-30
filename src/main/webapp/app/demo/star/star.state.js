@@ -36,17 +36,17 @@
             views: {
                 'content@': {
                     templateUrl: 'app/demo/star/star-detail.html',
-                    controller: 'ActorDetailController',
+                    controller: 'StarDetailController',
                     controllerAs: 'vm'
                 }
             },
             resolve: {
-                entity: ['$stateParams', 'Actor', function($stateParams, Actor) {
-                    return Actor.get({id : $stateParams.id}).$promise;
+                entity: ['$stateParams', 'Star', function($stateParams, Star) {
+                    return Star.get({id : $stateParams.id}).$promise;
                 }],
                 previousState: ["$state", function ($state) {
                     var currentStateData = {
-                        name: $state.current.name || 'actor',
+                        name: $state.current.name || 'star',
                         params: $state.params,
                         url: $state.href($state.current.name, $state.params)
                     };

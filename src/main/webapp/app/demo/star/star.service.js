@@ -10,13 +10,12 @@
         var resourceUrl =  'api/stars/:id';
 
         return $resource(resourceUrl, {}, {
-            'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',
                 transformResponse: function (data) {
                     if (data) {
                         data = angular.fromJson(data);
-                        data.birthDate = DateUtils.convertLocalDateFromServer(data.birthDate);
+                        data.birthDate = DateUtils.convertLocalDateFromServer(data.actor.birthDate);
                     }
                     return data;
                 }
