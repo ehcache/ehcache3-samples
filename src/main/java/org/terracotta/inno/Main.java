@@ -70,6 +70,15 @@ public class Main {
       return "Done.";
     });
 
+    get("/cancelNoFail", (request, response) -> {
+      Future<StatisticsPeekHolder> future = futureRef.get();
+      if (future != null) {
+        future.cancel(true);
+        futureRef.set(null);
+      }
+      return "Done.";
+    });
+
     get("/stats", (request, response) -> {
       response.type("application/json");
       List<QueueReporter.Result> data = new ArrayList<>();
