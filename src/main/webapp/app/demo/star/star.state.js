@@ -8,7 +8,8 @@
     stateConfig.$inject = ['$stateProvider'];
 
     function stateConfig($stateProvider) {
-        $stateProvider.state('star', {
+        $stateProvider
+        .state('star', {
             parent: 'demo',
             url: '/star',
             data: {
@@ -24,7 +25,35 @@
             },
             resolve: {
             }
-        });
+        })
+        .state('star-detail', {
+            parent: 'demo',
+            url: '/star/{id}',
+            data: {
+                authorities: ['ROLE_USER'],
+                pageTitle: 'Star'
+            },
+            views: {
+                'content@': {
+                    templateUrl: 'app/demo/star/star-detail.html',
+                    controller: 'ActorDetailController',
+                    controllerAs: 'vm'
+                }
+            },
+            resolve: {
+                entity: ['$stateParams', 'Actor', function($stateParams, Actor) {
+                    return Actor.get({id : $stateParams.id}).$promise;
+                }],
+                previousState: ["$state", function ($state) {
+                    var currentStateData = {
+                        name: $state.current.name || 'actor',
+                        params: $state.params,
+                        url: $state.href($state.current.name, $state.params)
+                    };
+                    return currentStateData;
+                }]
+            }
+        })
     }
 
 })();

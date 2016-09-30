@@ -5,9 +5,9 @@
         .module('demoApp')
         .controller('StarController', StarController);
 
-    StarController.$inject = ['$scope', '$state', 'Star', 'ParseLinks', 'AlertService'];
+    StarController.$inject = ['$scope', '$state', 'Actor', 'ParseLinks', 'AlertService'];
 
-    function StarController ($scope, $state, Star, ParseLinks, AlertService) {
+    function StarController ($scope, $state, Actor, ParseLinks, AlertService) {
         var vm = this;
 
         vm.actors = [];
@@ -57,7 +57,7 @@
 
         function loadPage(page) {
             vm.page = page;
-            //loadAll();
+            loadAll();
         }
     }
 })();

@@ -3,25 +3,25 @@
 
     <jhi-alert-error></jhi-alert-error>
 
-    <form name="form" role="form" novalidate ng-submit="vm.save()" show-validation>
+    <!--<form name="form" role="form" novalidate ng-submit="vm.save()" show-validation>-->
 
-        <div class="form-group">
-            <label class="control-label" for="firstName">First Name</label>
-            <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Actor first name"
-                   ng-model="vm.star.firstName">
-        </div>
-        <div class="form-group">
-            <label class="control-label" for="lastName">Last Name</label>
-            <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Actor last name"
-                   ng-model="vm.star.lastName">
-        </div>
+        <!--<div class="form-group">-->
+            <!--<label class="control-label" for="firstName">First Name</label>-->
+            <!--<input type="text" class="form-control" id="firstName" name="firstName" placeholder="Actor first name"-->
+                   <!--ng-model="vm.star.firstName">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+            <!--<label class="control-label" for="lastName">Last Name</label>-->
+            <!--<input type="text" class="form-control" id="lastName" name="lastName" placeholder="Actor last name"-->
+                   <!--ng-model="vm.star.lastName">-->
+        <!--</div>-->
 
-        <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Search</button>
-    </form>
+        <!--<button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Search</button>-->
+    <!--</form>-->
 
-    <br/>
+    <!--<br/>-->
 
-    <div class="table-responsive" ng-hide="vm.actors">
+    <div class="table-responsive">
         <table class="jh-table table table-striped">
             <thead>
             <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.reset()">
@@ -43,9 +43,9 @@
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"
-                                ui-sref="actor-detail({id:actor.id})"
+                                ui-sref="star-detail({id:actor.id})"
                                 class="btn btn-info btn-sm">
-                            <span class="glyphicon glyphicon-eye-open"></span>
+                            <span class="glyphicon glyphicon-cloud"></span>
                             <span class="hidden-xs hidden-sm"></span>
                         </button>
                     </div>
