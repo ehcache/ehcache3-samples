@@ -1,6 +1,21 @@
 Docker instructions
 ====
 
+Required environment variables
+---
+Make sure your webapp containers will receive those environment variables :
+
+* DEMO_GOOGLEAPIKEY
+* DEMO_DARKSKYAPIKEY
+* DEMO_BIOGRAPHIESREMOTELOCATION
+
+Often, it's a easy as running this command in the current docker shell :
+
+    export DEMO_GOOGLEAPIKEY=insert_key_here \
+    && export DEMO_DARKSKYAPIKEY=insert_key_here \
+    && export DEMO_BIOGRAPHIESREMOTELOCATION=ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
+
+
 Docker and docker compose instructions provided by JHipster
 ---
 On a single docker host ([such as Docker 4 mac or Docker 4 Windows](https://www.docker.com/products/docker)), or a pre 1.12 swarm, let's suppose you want to deploy your db, your terracotta server and several instances of your webapp
