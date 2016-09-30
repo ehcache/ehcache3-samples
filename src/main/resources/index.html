@@ -110,7 +110,7 @@
                 <div class="col-md-1"></div>
             </div>
 
-            <div class="row">
+            <div id="control2ndRow" class="row">
                 <div class="col-md-2"></div>
 
                 <!--Enable cache-->
@@ -222,6 +222,7 @@
                                 latenciesSmoothie.stop();
                             }
                             $('#taskButton').html('Start');
+                            $('#control2ndRow').find('input, textarea, button, select').attr('disabled', false);
                             started = false;
                         }
                 );
@@ -239,6 +240,7 @@
                             $('#spinner').toggle();
                             $('#taskButton').toggle();
                             $('#taskButton').html('Stop');
+                            $('#control2ndRow').find('input, textarea, button, select').attr('disabled', true);
                             started = true;
 
                             if ($('#enableCache').is(":checked") && $('#enableHeap').is(":checked")) {
