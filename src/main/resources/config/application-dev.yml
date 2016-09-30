@@ -98,4 +98,4 @@ jhipster:
 
 demo:
     biographiesRemoteLocation: ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
-    biographiesLocation: target/biographies.list.gz
+    biographiesLocation: biographies.list.gz

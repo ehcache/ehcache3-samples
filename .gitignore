@@ -2,6 +2,7 @@
 # Project Specific
 ######################
 /target/www/**
+biographies.list.gz
 
 ######################
 # Node
