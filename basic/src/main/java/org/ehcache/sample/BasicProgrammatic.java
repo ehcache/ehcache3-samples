@@ -31,8 +31,6 @@ public class BasicProgrammatic {
             }
         }
 
-        LOGGER.info("---------------------------------------------------------------");
-
         LOGGER.info("Exiting");
     }
 }
