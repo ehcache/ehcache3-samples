@@ -66,8 +66,8 @@ public abstract class BaseJCacheTester {
   private <K, V> void inspectCacheConfig(Cache<K, V> myJCache) {
     //get the configuration to print the size on heap
     CacheRuntimeConfiguration<K, V> ehcacheConfig = (CacheRuntimeConfiguration<K, V>) myJCache
-          .getConfiguration(Eh107Configuration.class)
-          .unwrap(CacheRuntimeConfiguration.class);
+      .getConfiguration(Eh107Configuration.class)
+      .unwrap(CacheRuntimeConfiguration.class);
     long heapSize = ehcacheConfig.getResourcePools().getPoolForResource(ResourceType.Core.HEAP).getSize();
     LOGGER.info(ehcacheConfig.toString());
     LOGGER.info("Cache testing - Cache {} with heap capacity = {}", myJCache.getName(), heapSize);

@@ -33,8 +33,8 @@ public class CreateBasicJCacheWithXML extends BaseJCacheTester {
     CachingProvider cachingProvider = Caching.getCachingProvider();
 
     try (CacheManager cacheManager = cachingProvider.getCacheManager(
-          Thread.currentThread().getContextClassLoader().getResource(xmlClassPath).toURI(),
-          Thread.currentThread().getContextClassLoader())) {
+      Thread.currentThread().getContextClassLoader().getResource(xmlClassPath).toURI(),
+      Thread.currentThread().getContextClassLoader())) {
 
       //go over all the caches
       for (String cacheName : cacheManager.getCacheNames()) {

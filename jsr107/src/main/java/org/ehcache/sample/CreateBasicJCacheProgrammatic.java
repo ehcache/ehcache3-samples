@@ -44,12 +44,12 @@ public class CreateBasicJCacheProgrammatic extends BaseJCacheTester {
 
     try (CacheManager cacheManager = cachingProvider.getCacheManager()) {
       Cache<Long, String> myJCache = cacheManager.createCache(
-            CACHE_NAME,
-            new MutableConfiguration<Long, String>()
-                  .setTypes(Long.class, String.class)
-                  .setStoreByValue(false)
-                  .setStatisticsEnabled(true)
-                  .setExpiryPolicyFactory(FactoryBuilder.factoryOf(new CreatedExpiryPolicy(new Duration(TimeUnit.SECONDS, 5)))));
+        CACHE_NAME,
+        new MutableConfiguration<Long, String>()
+          .setTypes(Long.class, String.class)
+          .setStoreByValue(false)
+          .setStatisticsEnabled(true)
+          .setExpiryPolicyFactory(FactoryBuilder.factoryOf(new CreatedExpiryPolicy(new Duration(TimeUnit.SECONDS, 5)))));
 
       simpleGetsAndPutsCacheTest(myJCache, numberOfIteration, numberOfObjectPerIteration, sleepTimeMillisBetweenIterations, new KeyValueGenerator<Long, String>() {
         @Override

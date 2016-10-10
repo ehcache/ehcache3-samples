@@ -1,10 +1,10 @@
 package org.ehcache.sample;
 
-import java.net.URI;
-
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.slf4j.Logger;
+
+import java.net.URI;
 
 import static java.net.URI.create;
 import static org.ehcache.clustered.client.config.builders.ClusteredResourcePoolBuilder.clusteredDedicated;
@@ -22,11 +22,11 @@ public class ClusteredProgrammatic {
     LOGGER.info("Creating clustered cache manager");
     final URI uri = create("terracotta://localhost:9510/clustered");
     try (CacheManager cacheManager = newCacheManagerBuilder()
-            .with(cluster(uri).autoCreate().defaultServerResource("default-resource"))
-            .withCache("basicCache",
-                    newCacheConfigurationBuilder(Long.class, String.class,
-                            heap(100).offheap(1, MB).with(clusteredDedicated(5, MB))))
-            .build(true)) {
+      .with(cluster(uri).autoCreate().defaultServerResource("default-resource"))
+      .withCache("basicCache",
+        newCacheConfigurationBuilder(Long.class, String.class,
+          heap(100).offheap(1, MB).with(clusteredDedicated(5, MB))))
+      .build(true)) {
       Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class, String.class);
 
       LOGGER.info("Putting to cache");

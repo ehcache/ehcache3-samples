@@ -44,22 +44,22 @@ public class CreateExtendedJCache extends BaseJCacheTester {
     String xmlClassPath = System.getProperty("jsr107.config.classpath", "ehcache-jsr107-extendedWithTemplates.xml");
 
     try (CacheManager cacheManager = cachingProvider.getCacheManager(
-          Thread.currentThread().getContextClassLoader().getResource(xmlClassPath).toURI(),
-          Thread.currentThread().getContextClassLoader())) {
+      Thread.currentThread().getContextClassLoader().getResource(xmlClassPath).toURI(),
+      Thread.currentThread().getContextClassLoader())) {
 
       LOGGER.info("----------------------------------------------------------------");
       String cacheName = "myJCache";
 
       //this new cache should use the default maxEntriesOnHeapCache template defined in the config
       LOGGER.info("Cache testing with new cache name {} - " +
-            "The new cache should use the default 'maxEntriesOnHeapCache' template defined in the config.", cacheName);
+        "The new cache should use the default 'maxEntriesOnHeapCache' template defined in the config.", cacheName);
       Cache<Long, String> myJCache = cacheManager.createCache(
-            cacheName,
-            new MutableConfiguration<Long, String>()
-                  .setTypes(Long.class, String.class)
-                  .setStoreByValue(false)
-                  .setStatisticsEnabled(true)
-                  .setExpiryPolicyFactory(FactoryBuilder.factoryOf(new CreatedExpiryPolicy(new Duration(TimeUnit.SECONDS, 5)))));
+        cacheName,
+        new MutableConfiguration<Long, String>()
+          .setTypes(Long.class, String.class)
+          .setStoreByValue(false)
+          .setStatisticsEnabled(true)
+          .setExpiryPolicyFactory(FactoryBuilder.factoryOf(new CreatedExpiryPolicy(new Duration(TimeUnit.SECONDS, 5)))));
 
       simpleGetsAndPutsCacheTest(myJCache, numberOfIteration, numberOfObjectPerIteration, sleepTimeMillisBetweenIterations, new KeyValueGenerator<Long, String>() {
         @Override
@@ -78,18 +78,18 @@ public class CreateExtendedJCache extends BaseJCacheTester {
 
       //this new cache should use the default byRefCache template defined in the config
       LOGGER.info("Cache testing with cache name {} - " +
-            "The new cache should use the jsr107 default matched by name '{}' defined in the config.", cacheName, cacheName);
+        "The new cache should use the jsr107 default matched by name '{}' defined in the config.", cacheName, cacheName);
 
       LOGGER.info("Cache testing with cache name {} - ", cacheName);
 
       //this new cache should use the default maxEntriesOnHeapCache template defined in the config
       Cache<Long, String> myJCache2 = cacheManager.createCache(
-            cacheName,
-            new MutableConfiguration<Long, String>()
-                  .setTypes(Long.class, String.class)
-                  .setStoreByValue(false)
-                  .setStatisticsEnabled(true)
-                  .setExpiryPolicyFactory(FactoryBuilder.factoryOf(new CreatedExpiryPolicy(new Duration(TimeUnit.SECONDS, 5)))));
+        cacheName,
+        new MutableConfiguration<Long, String>()
+          .setTypes(Long.class, String.class)
+          .setStoreByValue(false)
+          .setStatisticsEnabled(true)
+          .setExpiryPolicyFactory(FactoryBuilder.factoryOf(new CreatedExpiryPolicy(new Duration(TimeUnit.SECONDS, 5)))));
 
       simpleGetsAndPutsCacheTest(myJCache, numberOfIteration, numberOfObjectPerIteration, sleepTimeMillisBetweenIterations, new KeyValueGenerator<Long, String>() {
         @Override
@@ -108,16 +108,16 @@ public class CreateExtendedJCache extends BaseJCacheTester {
 
       //this new cache should use the default byRefCache template defined in the config
       LOGGER.info("Cache testing with cache name {} - " +
-            "The new cache should use the jsr107 default matched by name '{}' defined in the config.", cacheName, cacheName);
+        "The new cache should use the jsr107 default matched by name '{}' defined in the config.", cacheName, cacheName);
 
       //this new cache should use the default maxEntriesOnHeapCache template defined in the config
       Cache<Long, String> myJCache3 = cacheManager.createCache(
-            cacheName,
-            new MutableConfiguration<Long, String>()
-                  .setTypes(Long.class, String.class)
-                  .setStoreByValue(false)
-                  .setStatisticsEnabled(true)
-                  .setExpiryPolicyFactory(FactoryBuilder.factoryOf(new CreatedExpiryPolicy(new Duration(TimeUnit.SECONDS, 5)))));
+        cacheName,
+        new MutableConfiguration<Long, String>()
+          .setTypes(Long.class, String.class)
+          .setStoreByValue(false)
+          .setStatisticsEnabled(true)
+          .setExpiryPolicyFactory(FactoryBuilder.factoryOf(new CreatedExpiryPolicy(new Duration(TimeUnit.SECONDS, 5)))));
 
       simpleGetsAndPutsCacheTest(myJCache, numberOfIteration, numberOfObjectPerIteration, sleepTimeMillisBetweenIterations, new KeyValueGenerator<Long, String>() {
         @Override
