@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config
-        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-        xmlns='http://www.ehcache.org/v3'
-        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
-        xsi:schemaLocation="
+      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+      xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+      xmlns='http://www.ehcache.org/v3'
+      xsi:schemaLocation="
         http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.1.xsd
         http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.1.xsd">
 
-    <service>
-        <jsr107:defaults default-template="maxEntriesOnHeapCache" enable-management="false" enable-statistics="true">
-            <jsr107:cache name="byRefCache" template="byRefTemplate"/>
-            <jsr107:cache name="byValCache" template="byValueTemplate"/>
-        </jsr107:defaults>
-    </service>
+  <service>
+    <jsr107:defaults default-template="maxEntriesOnHeapCache" enable-management="false" enable-statistics="true">
+      <jsr107:cache name="byRefCache" template="byRefTemplate"/>
+      <jsr107:cache name="byValCache" template="byValueTemplate"/>
+    </jsr107:defaults>
+  </service>
 
-    <cache-template name="maxEntriesOnHeapCache">
-        <heap unit="entries">2000</heap>
-    </cache-template>
+  <cache-template name="maxEntriesOnHeapCache">
+    <heap unit="entries">2000</heap>
+  </cache-template>
 
-    <cache-template name="byRefTemplate">
-        <key-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.Long</key-type>
-        <value-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</value-type>
-        <heap unit="entries">2000</heap>
-    </cache-template>
+  <cache-template name="byRefTemplate">
+    <key-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.Long</key-type>
+    <value-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</value-type>
+    <heap unit="entries">2000</heap>
+  </cache-template>
 
-    <cache-template name="byValueTemplate">
-        <key-type copier="org.ehcache.impl.copy.SerializingCopier">java.lang.Long</key-type>
-        <value-type copier="org.ehcache.impl.copy.SerializingCopier">java.lang.String</value-type>
-        <heap unit="entries">2000</heap>
-    </cache-template>
+  <cache-template name="byValueTemplate">
+    <key-type copier="org.ehcache.impl.copy.SerializingCopier">java.lang.Long</key-type>
+    <value-type copier="org.ehcache.impl.copy.SerializingCopier">java.lang.String</value-type>
+    <heap unit="entries">2000</heap>
+  </cache-template>
 </config>

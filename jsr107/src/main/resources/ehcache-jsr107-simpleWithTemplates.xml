@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config
-        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-        xmlns='http://www.ehcache.org/v3'
-        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
-        xsi:schemaLocation="
+      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+      xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+      xmlns='http://www.ehcache.org/v3'
+      xsi:schemaLocation="
         http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.1.xsd
         http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.1.xsd">
 
-    <service>
-        <jsr107:defaults default-template="byRefTemplate" enable-management="false" enable-statistics="true"/>
-    </service>
+  <service>
+    <jsr107:defaults default-template="byRefTemplate" enable-management="false" enable-statistics="true"/>
+  </service>
 
-    <cache-template name="byRefTemplate">
-        <key-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.Long</key-type>
-        <value-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</value-type>
-        <heap unit="entries">2000</heap>
-    </cache-template>
+  <cache-template name="byRefTemplate">
+    <key-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.Long</key-type>
+    <value-type copier="org.ehcache.impl.copy.IdentityCopier">java.lang.String</value-type>
+    <heap unit="entries">2000</heap>
+  </cache-template>
 
-    <cache alias="myAbsoluteExpiryJCache" uses-template="byRefTemplate">
-        <expiry>
-            <ttl unit="seconds">5</ttl>
-        </expiry>
-    </cache>
+  <cache alias="myAbsoluteExpiryJCache" uses-template="byRefTemplate">
+    <expiry>
+      <ttl unit="seconds">5</ttl>
+    </expiry>
+  </cache>
 
-    <cache alias="mySlidingExpiryJCache" uses-template="byRefTemplate">
-        <expiry>
-            <tti unit="seconds">5</tti>
-        </expiry>
-    </cache>
+  <cache alias="mySlidingExpiryJCache" uses-template="byRefTemplate">
+    <expiry>
+      <tti unit="seconds">5</tti>
+    </expiry>
+  </cache>
 </config>

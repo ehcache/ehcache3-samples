@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config
-        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-        xmlns='http://www.ehcache.org/v3'
-        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
-        xsi:schemaLocation="
+      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+      xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+      xmlns='http://www.ehcache.org/v3'
+      xsi:schemaLocation="
         http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.1.xsd
         http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.1.xsd">
 
-    <service>
-        <jsr107:defaults enable-management="false" enable-statistics="true"/>
-    </service>
+  <service>
+    <jsr107:defaults enable-management="false" enable-statistics="true"/>
+  </service>
 
-    <cache alias="myAbsoluteExpiryJCache">
-        <key-type>java.lang.Long</key-type>
-        <value-type>java.lang.String</value-type>
-        <expiry>
-            <ttl unit="seconds">5</ttl>
-        </expiry>
-        <resources>
-            <heap unit="entries">2000</heap>
-        </resources>
-    </cache>
+  <cache alias="myAbsoluteExpiryJCache">
+    <key-type>java.lang.Long</key-type>
+    <value-type>java.lang.String</value-type>
+    <expiry>
+      <ttl unit="seconds">5</ttl>
+    </expiry>
+    <resources>
+      <heap unit="entries">2000</heap>
+    </resources>
+  </cache>
 
-    <cache alias="mySlidingExpiryJCache">
-        <key-type>java.lang.Long</key-type>
-        <value-type>java.lang.String</value-type>
-        <expiry>
-            <tti unit="seconds">5</tti>
-        </expiry>
-        <resources>
-            <heap unit="entries">2000</heap>
-        </resources>
-    </cache>
+  <cache alias="mySlidingExpiryJCache">
+    <key-type>java.lang.Long</key-type>
+    <value-type>java.lang.String</value-type>
+    <expiry>
+      <tti unit="seconds">5</tti>
+    </expiry>
+    <resources>
+      <heap unit="entries">2000</heap>
+    </resources>
+  </cache>
 </config>
