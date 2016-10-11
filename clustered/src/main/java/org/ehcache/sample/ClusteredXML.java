@@ -20,9 +20,9 @@ public class ClusteredXML {
     Configuration xmlConfig = new XmlConfiguration(myUrl);
     try (CacheManager cacheManager = newCacheManager(xmlConfig)) {
       cacheManager.init();
-
+      
       Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class, String.class);
-
+      
       LOGGER.info("Getting from cache");
       String value = basicCache.get(1L);
       LOGGER.info("Retrieved '{}'", value);
