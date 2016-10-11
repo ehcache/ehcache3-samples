@@ -14,7 +14,7 @@
         <terracotta:default-resource from="default-resource"/>
       </terracotta:server-side-config>
     </terracotta:cluster>
-  </ehcache:service>
+ </ehcache:service>
 
   <ehcache:cache alias="basicCache">
     <ehcache:key-type>java.lang.Long</ehcache:key-type>

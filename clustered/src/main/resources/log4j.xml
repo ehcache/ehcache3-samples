@@ -10,7 +10,7 @@
   </appender>
 
   <appender name="tc-file" class="org.apache.log4j.RollingFileAppender">
-    <param name="file" value="logs/terracotta-client.log"/>
+    <param name="file" value="logs/terracotta-client.log" />
     <param name="maxFileSize" value="256KB"/>
     <param name="maxBackupIndex" value="10"/>
 
