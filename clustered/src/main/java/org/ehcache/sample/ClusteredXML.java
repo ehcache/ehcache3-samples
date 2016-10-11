@@ -1,12 +1,12 @@
 package org.ehcache.sample;
 
+import java.net.URL;
+
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.Configuration;
 import org.ehcache.xml.XmlConfiguration;
 import org.slf4j.Logger;
-
-import java.net.URL;
 
 import static org.ehcache.config.builders.CacheManagerBuilder.newCacheManager;
 import static org.slf4j.LoggerFactory.getLogger;
