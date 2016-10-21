@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Handling Form Submission</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <style>
+        caption {
+            color: red;
+            font-size: larger
+        }
+    </style>
+</head>
+<body>
+<h1>Result</h1>
+
+<ul>
+    <li th:each="actor : ${actors}">
+        <p th:text="${actor.firstName} + ' ' + ${actor.lastName} + ' was born on ' + ${actor.birthDate} + ' in : ' + ${actor.birthLocation}"/>
+        <ul>
+            <li th:each="weatherReport : ${weatherReports.get(actor.id)}" th:unless="${weatherReport.location == null}">
+                <p th:text="'On that day, weather in ' + ${weatherReport.location} +
+                ' was ' + ${weatherReport.summary} +
+                ' with a min temperature of : ' + ${weatherReport.temperatureMin} +
+                'C and a max temperature of : ' + ${weatherReport.temperatureMax} + 'C'"/>
+            </li>
+        </ul>
+
+
+    </li>
+</ul>
+
+<p>
+    Resources used to complete the request :
+</p>
+<table>
+    <tr>
+        <th>Resource call parameter</th>
+        <th>Resource call time spent</th>
+        <th>Resource call method name</th>
+        <th>Resource call resource type</th>
+        <th>Resource call resource name</th>
+    </tr>
+
+    <tr th:each="resourceCallReport : ${resourceCallReports}">
+        <td th:text="${resourceCallReport.parameterName}"/>
+        <td th:text="${resourceCallReport.timeSpentMillis} + 'ms'"/>
+        <td th:text="${resourceCallReport.methodName}"/>
+        <td th:text="${resourceCallReport.resourceType}"/>
+        <td th:text="${resourceCallReport.resourceName}"/>
+    </tr>
+    <caption th:text="'Total time spent on external resources : ' + ${timeSpentTotal} + 'ms'"/>
+</table>
+
+
+<a href="/">Try another actor</a>
+</body>
+</html>
