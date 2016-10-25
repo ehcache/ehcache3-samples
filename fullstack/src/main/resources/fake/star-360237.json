@@ -1,0 +1,92 @@
+{
+  "actor" : {
+    "id" : 360237,
+    "firstName" : "Murray the",
+    "lastName" : "'K'",
+    "birthDate" : "1922-02-14",
+    "birthLocation" : "New York City, New York, USA"
+  },
+  "weatherReports" : [ {
+    "date" : null,
+    "location" : null,
+    "icon" : null,
+    "summary" : null,
+    "temperatureMin" : 0.0,
+    "temperatureMax" : 0.0
+  }, {
+    "date" : "1922-02-14",
+    "location" : "Montréal, Québec, Canada",
+    "icon" : "partly-cloudy-day",
+    "summary" : "Partly cloudy throughout the day.",
+    "temperatureMin" : -11.64,
+    "temperatureMax" : -7.43
+  }, {
+    "date" : "1922-02-14",
+    "location" : "Paris, Ile de France, France",
+    "icon" : "partly-cloudy-day",
+    "summary" : "Mostly cloudy throughout the day.",
+    "temperatureMin" : 3.59,
+    "temperatureMax" : 7.02
+  }, {
+    "date" : "1922-02-14",
+    "location" : "Moscow, Russia",
+    "icon" : "partly-cloudy-day",
+    "summary" : "Mostly cloudy throughout the day.",
+    "temperatureMin" : -9.44,
+    "temperatureMax" : -5.83
+  }, {
+    "date" : "1922-02-14",
+    "location" : "Tokyo, Japan",
+    "icon" : "partly-cloudy-day",
+    "summary" : "Partly cloudy throughout the day.",
+    "temperatureMin" : 3.01,
+    "temperatureMax" : 8.56
+  } ],
+  "resourceCallReports" : [ {
+    "resourceName" : "ActorRepository.findOne",
+    "resourceType" : "DATABASE",
+    "elapsed" : 2
+  }, {
+    "resourceName" : "Google Geocode Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 1090
+  }, {
+    "resourceName" : "Darksky Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 216
+  }, {
+    "resourceName" : "Google Geocode Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 84
+  }, {
+    "resourceName" : "Darksky Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 205
+  }, {
+    "resourceName" : "Google Geocode Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 84
+  }, {
+    "resourceName" : "Darksky Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 144
+  }, {
+    "resourceName" : "Google Geocode Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 142
+  }, {
+    "resourceName" : "Darksky Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 140
+  }, {
+    "resourceName" : "Google Geocode Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 86
+  }, {
+    "resourceName" : "Darksky Rest API",
+    "resourceType" : "WEB_SERVICE",
+    "elapsed" : 155
+  } ],
+  "totalTimeSpent" : 2348,
+  "hostname" : "mine.local"
+}

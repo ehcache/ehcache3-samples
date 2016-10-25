@@ -1,0 +1,13 @@
+entity Actor {
+	firstName String,
+    lastName String,
+    birthDate LocalDate,
+    birthLocation String
+}
+
+// Set pagination options
+paginate Actor with infinite-scroll
+
+// Set service options to all except few
+service all with serviceImpl
+
