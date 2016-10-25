@@ -2,7 +2,6 @@ package org.terracotta.demo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.MetricFilterAutoConfiguration;
@@ -18,6 +17,8 @@ import org.terracotta.demo.config.DefaultProfileUtil;
 import org.terracotta.demo.config.JHipsterProperties;
 import org.terracotta.demo.domain.Actor;
 import org.terracotta.demo.repository.ActorRepository;
+
+import com.google.common.base.Strings;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -50,19 +51,6 @@ public class DemoApp {
 
     private static final Logger log = LoggerFactory.getLogger(DemoApp.class);
 
-    @Value("${demo.biographiesLocation}")
-    private String biographiesLocation;
-
-    @Value("${demo.biographiesRemoteLocation}")
-    private String biographiesRemoteLocation;
-
-    @Value("${demo.googleApiKey}")
-    private String googleApiKey;
-
-    @Value("${demo.darkSkyApiKey}")
-    private String darkSkyApiKey;
-
-
     @Inject
     private Environment env;
 
@@ -85,12 +73,6 @@ public class DemoApp {
             log.error("You have misconfigured your application! It should not" +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
-        // check for mandatory API keys
-//            if ("${darkSkyApiKey}".equals(darkSkyApiKey) || "${googleApiKey}".equals(googleApiKey)) {
-//                throw new RuntimeException("You need to specify API keys for geolocation (using Google Geocode API)" +
-//                    " and for weather reports (using DarkSkyApi).\n" +
-//                    "Please re run the app with --googleApiKey=API_KEY --darkSkyApiKey=API_KEY ");
-//            }
     }
 
     /**
@@ -117,17 +99,23 @@ public class DemoApp {
     @Bean
     public CommandLineRunner demo(ActorRepository actorRepository) {
         return (args) -> {
-            if(googleApiKey == null || googleApiKey.equals("${googleApiKey}") || googleApiKey.trim().equals("")) {
-                log.error("The googleApiKey is not defined, CoordinatesService will NOT work !");
+            String googleApiKey = env.getProperty("demo.googleApiKey");
+            String darkSkyApiKey = env.getProperty("demo.darkSkyApiKey");
+
+            if(Strings.isNullOrEmpty(googleApiKey)) {
+                log.warn("The googleApiKey is not defined, CoordinatesService will NOT work !");
             }
-            if(darkSkyApiKey == null || darkSkyApiKey.equals("${darkSkyApiKey}") || darkSkyApiKey.trim().equals("")) {
-                log.error("The darkSkyApiKey is not defined, WeatherService will NOT work !");
+            if(Strings.isNullOrEmpty(darkSkyApiKey)) {
+                log.warn("The darkSkyApiKey is not defined, WeatherService will NOT work !");
             }
 
             // Assume that if we already have entries in the DB, that we already read the full file
             if (actorRepository.count() != 0) {
                 return;
             }
+
+            String biographiesLocation = env.getProperty("demo.biographiesLocation");
+            String biographiesRemoteLocation = env.getProperty("demo.biographiesRemoteLocation");
 
             log.info("The Actor table is empty, let's fill it up!");
 
