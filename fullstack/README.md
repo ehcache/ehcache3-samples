@@ -22,10 +22,47 @@ The interesting points are:
 
 This application was generated using JHipster, you can find documentation and help at [https://jhipster.github.io](https://jhipster.github.io).
 
+## The application
+
+The idea behind the application is to be able to search through a list of actors and then see the
+meteo on his/her date or birth and location.
+
+### Usage
+
+* Open the application home page
+* Log yourself as admin/admin
+* Go to the Demo->Stars menu
+* Click on the little cloud button on any of the actors
+
+### Caching
+
+To provide the actor details, we need
+* To retrieve its record from the database 
+* Call Google Maps API to get the coordinates of the city of birth (see [CoordinatesService.java](src/main/java/org/terracotta/demo/service/CoordinatesService.java))
+* Call the Darksky API to get the weather at this place and time (see [WeatherService.java](src/main/java/org/terracotta/demo/service/WeatherService.java))
+
+Caching occurs in two places:
+* Spring level using JCache annotations in `WeatherService`
+* Hibernate second-level cache on actors
+
 ## Environment
 
 This application requires Java 8 to run. Having [Docker](https://www.docker.com/) is necessary to run the production setup. Node.js is used
 for compilation and development.
+
+### Required environment variables
+
+To be able to access the web services correctly, you will need these environment variables:
+
+* DEMO_GOOGLEAPIKEY
+* DEMO_DARKSKYAPIKEY
+
+Often, it's a easy as running this command in your shell :
+
+```bash
+export DEMO_GOOGLEAPIKEY=insert_key_here
+export DEMO_DARKSKYAPIKEY=insert_key_here
+```
 
 ### Install Node and Gulp
 
@@ -99,26 +136,10 @@ Or if you want everything in Docker
     
 And the start your application locally 
 
-Docker instructions
-====
+## Docker
 
-Required environment variables
----
-Make sure your webapp containers will receive those environment variables :
+### Docker and docker compose instructions provided by JHipster
 
-* DEMO_GOOGLEAPIKEY
-* DEMO_DARKSKYAPIKEY
-* DEMO_BIOGRAPHIESREMOTELOCATION
-
-Often, it's a easy as running this command in the current docker shell :
-
-    export DEMO_GOOGLEAPIKEY=insert_key_here \
-    && export DEMO_DARKSKYAPIKEY=insert_key_here \
-    && export DEMO_BIOGRAPHIESREMOTELOCATION=ftp://ftp.fu-berlin.de/pub/misc/movies/database/biographies.list.gz
-
-
-Docker and docker compose instructions provided by JHipster
----
 On a single docker host ([such as Docker 4 mac or Docker 4 Windows](https://www.docker.com/products/docker)), or a pre 1.12 swarm, let's suppose you want to deploy your db, your terracotta server and several instances of your webapp
 
 First,[read the jhipster doc](https://jhipster.github.io/docker-compose/); that basically means :
@@ -133,16 +154,17 @@ Start everything up :
 
 And hit [http://localhost:9000](http://localhost:9000)
     
-So you wanna "scale" ? sure, go ahead, but before, make sure to remove the port binding in app.yml for demo-app, or make sure that each container will be started ona  different swarm node, or else you'll hit :
+So you wanna "scale"? Sure, go ahead, but before, make sure to remove the port binding in `app.yml` for demo-app, or make sure that 
+each container will be started on a different swarm node, or else you'll hit :
     
     $ docker-compose -f src/main/docker/app.yml  scale demo-app=3
     WARNING: The "demo-app" service specifies a port on the host. If multiple containers for this service are created on a single host, the port will clash.
     Creating and starting docker_demo-app_2 ... error
     Creating and starting docker_demo-app_3 ... error
 
-let's try again without port clashing :
+Let's try again without port clashing :
        
-    $ docker-compose -f src/main/docker/app.yml  scale demo-app=3
+    $ docker-compose -f src/main/docker/app.yml scale demo-app=3
     $ docker-compose -f src/main/docker/app.yml ps
              Name                       Command               State                Ports               
     --------------------------------------------------------------------------------------------------
@@ -152,13 +174,9 @@ let's try again without port clashing :
     docker_demo-app_2        /bin/sh -c echo "The appli ...   Up      0.0.0.0:32769->8080/tcp          
     docker_demo-app_3        /bin/sh -c echo "The appli ...   Up      0.0.0.0:32768->8080/tcp  
     
-Feeling curious ? Nice, go and have a look at src/main/docker, everything is there.
+Feeling curious? Nice, go and have a look at src/main/docker, everything is there.
 
-    
-
-
-Docker swarm mode (1.12+) and overlay network (theory, not verified yet)  
----
+### Docker swarm mode (1.12+) and overlay network (theory, not verified yet)  
 
 After setting up a Docker swarm with several nodes (docker hosts), the idea is to have :
 
