@@ -128,6 +128,9 @@ public class DemoApp {
                     Files.copy(inputStream, localBiographiesPath);
                 }
                 log.info("Download complete");
+            } else {
+                log.info("Using local copy of biographies.gz at {}", localBiographiesPath.toAbsolutePath().toString());
+
             }
 
             try (BufferedReader br = new BufferedReader(new InputStreamReader(new GZIPInputStream(Files.newInputStream(localBiographiesPath)), StandardCharsets.ISO_8859_1))) {

@@ -17,7 +17,7 @@ The interesting points are:
 * Ehcache clustered configuration for production
   * [ehcache-clustered.xml](src/main/resources/ehcache-clustered.xml): Ehcache clustered configuration
   * [application-prod.xml](src/main/resources/config/application-prod.yml): Clustered configuration in Spring 
-* Teracotta server deployed with Docker
+* Terracotta server deployed with Docker
   * [terracotta-server-yml](src/main/docker/terracotta-server.yml): Docker Compose for Terracotta server
 
 This application was generated using JHipster, you can find documentation and help at [https://jhipster.github.io](https://jhipster.github.io).
@@ -81,12 +81,17 @@ We use [Gulp](http://gulpjs.com) as our build system. Install the Gulp command-l
 
     npm install -g gulp
 
+We use [Bower](https://bower.io/) as the UI components dependency manager. Install the Bower command-line tool globally with:
+
+    npm install -g bower
+
 ## Development
 
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
 
     ./mvnw
+    bower install
     gulp
 
 Bower is used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
