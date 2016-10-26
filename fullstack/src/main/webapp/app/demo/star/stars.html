@@ -1,0 +1,58 @@
+<div>
+    <h2>Stars</h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <!--<form name="form" role="form" novalidate ng-submit="vm.save()" show-validation>-->
+
+        <!--<div class="form-group">-->
+            <!--<label class="control-label" for="firstName">First Name</label>-->
+            <!--<input type="text" class="form-control" id="firstName" name="firstName" placeholder="Actor first name"-->
+                   <!--ng-model="vm.star.firstName">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+            <!--<label class="control-label" for="lastName">Last Name</label>-->
+            <!--<input type="text" class="form-control" id="lastName" name="lastName" placeholder="Actor last name"-->
+                   <!--ng-model="vm.star.lastName">-->
+        <!--</div>-->
+
+        <!--<button type="submit" ng-disabled="form.$invalid" class="btn btn-primary">Search</button>-->
+    <!--</form>-->
+
+    <!--<br/>-->
+
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+            <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.reset()">
+                <th jh-sort-by="id"><span>ID</span> <span class="glyphicon glyphicon-sort"></span></th>
+                <th jh-sort-by="firstName"><span>First Name</span> <span class="glyphicon glyphicon-sort"></span></th>
+                <th jh-sort-by="lastName"><span>Last Name</span> <span class="glyphicon glyphicon-sort"></span></th>
+                <th jh-sort-by="birthDate"><span>Birth Date</span> <span class="glyphicon glyphicon-sort"></span></th>
+                <th jh-sort-by="birthLocation"><span>Birth Location</span> <span class="glyphicon glyphicon-sort"></span></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody infinite-scroll="vm.loadPage(vm.page + 1)" infinite-scroll-disabled="vm.page >= vm.links['last']">
+            <tr ng-repeat="actor in vm.actors track by actor.id">
+                <td><a ui-sref="actor-detail({id:actor.id})">{{actor.id}}</a></td>
+                <td>{{actor.firstName}}</td>
+                <td>{{actor.lastName}}</td>
+                <td>{{actor.birthDate | date:'mediumDate'}}</td>
+                <td>{{actor.birthLocation}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                ui-sref="star-detail({id:actor.id})"
+                                class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-cloud"></span>
+                            <span class="hidden-xs hidden-sm"></span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
