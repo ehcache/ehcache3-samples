@@ -124,37 +124,22 @@ You can run your application locally with
 
     mvn spring-boot:run
     
-If you want to use a local production database in Docker 
+If you want to use a local production database and Terracotta server in Docker 
 
     docker-compose -f src/main/docker/postgresql.yml up
+    docker-compose -f src/main/docker/terracotta-server.yml up
     ./mvnw spring-boot:run -Pprod
+
+**Note:** You need to change `ehcache-clustered.xml` to replace `terracotta://terracotta-server:9510/demo-entity` by `terracotta://localhost:9510/demo-entity`
+for this to work.
 
 Or if you want everything in Docker
 
     ./mvnw package -Pprod docker:build
     docker-compose -f src/main/docker/app.yml up
-    
-And the start your application locally 
+     
 
-## Docker
-
-### Docker and docker compose instructions provided by JHipster
-
-On a single docker host ([such as Docker 4 mac or Docker 4 Windows](https://www.docker.com/products/docker)), or a pre 1.12 swarm, let's suppose you want to deploy your db, your terracotta server and several instances of your webapp
-
-First,[read the jhipster doc](https://jhipster.github.io/docker-compose/); that basically means :
-
-Build your app, and its docker image :
-
-    ./mvnw package -Pprod docker:build
-    
-Start everything up :
-    
-    docker-compose -f src/main/docker/app.yml up
-
-And hit [http://localhost:9000](http://localhost:9000)
-    
-So you wanna "scale"? Sure, go ahead, but before, make sure to remove the port binding in `app.yml` for demo-app, or make sure that 
+You wanna "scale"? Sure, go ahead, but before, make sure to remove the port binding in `app.yml` for demo-app, or make sure that 
 each container will be started on a different swarm node, or else you'll hit :
     
     $ docker-compose -f src/main/docker/app.yml  scale demo-app=3
