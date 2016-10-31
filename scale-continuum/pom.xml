@@ -80,7 +80,7 @@
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>org.terracotta.inno.Main</mainClass>
+              <mainClass>org.terracotta.sample.Main</mainClass>
             </configuration>
           </execution>
         </executions>

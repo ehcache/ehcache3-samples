@@ -1,4 +1,4 @@
-package org.terracotta.inno.service;
+package org.terracotta.sample.service;
 
 import org.ehcache.Cache;
 

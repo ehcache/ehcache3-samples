@@ -1,12 +1,12 @@
-package org.terracotta.inno;
+package org.terracotta.sample;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.rainfall.statistics.StatisticsPeekHolder;
-import org.terracotta.inno.collector.Config;
-import org.terracotta.inno.collector.Entry;
-import org.terracotta.inno.collector.PerformanceMetricsCollector;
-import org.terracotta.inno.collector.QueueReporter;
+import org.terracotta.sample.collector.Config;
+import org.terracotta.sample.collector.Entry;
+import org.terracotta.sample.collector.PerformanceMetricsCollector;
+import org.terracotta.sample.collector.QueueReporter;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

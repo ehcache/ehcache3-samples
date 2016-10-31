@@ -1,4 +1,4 @@
-package org.terracotta.inno.collector;
+package org.terracotta.sample.collector;
 
 import org.ehcache.impl.internal.store.offheap.MemorySizeParser;
 

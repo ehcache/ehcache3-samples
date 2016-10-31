@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terracotta.inno.dao;
+package org.terracotta.sample.dao;
 
 import io.rainfall.ObjectGenerator;
 

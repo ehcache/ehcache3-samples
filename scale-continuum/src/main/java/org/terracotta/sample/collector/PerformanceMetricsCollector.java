@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terracotta.inno.collector;
+package org.terracotta.sample.collector;
 
 import io.rainfall.AssertionEvaluator;
 import io.rainfall.Configuration;
@@ -39,11 +39,11 @@ import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.config.units.EntryUnit;
 import org.ehcache.config.units.MemoryUnit;
-import org.terracotta.inno.dao.SoRDao;
-import org.terracotta.inno.dao.SorLoaderWriter;
-import org.terracotta.inno.service.CachedDataService;
-import org.terracotta.inno.service.DataService;
-import org.terracotta.inno.service.UncachedDataService;
+import org.terracotta.sample.dao.SoRDao;
+import org.terracotta.sample.dao.SorLoaderWriter;
+import org.terracotta.sample.service.CachedDataService;
+import org.terracotta.sample.service.DataService;
+import org.terracotta.sample.service.UncachedDataService;
 
 import java.net.URI;
 import java.util.Arrays;

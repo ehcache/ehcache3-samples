@@ -1,7 +1,7 @@
-package org.terracotta.inno.service;
+package org.terracotta.sample.service;
 
 import io.rainfall.ObjectGenerator;
-import org.terracotta.inno.dao.SoRDao;
+import org.terracotta.sample.dao.SoRDao;
 
 /**
  * @author Aurelien Broszniowski

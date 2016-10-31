@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.terracotta.inno.collector;
+package org.terracotta.sample.collector;
 
 import io.rainfall.Reporter;
 import io.rainfall.statistics.StatisticsHolder;
@@ -24,9 +24,9 @@ import org.ehcache.Cache;
 import java.util.List;
 import java.util.Queue;
 
-import static org.terracotta.inno.collector.Ehcache3Stats.findValueStat;
-import static org.terracotta.inno.collector.PerformanceMetricsCollector.DaoResult.LOAD;
-import static org.terracotta.inno.collector.PerformanceMetricsCollector.OPERATION_NAME;
+import static org.terracotta.sample.collector.Ehcache3Stats.findValueStat;
+import static org.terracotta.sample.collector.PerformanceMetricsCollector.DaoResult.LOAD;
+import static org.terracotta.sample.collector.PerformanceMetricsCollector.OPERATION_NAME;
 
 /**
  * @author Ludovic Orban

@@ -1,4 +1,4 @@
-package org.terracotta.inno.collector;
+package org.terracotta.sample.collector;
 
 /**
  * @author Aurelien Broszniowski

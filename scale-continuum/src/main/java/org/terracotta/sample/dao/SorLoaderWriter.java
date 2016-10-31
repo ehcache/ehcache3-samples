@@ -1,4 +1,4 @@
-package org.terracotta.inno.dao;
+package org.terracotta.sample.dao;
 
 import org.ehcache.spi.loaderwriter.BulkCacheLoadingException;
 import org.ehcache.spi.loaderwriter.BulkCacheWritingException;
