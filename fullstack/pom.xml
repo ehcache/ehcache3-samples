@@ -270,11 +270,6 @@
             <artifactId>ehcache-transactions</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.ehcache.modules</groupId>
-            <artifactId>ehcache-management</artifactId>
-            <version>${ehcache3.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-envers</artifactId>
         </dependency>
@@ -392,11 +387,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.terracotta.management</groupId>
-            <artifactId>management-model</artifactId>
-            <version>5.0.7.beta</version>
         </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
@@ -879,4 +869,5 @@
             </dependencies>
         </profile>
     </profiles>
+
 </project>
