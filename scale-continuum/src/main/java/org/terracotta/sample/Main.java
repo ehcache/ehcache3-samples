@@ -30,7 +30,7 @@ public class Main {
 
     PerformanceMetricsCollector metricsCollector = new PerformanceMetricsCollector();
 
-    staticFileLocation("/");
+    staticFileLocation("/public");
 
     post("/start", (request, response) -> {
       String body = request.body();
