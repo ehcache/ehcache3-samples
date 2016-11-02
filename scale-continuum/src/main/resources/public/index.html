@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Scale continuum</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <style>
+        body {
+            background: url(graphics/Hd-Blue-Wallpaper-9.jpg) no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+
+        input, textarea, select {
+            background-color: #FFF;
+            color: #337AB7;
+        }
+    </style>
+</head>
+<body>
+
+<div id="switchButton" class="btn btn-primary btn-success" style="position: fixed; top: 10px; left: 10px">Switch
+    configuration panel
+</div>
+
+<section class="bg-primary">
+    <div class="container-fluid" id="title">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <h2 class="section-heading">Scale continuum Demo</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-primary" id="controls">
+    <div class="container-fluid">
+        <form name="form" id="form">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    Please choose the dataset size and the cache configuration.<br/>
+                    Then press the 'Start' button to execute the demo. The performance of fetching data will be
+                    displayed below
+                    <hr class="light"/>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2"></div>
+
+                <div class="col-md-1">
+                    <div style="float:left;padding: 10px;">
+                        <img id="spinner" src="graphics/ajax-loader.gif">
+                        <div id="taskButton" class="btn btn-primary btn-success">Start</div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <label>
+                        Dataset size:
+                        <select id="datasetCount" name="datasetCount">
+                            <option value="100">100</option>
+                            <option value="10000">10000</option>
+                            <option value="1000000">1000000</option>
+                            <option value="100000000">10000000</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label>
+                        Value size:
+                        <select id="valueSize" name="valueSize">
+                            <option value="100">100 B</option>
+                            <option value="1024">1 KB</option>
+                            <option value="16384">16 KB</option>
+                            <option value="1048576">1 MB</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="col-md-1" style="padding-top: 21px; padding-left: 0px;" >
+                    <label>
+                        <span class="bg-primary" id="totalDatasetSize">0 MB</span>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label>
+                        Client count:
+                        <input type="text" name="clientCount" value="16" size="6"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="heapGaugeLabel">
+                        Heap usage :
+                        <meter id="heapGauge" value="0" min="0" max="10000"></meter>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="offheapGaugeLabel">
+                        Offheap usage :
+                        <meter id="offheapGauge" value="0" min="0" max="10000"></meter>
+                    </label>
+                </div>
+            </div>
+
+            <div id="control2ndRow" class="row">
+                <div class="col-md-2"></div>
+
+                <!--Enable cache-->
+                <div class="col-md-1">
+                    <label>
+                        Enable cache:
+                        <input id="enableCache" type="checkbox" name="cacheEnabled"/>
+                    </label>
+                </div>
+
+                <!--Heap-->
+                <div class="col-md-1">
+                    <label id="enableHeapLabel">
+                        Enable Heap:
+                        <input id="enableHeap" type="checkbox" name="heapEnabled"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="heapSizeLabel">
+                        Heap size:
+                        <input id="heapSize" type="text" name="heapSize" size="6" value="1000">
+                    </label>
+                </div>
+
+                <!--Offheap-->
+                <div class="col-md-1">
+                    <label id="enableOffheapLabel">
+                        Enable Offheap:
+                        <input id="enableOffheap" type="checkbox" name="offheapEnabled"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="offheapSizeLabel">
+                        Offheap size:
+                        <input id="offheapSize" type="text" name="offheapSize" size="6" value="100"/> MB
+                    </label>
+                </div>
+
+                <!--Terracotta-->
+                <div class="col-md-1">
+                    <label id="enableTerracottaLabel">
+                        Enable Terracotta:
+                        <input id="enableTerracotta" type="checkbox" name="TerracottaEnabled"/>
+                    </label>
+                </div>
+
+                <div class="col-md-1">
+                    <label id="terracottaUrlLabel">
+                        Terracotta&nbsp;URL:
+                        <input type="text" name="terracottaUrl" size="18" value="localhost:9510"/>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <br/>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<section id="graphs">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1" style="z-index: 10;">
+                <span id="tpsLabel" style="font-size: 1800%; opacity: 0.70; color: #fff">&nbsp;</span>
+            </div>
+            <div id="tpsCanvas" class="col-lg-10 text-center" style="position: relative; top:10px;z-index: 5;">
+                <canvas id="tps" width="960" height="350"></canvas>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-1" style="z-index: 10;">
+                <span id="latencyLabel" style="font-size: 1800%; opacity: 0.70; color: #fff">&nbsp;</span>
+            </div>
+            <div id="latencyCanvas" class="col-lg-10 text-center" style="position: relative; top:10px;z-index: 5;">
+                <canvas id="latencies" width="960" height="350"></canvas>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+    </div>
+</section>
+
+<
+
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/smoothie.js"></script>
+<script type="application/javascript">
+    $(document).ready(function () {
+        var started = false;
+        var intervalFunction;
+        var tpsSmoothie;
+        var latenciesSmoothie;
+
+//        bind submit button to call Rest start command
+        $('#taskButton').click(function () {
+            if (started) {
+                $.get('/cancel').done(function () {
+                            clearInterval(intervalFunction);
+                            if (tpsSmoothie !== null) {
+                                tpsSmoothie.stop();
+                            }
+                            if (latenciesSmoothie !== null) {
+                                latenciesSmoothie.stop();
+                            }
+                            $('#taskButton').html('Start');
+                            $('#control2ndRow').find('input, textarea, button, select').attr('disabled', false);
+                            started = false;
+                        }
+                );
+            } else {
+                var data = $('form').serializeArray();
+                $('#spinner').toggle();
+                $('#taskButton').toggle();
+                $.get('/cancelNoFail').done(function() {
+                $.post("/start", JSON.stringify(data), "json")
+                        .fail(function (jqXHR) {
+                            $('#spinner').toggle();
+                            $('#taskButton').toggle();
+                            alert("error: " + jqXHR.responseText);
+                        })
+                        .done(function () {
+                            $('#spinner').toggle();
+                            $('#taskButton').toggle();
+                            $('#taskButton').html('Stop');
+                            $('#control2ndRow').find('input, textarea, button, select').attr('disabled', true);
+                            started = true;
+
+                            if ($('#enableCache').is(":checked") && $('#enableHeap').is(":checked")) {
+                                $('#heapGaugeLabel').show();
+                                $('#heapGauge').attr('max', $('#heapSize').val());
+                            } else {
+                                $('#heapGaugeLabel').hide();
+                            }
+
+                            if ($('#enableCache').is(":checked") && $('#enableOffheap').is(":checked")) {
+                                $('#offheapGaugeLabel').show();
+                                $('#offheapGauge').attr('max', $('#offheapSize').val());
+                            } else {
+                                $('#offheapGaugeLabel').hide();
+                            }
+
+                            $('#tpsCanvas').empty().append('<canvas id="tps" width="1000" height="350"></canvas>');
+                            $('#latencyCanvas').empty().append('<canvas id="latencies" width="1000" height="350"></canvas>');
+
+                            var tpsLine = new TimeSeries();
+                            var latenciesLine = new TimeSeries();
+
+                            tpsSmoothie = new SmoothieChart({labels: {fontSize: 20}, millisPerPixel: 64, grid:{millisPerLine:5000}});
+                            tpsSmoothie.streamTo(document.getElementById("tps"));
+
+                            latenciesSmoothie = new SmoothieChart({labels: {fontSize: 20}, millisPerPixel: 64, grid:{millisPerLine:5000}});
+                            latenciesSmoothie.streamTo(document.getElementById("latencies"));
+
+                            intervalFunction = setInterval(function () {
+                                $.get('/stats', function (data) {
+                                    $.each(data, function () {
+                                        tpsLine.append(this['timestamp'], this['periodicTps']);
+                                        latenciesLine.append(this['timestamp'], this['periodicAverageLatencyInMs']);
+                                        $('#heapGauge').val(this['onHeapCount']);
+                                        $('#offheapGauge').val(this['offHeapSizeInMegabytes']);
+                                        $('#tpsLabel').text('' + this['periodicTps'] + '/s');
+                                        $('#latencyLabel').text('' + this['periodicAverageLatencyInMs'].toFixed(2) + 'ms');
+                                    })
+                                })
+                            }, 1000);
+                            tpsSmoothie.addTimeSeries(tpsLine, {
+                                strokeStyle: 'rgba(0, 255, 0, 1)',
+                                fillStyle: 'rgba(0, 255, 0, 0.2)',
+                                lineWidth: 4
+                            }, 1000);
+                            latenciesSmoothie.addTimeSeries(latenciesLine, {
+                                lineWidth: 5,
+                                strokeStyle: '#0055c9',
+                                fillStyle: 'rgba(0,0,255,0.30)'
+                            }, 1000);
+                        });
+                });
+            }
+        });
+
+        $('#enableHeapLabel').hide();
+        $('#enableOffheapLabel').hide();
+        $('#enableTerracottaLabel').hide();
+
+        $('#heapSizeLabel').hide();
+        $('#offheapSizeLabel').hide();
+        $('#terracottaUrlLabel').hide();
+
+        $('#enableCache').click(function () {
+            $('#enableHeapLabel').toggle();
+            $('#enableOffheapLabel').toggle();
+            $('#enableTerracottaLabel').toggle();
+        });
+
+        $('#enableHeap').click(function () {
+            $('#heapSizeLabel').toggle();
+        });
+
+        $('#enableOffheap').click(function () {
+            $('#offheapSizeLabel').toggle();
+        });
+
+        $('#enableTerracotta').click(function () {
+            $('#terracottaUrlLabel').toggle();
+        });
+
+        $('#switchButton').click(function () {
+            $('#controls').slideToggle();
+        });
+        $('#controls').hide();
+
+        $('#heapGaugeLabel').hide();
+        $('#offheapGaugeLabel').hide();
+        $('#spinner').hide();
+
+        $.get('/cancelNoFail');
+
+        calculateTotalDatasetSize();
+        $('#datasetCount').click(function() {
+            calculateTotalDatasetSize();
+        });
+        $('#valueSize').click(function() {
+            calculateTotalDatasetSize();
+        });
+    })
+
+    function calculateTotalDatasetSize() {
+        datasetCount = $('#datasetCount').val();
+        valueSize = $('#valueSize').val();
+        totalDatasetSize = datasetCount * valueSize / 1024 / 1024;
+        $('#totalDatasetSize').text(totalDatasetSize.toFixed(2) + ' MB');
+    }
+</script>
+</body>
+</html>

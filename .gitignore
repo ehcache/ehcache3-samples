@@ -1,5 +1,7 @@
+
 # Compiled source #
 *.class
+dependency-reduced-pom.xml
 bin/
 target/
 out/
@@ -35,3 +37,4 @@ bin/**
 
 #misc
 .DS_Store
+
