@@ -87,3 +87,4 @@ demo:
     biographiesLocation: target/test-classes/biographies.test.list.gz
     googleApiKey: ""
     darkSkyApiKey: ""
+    stubWebServices: true

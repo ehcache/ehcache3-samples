@@ -14,6 +14,9 @@ import com.google.common.base.Stopwatch;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Locale;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import javax.cache.annotation.CacheResult;
@@ -24,6 +27,9 @@ import javax.inject.Inject;
  */
 @Service
 public class WeatherService {
+
+    @Value("${demo.stubWebServices}")
+    private boolean stubWebServices;
 
     @Value("${demo.darkSkyApiKey}")
     private String darkSkyApiKey;
@@ -42,6 +48,10 @@ public class WeatherService {
 
     @CacheResult(cacheName = "weatherReports")
     public WeatherReport retrieveWeatherReport(String location, LocalDate date) {
+
+        if (stubWebServices) {
+            return getFakeWeatherReport(location, date);
+        }
 
         // resource call report gathered in the retrieveCoordinates service
         Coordinates coordinates = coordinatesService.retrieveCoordinates(location);
@@ -84,4 +94,24 @@ public class WeatherService {
         }
     }
 
+    private static final String[] WEATHERS = {
+        "Cloudy",
+        "Sunny",
+        "Rainy",
+        "Snowy"
+    };
+
+    private WeatherReport getFakeWeatherReport(String location, LocalDate date) {
+        Random rand = ThreadLocalRandom.current();
+        try {
+            Thread.sleep(500 + rand.nextInt(1000));
+        } catch (InterruptedException e) {
+            // ignore
+        }
+        int min = -30 + rand.nextInt(60);
+        int max = min + rand.nextInt(15);
+        String summary = WEATHERS[rand.nextInt(WEATHERS.length)];
+        String icon = summary.toLowerCase(Locale.US);
+        return new WeatherReport(date, location, summary, icon, min, max);
+    }
 }
