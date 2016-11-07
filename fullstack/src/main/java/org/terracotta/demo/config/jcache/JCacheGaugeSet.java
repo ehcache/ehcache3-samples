@@ -1,4 +1,4 @@
-package org.terracotta.demo.config;
+package org.terracotta.demo.config.jcache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

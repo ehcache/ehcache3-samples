@@ -8,9 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 import com.codahale.metrics.MetricRegistry;
 
-import java.util.SortedSet;
-
 import javax.annotation.PreDestroy;
+import javax.cache.CacheManager;
 import javax.inject.Inject;
 
 @SuppressWarnings("unused")
@@ -24,11 +23,13 @@ public class CacheConfiguration {
     @Inject
     private MetricRegistry metricRegistry;
 
+    @Inject
+    private CacheManager cacheManager;
+
     @PreDestroy
     public void destroy() {
-        log.info("Remove Cache Manager metrics");
-        SortedSet<String> names = metricRegistry.getNames();
-        names.forEach(metricRegistry::remove);
+        log.info("Close Cache Manager");
+        cacheManager.close();
     }
 
 }
