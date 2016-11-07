@@ -747,7 +747,7 @@
             </build>
             <properties>
                 <!-- log configuration -->
-                <logback.loglevel>DEBUG</logback.loglevel>
+                <logback.loglevel>INFO</logback.loglevel>
                 <!-- default Spring profiles -->
                 <spring.profiles.active>dev${profile.no-liquibase}</spring.profiles.active>
             </properties>
