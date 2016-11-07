@@ -99,14 +99,21 @@ public class DemoApp {
     @Bean
     public CommandLineRunner demo(ActorRepository actorRepository) {
         return (args) -> {
-            String googleApiKey = env.getProperty("demo.googleApiKey");
-            String darkSkyApiKey = env.getProperty("demo.darkSkyApiKey");
+            boolean stubWebServices = env.getProperty("demo.stubWebServices", Boolean.class, false);
 
-            if(Strings.isNullOrEmpty(googleApiKey)) {
-                log.warn("The googleApiKey is not defined, CoordinatesService will NOT work !");
+            if(stubWebServices) {
+                log.warn("Fake web service calls will be made");
             }
-            if(Strings.isNullOrEmpty(darkSkyApiKey)) {
-                log.warn("The darkSkyApiKey is not defined, WeatherService will NOT work !");
+            else {
+                String googleApiKey = env.getProperty("demo.googleApiKey");
+                String darkSkyApiKey = env.getProperty("demo.darkSkyApiKey");
+
+                if (Strings.isNullOrEmpty(googleApiKey)) {
+                    log.warn("The googleApiKey is not defined, CoordinatesService will NOT work !");
+                }
+                if (Strings.isNullOrEmpty(darkSkyApiKey)) {
+                    log.warn("The darkSkyApiKey is not defined, WeatherService will NOT work !");
+                }
             }
 
             // Assume that if we already have entries in the DB, that we already read the full file

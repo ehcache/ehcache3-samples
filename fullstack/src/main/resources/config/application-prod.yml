@@ -93,3 +93,6 @@ jhipster:
             host: localhost
             port: 5000
             queueSize: 512
+
+demo:
+    stubWebServices: false
