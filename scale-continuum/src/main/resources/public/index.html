@@ -217,7 +217,7 @@
 //        bind submit button to call Rest start command
         $('#taskButton').click(function () {
             if (started) {
-                $.get('/cancel').done(function () {
+                $.get('/api/cancel').done(function () {
                             clearInterval(intervalFunction);
                             if (tpsSmoothie !== null) {
                                 tpsSmoothie.stop();
@@ -234,8 +234,8 @@
                 var data = $('form').serializeArray();
                 $('#spinner').toggle();
                 $('#taskButton').toggle();
-                $.get('/cancelNoFail').done(function() {
-                $.post("/start", JSON.stringify(data), "json")
+                $.get('/api/cancelNoFail').done(function() {
+                $.post('/api/start', JSON.stringify(data), "json")
                         .fail(function (jqXHR) {
                             $('#spinner').toggle();
                             $('#taskButton').toggle();
@@ -275,7 +275,7 @@
                             latenciesSmoothie.streamTo(document.getElementById("latencies"));
 
                             intervalFunction = setInterval(function () {
-                                $.get('/stats', function (data) {
+                                $.get('/api/stats', function (data) {
                                     $.each(data, function () {
                                         tpsLine.append(this['timestamp'], this['periodicTps']);
                                         latenciesLine.append(this['timestamp'], this['periodicAverageLatencyInMs']);
@@ -336,7 +336,7 @@
         $('#offheapGaugeLabel').hide();
         $('#spinner').hide();
 
-        $.get('/cancelNoFail');
+        $.get('/api/cancelNoFail');
 
         calculateTotalDatasetSize();
         $('#datasetCount').click(function() {

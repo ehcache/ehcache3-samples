@@ -1,12 +1,13 @@
 package org.terracotta.sample;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import io.rainfall.statistics.StatisticsPeekHolder;
 import org.terracotta.sample.collector.Config;
 import org.terracotta.sample.collector.Entry;
 import org.terracotta.sample.collector.PerformanceMetricsCollector;
 import org.terracotta.sample.collector.QueueReporter;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -32,7 +33,7 @@ public class Main {
 
     staticFileLocation("/public");
 
-    post("/start", (request, response) -> {
+    post("/api/start", (request, response) -> {
       String body = request.body();
       GsonBuilder builder = new GsonBuilder();
       Gson gson = builder.create();
@@ -50,7 +51,7 @@ public class Main {
       return "Started.";
     });
 
-    get("/waitUntilDone", (request, response) -> {
+    get("/api/waitUntilDone", (request, response) -> {
       Future<StatisticsPeekHolder> future = futureRef.get();
       if (future == null) {
         throw new RuntimeException("no job started");
@@ -60,7 +61,7 @@ public class Main {
       return "Done.";
     });
 
-    get("/cancel", (request, response) -> {
+    get("/api/cancel", (request, response) -> {
       Future<StatisticsPeekHolder> future = futureRef.get();
       if (future == null) {
         throw new RuntimeException("no job started");
@@ -70,7 +71,7 @@ public class Main {
       return "Done.";
     });
 
-    get("/cancelNoFail", (request, response) -> {
+    get("/api/cancelNoFail", (request, response) -> {
       Future<StatisticsPeekHolder> future = futureRef.get();
       if (future != null) {
         future.cancel(true);
@@ -79,7 +80,7 @@ public class Main {
       return "Done.";
     });
 
-    get("/stats", (request, response) -> {
+    get("/api/stats", (request, response) -> {
       response.type("application/json");
       List<QueueReporter.Result> data = new ArrayList<>();
 
