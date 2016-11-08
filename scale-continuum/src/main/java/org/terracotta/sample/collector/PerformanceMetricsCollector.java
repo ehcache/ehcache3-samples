@@ -146,7 +146,7 @@ public class PerformanceMetricsCollector {
               }
             }
         ))
-        .executed(during(10, TimeDivision.minutes))
+        .executed(during(24 * 60, TimeDivision.minutes))
         .config(concurrency, ReportingConfig.report(DaoResult.class).log(new QueueReporter(resultQueue, cache)))
         .start();
 
