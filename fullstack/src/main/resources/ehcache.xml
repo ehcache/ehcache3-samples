@@ -3,7 +3,7 @@
 
     <cache-template name="simple">
         <expiry>
-            <ttl unit="seconds">3600</ttl>
+            <ttl unit="seconds">60</ttl>
         </expiry>
         <heap>100</heap>
     </cache-template>
