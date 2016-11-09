@@ -208,6 +208,21 @@
 <script src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/smoothie.js"></script>
 <script type="application/javascript">
+    Number.prototype.addSeparator = function(c){
+        var s = this.toString();
+        if(s.length <= 4) {
+            return s;
+        }
+        var result = s.charAt(s.length - 1);
+        for(var i = 1; i < s.length; i++) {
+            if(i % 3 == 0) {
+                result = c + result;
+            }
+            result = s.charAt(s.length - 1 - i) + result;
+        }
+        return result;
+    };
+
     $(document).ready(function () {
         var started = false;
         var intervalFunction;
@@ -281,8 +296,8 @@
                                         latenciesLine.append(this['timestamp'], this['periodicAverageLatencyInMs']);
                                         $('#heapGauge').val(this['onHeapCount']);
                                         $('#offheapGauge').val(this['offHeapSizeInMegabytes']);
-                                        $('#tpsLabel').text('' + this['periodicTps'] + 'tps');
-                                        $('#latencyLabel').text('' + this['periodicAverageLatencyInMs'].toFixed(2) + 'ms');
+                                        $('#tpsLabel').html(this['periodicTps'].addSeparator('&nbsp;') + 'tps');
+                                        $('#latencyLabel').text(this['periodicAverageLatencyInMs'].toFixed(2) + 'ms');
                                     })
                                 })
                             }, 1000);
