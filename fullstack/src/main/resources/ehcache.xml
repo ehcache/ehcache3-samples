@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://www.ehcache.org/v3">
+<config
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xmlns='http://www.ehcache.org/v3'
+    xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+    xsi:schemaLocation="
+        http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd
+        http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
+
+    <service>
+        <jsr107:defaults default-template="simple"/>
+    </service>
 
     <cache-template name="simple">
         <expiry>
@@ -7,21 +17,5 @@
         </expiry>
         <heap>100</heap>
     </cache-template>
-
-    <cache alias="org.terracotta.demo.domain.User" uses-template="simple"/>
-
-    <cache alias="org.terracotta.demo.domain.Authority" uses-template="simple"/>
-
-    <cache alias="org.terracotta.demo.domain.User.authorities" uses-template="simple"/>
-
-    <cache alias="org.terracotta.demo.domain.PersistentToken" uses-template="simple"/>
-
-    <cache alias="org.terracotta.demo.domain.User.persistentTokens" uses-template="simple"/>
-
-    <cache alias="org.terracotta.demo.domain.PersistentAuditEvent" uses-template="simple"/>
-
-    <cache alias="org.terracotta.demo.domain.Actor" uses-template="simple"/>
-
-    <cache alias="weatherReports" uses-template="simple"/>
 
 </config>

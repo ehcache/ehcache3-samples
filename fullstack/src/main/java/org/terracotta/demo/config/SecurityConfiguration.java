@@ -22,6 +22,8 @@ import org.springframework.security.web.csrf.CsrfFilter;
 
 import javax.inject.Inject;
 
+import static com.stormpath.spring.config.StormpathWebSecurityConfigurer.stormpath;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -75,7 +77,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.apply(stormpath()).and()
             .csrf()
         .and()
             .addFilterAfter(new CsrfCookieGeneratorFilter(), CsrfFilter.class)
