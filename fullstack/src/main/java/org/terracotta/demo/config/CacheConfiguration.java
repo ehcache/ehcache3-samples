@@ -1,7 +1,13 @@
 package org.terracotta.demo.config;
 
+import org.ehcache.clustered.client.config.ClusteredStoreConfiguration;
+import org.ehcache.clustered.client.config.builders.ClusteredResourcePoolBuilder;
+import org.ehcache.clustered.client.config.builders.ClusteringServiceConfigurationBuilder;
+import org.ehcache.clustered.client.config.builders.ServerSideConfigurationBuilder;
+import org.ehcache.clustered.common.Consistency;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.units.MemoryUnit;
 import org.ehcache.core.config.DefaultConfiguration;
 import org.ehcache.expiry.Expirations;
 import org.ehcache.jsr107.EhcacheCachingProvider;
@@ -13,13 +19,14 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.terracotta.demo.domain.Actor;
 import org.terracotta.demo.domain.Authority;
 import org.terracotta.demo.domain.PersistentAuditEvent;
 import org.terracotta.demo.domain.PersistentToken;
 import org.terracotta.demo.domain.User;
 
-import java.util.Collections;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PreDestroy;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
 import javax.inject.Inject;
 
 @SuppressWarnings("unused")
@@ -39,6 +45,9 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     private final Logger log = LoggerFactory.getLogger(CacheConfiguration.class);
 
     @Inject
+    private Environment env;
+
+    @Inject
     private JHipsterProperties properties;
 
     private CacheManager cacheManager;
@@ -46,22 +55,8 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     @Bean
     @Override
     public org.springframework.cache.CacheManager cacheManager() {
-        CachingProvider cachingProvider = Caching.getCachingProvider();
-        EhcacheCachingProvider ehcacheProvider = (EhcacheCachingProvider) cachingProvider;
 
-        Map<String, org.ehcache.config.CacheConfiguration<?, ?>> caches = new HashMap<>();
-        caches.put(User.class.getName(), createCacheConfiguration());
-        caches.put(Authority.class.getName(), createCacheConfiguration());
-        caches.put(User.class.getName() + ".authorities", createCacheConfiguration());
-        caches.put(PersistentToken.class.getName(), createCacheConfiguration());
-        caches.put(User.class.getName() + ".persistentTokens", createCacheConfiguration());
-        caches.put(PersistentAuditEvent.class.getName(), createCacheConfiguration());
-        caches.put(Actor.class.getName(), createCacheConfiguration());
-        caches.put("weatherReports", createCacheConfiguration());
-
-        DefaultConfiguration configuration = new DefaultConfiguration(caches, ehcacheProvider.getDefaultClassLoader());
-
-        cacheManager = ehcacheProvider.getCacheManager(ehcacheProvider.getDefaultURI(), configuration);
+        cacheManager = env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION) ? createClusteredCacheManager() : createInMemoryCacheManager();
 
         return new JCacheCacheManager(cacheManager) {
             @Override
@@ -82,23 +77,64 @@ public class CacheConfiguration extends CachingConfigurerSupport {
         cacheManager.close();
     }
 
-    private CacheManager createCacheManager() {
+    private CacheManager createInMemoryCacheManager() {
+        long cacheSize = properties.getCache().getEhcache().getSize();
+        long ttl = properties.getCache().getEhcache().getTimeToLiveSeconds();
+
+        org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration = CacheConfigurationBuilder
+            .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder
+                .newResourcePoolsBuilder()
+                .heap(cacheSize))
+            .withExpiry(Expirations.timeToLiveExpiration(new org.ehcache.expiry.Duration(ttl, TimeUnit.SECONDS)))
+            .build();
+
+        Map<String, org.ehcache.config.CacheConfiguration<?, ?>> caches = createCacheConfigurations(cacheConfiguration);
+
         EhcacheCachingProvider provider = getCachingProvider();
-
-        DefaultConfiguration configuration = new DefaultConfiguration(
-            Collections.emptyMap(),
-            provider.getDefaultClassLoader());
-
+        DefaultConfiguration configuration = new DefaultConfiguration(caches, provider.getDefaultClassLoader());
         return provider.getCacheManager(provider.getDefaultURI(), configuration);
     }
 
-    private org.ehcache.config.CacheConfiguration<Object, Object> createCacheConfiguration() {
-        long cacheSize = properties.getCache().getEhcache().getSize();
+    private CacheManager createClusteredCacheManager() {
+        JHipsterProperties.Cache.Ehcache.Cluster clusterProperties = properties.getCache().getEhcache().getCluster();
+        URI clusterUri = clusterProperties.getUri();
+        boolean autoCreate = clusterProperties.isAutoCreate();
+        long clusteredCacheSize = clusterProperties.getSizeInMb();
+        Consistency consistency = clusterProperties.getConsistency();
+
+        long heapCacheSize = properties.getCache().getEhcache().getSize();
         long ttl = properties.getCache().getEhcache().getTimeToLiveSeconds();
-        return CacheConfigurationBuilder
-            .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder.newResourcePoolsBuilder().heap(cacheSize))
+
+        ClusteringServiceConfigurationBuilder clusteringServiceConfigurationBuilder = ClusteringServiceConfigurationBuilder.cluster(clusterUri);
+        ServerSideConfigurationBuilder serverSideConfigurationBuilder = (autoCreate ? clusteringServiceConfigurationBuilder.autoCreate() : clusteringServiceConfigurationBuilder.expecting())
+            .defaultServerResource("primary-server-resource");
+
+        org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration = CacheConfigurationBuilder
+            .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder
+                .newResourcePoolsBuilder()
+                .heap(heapCacheSize)
+                .with(ClusteredResourcePoolBuilder.clusteredDedicated(clusteredCacheSize, MemoryUnit.MB)))
             .withExpiry(Expirations.timeToLiveExpiration(new org.ehcache.expiry.Duration(ttl, TimeUnit.SECONDS)))
-            .build();
+            .add(new ClusteredStoreConfiguration(consistency)).build();
+
+        Map<String, org.ehcache.config.CacheConfiguration<?, ?>> caches = createCacheConfigurations(cacheConfiguration);
+
+        EhcacheCachingProvider provider = getCachingProvider();
+        DefaultConfiguration configuration = new DefaultConfiguration(caches, provider.getDefaultClassLoader(), serverSideConfigurationBuilder.build());
+        return provider.getCacheManager(provider.getDefaultURI(), configuration);
+    }
+
+    private Map<String, org.ehcache.config.CacheConfiguration<?, ?>> createCacheConfigurations(org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration) {
+        Map<String, org.ehcache.config.CacheConfiguration<?, ?>> caches = new HashMap<>();
+        caches.put(User.class.getName(), cacheConfiguration);
+        caches.put(Authority.class.getName(), cacheConfiguration);
+        caches.put(User.class.getName() + ".authorities", cacheConfiguration);
+        caches.put(PersistentToken.class.getName(), cacheConfiguration);
+        caches.put(User.class.getName() + ".persistentTokens", cacheConfiguration);
+        caches.put(PersistentAuditEvent.class.getName(), cacheConfiguration);
+        caches.put(Actor.class.getName(), cacheConfiguration);
+        caches.put("weatherReports", cacheConfiguration);
+        return caches;
     }
 
     private EhcacheCachingProvider getCachingProvider() {

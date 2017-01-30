@@ -1,7 +1,10 @@
 package org.terracotta.demo.config;
 
+import org.ehcache.clustered.common.Consistency;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.cors.CorsConfiguration;
+
+import java.net.URI;
 
 import javax.validation.constraints.NotNull;
 
@@ -134,9 +137,15 @@ public class JHipsterProperties {
 
         public static class Ehcache {
 
+            private Cluster cluster = new Cluster();
+
             private int timeToLiveSeconds = 3600;
 
             private long size = 100;
+
+            public Cluster getCluster() {
+                return cluster;
+            }
 
             public int getTimeToLiveSeconds() {
                 return timeToLiveSeconds;
@@ -152,6 +161,49 @@ public class JHipsterProperties {
 
             public void setSize(long size) {
                 this.size = size;
+            }
+
+            public static class Cluster {
+
+                private URI uri;
+
+                private boolean autoCreate = true;
+
+                private Consistency consistency = Consistency.STRONG;
+
+                private long sizeInMb = 10;
+
+                public URI getUri() {
+                    return uri;
+                }
+
+                public void setUri(URI uri) {
+                    this.uri = uri;
+                }
+
+                public boolean isAutoCreate() {
+                    return autoCreate;
+                }
+
+                public void setAutoCreate(boolean autoCreate) {
+                    this.autoCreate = autoCreate;
+                }
+
+                public Consistency getConsistency() {
+                    return consistency;
+                }
+
+                public void setConsistency(Consistency consistency) {
+                    this.consistency = consistency;
+                }
+
+                public long getSizeInMb() {
+                    return sizeInMb;
+                }
+
+                public void setSizeInMb(long sizeInMb) {
+                    this.sizeInMb = sizeInMb;
+                }
             }
         }
     }

@@ -61,6 +61,8 @@ jhipster:
             timeToLiveInDays: 1461
     cache:
         ehcache:
+            cluster:
+                uri: terracotta://localhost:9510/demo-entity
             timeToLiveSeconds: 3600
             size: 100
     security:
@@ -91,4 +93,6 @@ jhipster:
             queueSize: 512
 
 demo:
-    stubWebServices: false
+    stubWebServices: true
+    googleApiKey: ""
+    darkSkyApiKey: ""
