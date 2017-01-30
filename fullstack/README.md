@@ -6,17 +6,19 @@ The sample features Ehcache used in a full-stack enterprise architecture.
 
 The interesting points are:
 * Spring using Ehcache through JCache (JSR-107)
-  * [application-dev.xml](src/main/resources/config/application-dev.yml), [application-prod.xml](src/main/resources/config/application-prod.yml): Spring JCache configuration
-  * [ehcache.xml](src/main/resources/ehcache.xml): Ehcache configuration
+  * [CacheConfiguration](src/main/java/org/terracotta/demo/config/CacheConfiguration.java): Spring JCache configuration
 * Hibernate 5 reusing the same `CacheManager` as Spring through JCache  
-  * [application-dev.xml](src/main/resources/config/application-dev.yml), [application-prod.xml](src/main/resources/config/application-prod.yml): Hibernate cache provider configuration
-  * [SpringCacheRegionFactory.java](src/main/java/org/terracotta/demo/config/jcache/SpringCacheRegionFactory.java): Hibernate region factory linked with Spring
+  * [JCacheRegionFactory.java](src/main/java/org/terracotta/demo/config/jcache/JCacheRegionFactory.java): Special region factory preventing cache configured by default
+  * [application-dev.xml](src/main/resources/config/application-dev.yml), [application-prod.xml](src/main/resources/config/application-prod.yml): Hibernate region factory configuration
+* Configuration through JHipster
+  * [JHipsterProperties](src/main/java/org/terracotta/demo/config/JHipsterProperties.java): Ehcache specific configuration class
+  * [application-dev.xml](src/main/resources/config/application-dev.yml), [application-prod.xml](src/main/resources/config/application-prod.yml): Ehcache specific configuration
 * Push JCache JMX metrics to [Dropwizard Metrics](http://metrics.dropwizard.io)
   * [MetricsConfiguration.java](src/main/java/org/terracotta/demo/config/MetricsConfiguration.java)
   * [JCacheGaugeSet.java](src/main/java/org/terracotta/demo/config/JCacheGaugeSet.java)
 * Ehcache clustered configuration for production
-  * [ehcache-clustered.xml](src/main/resources/ehcache-clustered.xml): Ehcache clustered configuration
-  * [application-prod.xml](src/main/resources/config/application-prod.yml): Clustered configuration in Spring 
+  * [CacheConfiguration](src/main/java/org/terracotta/demo/config/CacheConfiguration.java): Ehcache clustered configuration in a dedicated profile
+  * [application-prod.xml](src/main/resources/config/application-prod.yml): Clustered configuration 
 * Terracotta server deployed with Docker
   * [terracotta-server-yml](src/main/docker/terracotta-server.yml): Docker Compose for Terracotta server
 
