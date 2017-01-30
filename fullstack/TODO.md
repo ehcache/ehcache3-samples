@@ -1,4 +1,3 @@
-* Create the CacheManager in a programmative way (no ehcache.xml)... This pushes for separating URI in SPI
 * Do a front page with performance graphs of different style of caching
 * Generate a CSV of the biographies to feed to Gatling
 * Gatling get stars and weather injector
