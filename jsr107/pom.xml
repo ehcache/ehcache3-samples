@@ -7,7 +7,7 @@
 
   <properties>
     <jcache.version>1.0.0</jcache.version>
-    <ehcache.version>3.1.0</ehcache.version>
+    <ehcache.version>3.2.0</ehcache.version>
     <maven-compiler-plugin.version>2.3.1</maven-compiler-plugin.version>
   </properties>
 

@@ -77,7 +77,7 @@ After installing Node, you should be able to run the following command to instal
 [Bower](https://bower.io) and [BrowserSync](https://www.browsersync.io)). You will only need to run this command when dependencies change 
 in `package.json`.
 
-    npm install
+npm install
 
 We use [Gulp](http://gulpjs.com) as our build system. Install the Gulp command-line tool globally with:
 
@@ -130,34 +130,31 @@ You can run your application locally with
 
     mvn spring-boot:run
     
-If you want to use a local production database and Terracotta server in Docker 
+If you want to use a production database and a Terracotta server in Docker 
 
     docker-compose -f src/main/docker/postgresql.yml up
     docker-compose -f src/main/docker/terracotta-server.yml up
     ./mvnw spring-boot:run -Pprod
 
-**Note:** You need to change `ehcache-clustered.xml` to replace `terracotta://terracotta-server:9510/demo-entity` by `terracotta://localhost:9510/demo-entity`
-for this to work.
-
 Or if you want everything in Docker
 
     ./mvnw package -Pprod docker:build
     docker-compose -f src/main/docker/app.yml up
-     
+    docker-compose -f src/main/docker/app.yml ps
 
-You wanna "scale"? Sure, go ahead, but before, make sure to remove the port binding in `app.yml` for demo-app, or make sure that 
-each container will be started on a different swarm node, or else you'll hit :
-    
-    $ docker-compose -f src/main/docker/app.yml  scale demo-app=3
-    WARNING: The "demo-app" service specifies a port on the host. If multiple containers for this service are created on a single host, the port will clash.
-    Creating and starting docker_demo-app_2 ... error
-    Creating and starting docker_demo-app_3 ... error
+The last line will allow you to see on which port the app port was forwarded locally (e.g. 32769 below).
 
-Let's try again without port clashing :
+    Name                       Command               State                Ports
+    --------------------------------------------------------------------------------------------------
+    demo-postgresql          /docker-entrypoint.sh postgres   Up      0.0.0.0:5432->5432/tcp
+    demo-terracotta-server   /bin/sh -c sed -i -r 's/OF ...   Up      0.0.0.0:9510->9510/tcp, 9530/tcp
+    docker_demo-app_1        /bin/sh -c echo "The appli ...   Up      0.0.0.0:32769->8080/tcp
+
+You wanna "scale"? Sure, go ahead. Here we go:
        
     $ docker-compose -f src/main/docker/app.yml scale demo-app=3
     $ docker-compose -f src/main/docker/app.yml ps
-             Name                       Command               State                Ports               
+    Name                       Command               State                Ports               
     --------------------------------------------------------------------------------------------------
     demo-postgresql          /docker-entrypoint.sh postgres   Up      0.0.0.0:5432->5432/tcp           
     demo-terracotta-server   /bin/sh -c sed -i -r 's/OF ...   Up      0.0.0.0:9510->9510/tcp, 9530/tcp 

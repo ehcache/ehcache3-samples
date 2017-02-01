@@ -2,7 +2,7 @@ version: '2'
 services:
     demo-terracotta-server:
         container_name: demo-terracotta-server
-        image: anthonydahanne/terracotta-server-oss:5.0.0
+        image: anthonydahanne/terracotta-server-oss:5.1.0
         environment:
             - OFFHEAP_RESOURCE_SIZE=256
             - OFFHEAP_RESOURCE_UNIT=MB

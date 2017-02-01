@@ -13,8 +13,7 @@ services:
             - DEMO_DARKSKYAPIKEY # this value needs to be passed via an environment variable
             - DEMO_BIOGRAPHIESREMOTELOCATION # this value needs to be passed via an environment variable
         ports:
-            # let's make sure we are not confused in development between docker and direct jvm launching
-            - 8080:9000
+            - 8080
     demo-postgresql:
         extends:
             file: postgresql.yml
