@@ -94,5 +94,3 @@ jhipster:
 
 demo:
     stubWebServices: true
-    googleApiKey: ""
-    darkSkyApiKey: ""
