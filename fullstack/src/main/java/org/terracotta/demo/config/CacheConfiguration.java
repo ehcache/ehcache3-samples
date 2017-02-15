@@ -55,20 +55,8 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     @Bean
     @Override
     public org.springframework.cache.CacheManager cacheManager() {
-
         cacheManager = env.acceptsProfiles(Constants.SPRING_PROFILE_PRODUCTION) ? createClusteredCacheManager() : createInMemoryCacheManager();
-
-        return new JCacheCacheManager(cacheManager) {
-            @Override
-            protected org.springframework.cache.Cache getMissingCache(String name) {
-                org.springframework.cache.Cache cache = super.getMissingCache(name);
-                // All caches should be configured. So I throw an exception when one is not found
-                if(cache == null) {
-                    throw new IllegalArgumentException("Unknown cache: " + name);
-                }
-                return cache;
-            }
-        };
+        return new JCacheCacheManager(cacheManager);
     }
 
     @PreDestroy
