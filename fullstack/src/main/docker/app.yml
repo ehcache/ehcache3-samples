@@ -4,21 +4,29 @@ services:
         image: demo
         external_links:
             - demo-postgresql:postgresql
-            - demo-terracotta-server:terracotta-server
+            - demo-terracotta-server1:terracotta-server1
+            - demo-terracotta-server2:terracotta-server2
         environment:
             - SPRING_PROFILES_ACTIVE=prod,swagger
             - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/demo
+            - DEMO_STUBWEBSERVICES=false
+            - JHIPSTER_CACHE_EHCACHE_CLUSTER_URI=terracotta://terracotta-server1:9510,terracotta-server2:9510/demo-entity
             - JHIPSTER_SLEEP=10 # gives time for the database to boot before the application
             - DEMO_GOOGLEAPIKEY # this value needs to be passed via an environment variable
             - DEMO_DARKSKYAPIKEY # this value needs to be passed via an environment variable
             - DEMO_BIOGRAPHIESREMOTELOCATION # this value needs to be passed via an environment variable
+
         ports:
             - 8080
     demo-postgresql:
         extends:
             file: postgresql.yml
             service: demo-postgresql
-    demo-terracotta-server:
+    demo-terracotta-server1:
         extends:
             file: terracotta-server.yml
-            service: demo-terracotta-server
+            service: demo-terracotta-server1
+    demo-terracotta-server2:
+        extends:
+            file: terracotta-server.yml
+            service: demo-terracotta-server2
