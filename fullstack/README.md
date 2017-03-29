@@ -15,7 +15,6 @@ The interesting points are:
   * [application-dev.xml](src/main/resources/config/application-dev.yml), [application-prod.xml](src/main/resources/config/application-prod.yml): Ehcache specific configuration
 * Push JCache JMX metrics to [Dropwizard Metrics](http://metrics.dropwizard.io)
   * [MetricsConfiguration.java](src/main/java/org/terracotta/demo/config/MetricsConfiguration.java)
-  * [JCacheGaugeSet.java](src/main/java/org/terracotta/demo/config/JCacheGaugeSet.java)
 * Ehcache clustered configuration for production
   * [CacheConfiguration](src/main/java/org/terracotta/demo/config/CacheConfiguration.java): Ehcache clustered configuration in a dedicated profile
   * [application-prod.xml](src/main/resources/config/application-prod.yml): Clustered configuration 
