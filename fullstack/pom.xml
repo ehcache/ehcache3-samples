@@ -29,7 +29,7 @@
         <frontend-maven-plugin.version>1.0</frontend-maven-plugin.version>
         <gatling-maven-plugin.version>2.1.7</gatling-maven-plugin.version>
         <gatling.version>2.1.7</gatling.version>
-        <hibernate.version>5.2.2.Final</hibernate.version>
+        <hibernate.version>5.2.9.Final</hibernate.version>
         <hikaricp.version>2.4.6</hikaricp.version>
         <jacoco-maven-plugin.version>0.7.7.201606060606</jacoco-maven-plugin.version>
         <java.version>1.8</java.version>
