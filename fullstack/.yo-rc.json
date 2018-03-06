@@ -1,23 +1,30 @@
 {
   "generator-jhipster": {
-    "jhipsterVersion": "3.8.0",
+    "promptValues": {
+      "packageName": "org.ehcache.sample"
+    },
+    "jhipsterVersion": "4.14.1",
     "baseName": "demo",
-    "packageName": "org.terracotta.demo",
-    "packageFolder": "org/terracotta/demo",
+    "packageName": "org.ehcache.sample",
+    "packageFolder": "org/ehcache/sample",
     "serverPort": "8080",
-    "authenticationType": "session",
-    "hibernateCache": "ehcache",
-    "clusteredHttpSession": false,
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
     "websocket": false,
     "databaseType": "sql",
     "devDatabaseType": "h2Disk",
-    "prodDatabaseType": "postgresql",
+    "prodDatabaseType": "mysql",
     "searchEngine": false,
     "messageBroker": false,
+    "serviceDiscoveryType": false,
     "buildTool": "maven",
     "enableSocialSignIn": false,
-    "rememberMeKey": "5f57b51c2be9a371a9b3ee22341ff3b168bb8968",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "c062645393a0b160c8dcfa398c38da3226f0c670",
+    "clientFramework": "angularX",
     "useSass": false,
+    "clientPackageManager": "yarn",
     "applicationType": "monolith",
     "testFrameworks": [
       "gatling"

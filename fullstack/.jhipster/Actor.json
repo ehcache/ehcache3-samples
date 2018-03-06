@@ -19,9 +19,10 @@
             "fieldType": "String"
         }
     ],
-    "changelogDate": "20160926161459",
-    "entityTableName": "actor",
+    "changelogDate": "20180306005136",
     "dto": "no",
-    "pagination": "infinite-scroll",
-    "service": "serviceImpl"
+    "service": "serviceClass",
+    "entityTableName": "actor",
+    "jpaMetamodelFiltering": false,
+    "pagination": "infinite-scroll"
 }
