@@ -1,0 +1,26 @@
+version: '2'
+services:
+    demo-terracotta-server1:
+        hostname: demo-terracotta-server1
+        container_name: demo-terracotta-server1
+        image: terracotta/terracotta-server-oss:5.4.0
+        environment:
+            - OFFHEAP_RESOURCE_SIZE=256
+            - OFFHEAP_RESOURCE_UNIT=MB
+            - OFFHEAP_RESOURCE_NAME=primary-server-resource
+            - TC_SERVER1=demo-terracotta-server1
+            - TC_SERVER2=demo-terracotta-server2
+        ports:
+            - 9410
+    demo-terracotta-server2:
+        hostname: demo-terracotta-server2
+        container_name: demo-terracotta-server2
+        image: terracotta/terracotta-server-oss:5.4.0
+        environment:
+            - OFFHEAP_RESOURCE_SIZE=256
+            - OFFHEAP_RESOURCE_UNIT=MB
+            - OFFHEAP_RESOURCE_NAME=primary-server-resource
+            - TC_SERVER1=demo-terracotta-server1
+            - TC_SERVER2=demo-terracotta-server2
+        ports:
+            - 9410
