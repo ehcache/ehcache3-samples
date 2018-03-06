@@ -1,7 +1,6 @@
 package org.ehcache.sample.service;
 
 import org.ehcache.sample.domain.Coordinates;
-import org.ehcache.sample.service.dto.ResourceCallReport;
 import org.ehcache.sample.service.dto.ResourceType;
 import org.ehcache.sample.service.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Value;

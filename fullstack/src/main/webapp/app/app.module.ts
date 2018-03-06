@@ -16,6 +16,7 @@ import { DemoHomeModule } from './home/home.module';
 import { DemoAdminModule } from './admin/admin.module';
 import { DemoAccountModule } from './account/account.module';
 import { DemoEntityModule } from './entities/entity.module';
+import { DemoDemoModule } from './demo/demo.module';
 import { PaginationConfig } from './blocks/config/uib-pagination.config';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import {
@@ -37,6 +38,7 @@ import {
         DemoAdminModule,
         DemoAccountModule,
         DemoEntityModule,
+        DemoDemoModule
         // jhipster-needle-angular-add-module JHipster will add new module here
     ],
     declarations: [
