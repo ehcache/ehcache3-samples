@@ -6,13 +6,13 @@ services:
             - SPRING_PROFILES_ACTIVE=prod
             - SPRING_DATASOURCE_URL=jdbc:mysql://demo-mysql:3306/demo?useUnicode=true&characterEncoding=utf8&useSSL=false
             - JHIPSTER_SLEEP=10 # gives time for the database to boot before the application
-            - JHIPSTER_CACHE_EHCACHE_CLUSTER_URI=terracotta://terracotta-server1:9410,terracotta-server2:9410/demo-entity
-            - DEMO_STUBWEBSERVICES=false
-            - DEMO_GOOGLEAPIKEY # this value needs to be passed via an environment variable
-            - DEMO_DARKSKYAPIKEY # this value needs to be passed via an environment variable
-            - DEMO_BIOGRAPHIESREMOTELOCATION # this value needs to be passed via an environment variable
+            - APPLICATION_CLUSTER_URI=terracotta://demo-terracotta-server1:9410,demo-terracotta-server2:9410/demo-entity
+            - APPLICATION_STUBWEBSERVICES=false
+            - APPLICATION_GOOGLEAPIKEY # this value needs to be passed via an environment variable
+            - APPLICATION_DARKSKYAPIKEY # this value needs to be passed via an environment variable
+            - APPLICATION_BIOGRAPHIESREMOTELOCATION # this value needs to be passed via an environment variable
         ports:
-            - 8080:8080
+            - 8080
     demo-mysql:
         extends:
             file: mysql.yml

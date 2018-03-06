@@ -3,4 +3,5 @@ export class ProfileInfo {
     ribbonEnv: string;
     inProduction: boolean;
     swaggerEnabled: boolean;
+    hostname: string;
 }
