@@ -152,16 +152,16 @@ You can run your application locally with
 
     ./mvnw
     
-If you want to use a production database and a highly available Terracotta cluster in Docker 
+If you want to use a production database and a Terracotta cluster in Docker 
 
-    docker-compose -f src/main/docker/mysql.yml up
-    docker-compose -f src/main/docker/terracotta-server.yml up
+    docker-compose -f src/main/docker/mysql.yml up -d
+    docker-compose -f src/main/docker/terracotta-server-single.yml up -d
     ./mvnw -Pprod
 
 Or if you want everything in Docker
 
     ./mvnw package -Pprod dockerfile:build
-    docker-compose -f src/main/docker/app.yml up
+    docker-compose -f src/main/docker/app.yml up -d
     docker-compose -f src/main/docker/app.yml ps
 
 The last line will allow you to see on which port the app port was forwarded locally (e.g. 32769 below).

@@ -80,6 +80,8 @@ public class ApplicationProperties {
 
         private long sizeInMb = 10;
 
+        private String offheapResourceName = "offheap-1";
+
         public URI getUri() {
             return uri;
         }
@@ -110,6 +112,14 @@ public class ApplicationProperties {
 
         public void setSizeInMb(long sizeInMb) {
             this.sizeInMb = sizeInMb;
+        }
+
+        public String getOffheapResourceName() {
+            return offheapResourceName;
+        }
+
+        public void setOffheapResourceName(String offheapResourceName) {
+            this.offheapResourceName = offheapResourceName;
         }
     }
 }

@@ -19,9 +19,9 @@ services:
             service: demo-mysql
     demo-terracotta-server1:
         extends:
-            file: terracotta-server.yml
+            file: terracotta-server-ha.yml
             service: demo-terracotta-server1
     demo-terracotta-server2:
         extends:
-            file: terracotta-server.yml
+            file: terracotta-server-ha.yml
             service: demo-terracotta-server2

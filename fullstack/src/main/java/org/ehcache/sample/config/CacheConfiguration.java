@@ -76,6 +76,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
         URI clusterUri = clusterProperties.getUri();
         boolean autoCreate = clusterProperties.isAutoCreate();
         long clusteredCacheSize = clusterProperties.getSizeInMb();
+        String offheapResourceName = clusterProperties.getOffheapResourceName();
         Consistency consistency = clusterProperties.getConsistency();
 
         long heapCacheSize = jHipsterProperties.getCache().getEhcache().getMaxEntries();
@@ -83,7 +84,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
         ClusteringServiceConfigurationBuilder clusteringServiceConfigurationBuilder = ClusteringServiceConfigurationBuilder.cluster(clusterUri);
         ServerSideConfigurationBuilder serverSideConfigurationBuilder = (autoCreate ? clusteringServiceConfigurationBuilder.autoCreate() : clusteringServiceConfigurationBuilder.expecting())
-            .defaultServerResource("primary-server-resource");
+            .defaultServerResource(offheapResourceName);
 
         org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration = CacheConfigurationBuilder
             .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder

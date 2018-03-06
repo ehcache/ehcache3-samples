@@ -110,3 +110,4 @@ application:
     biographiesLocation: biographies.list.gz
     cluster:
         uri: terracotta://localhost:9410/demo-entity
+        offheapResourceName: offheap-1
