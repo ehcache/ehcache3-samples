@@ -37,7 +37,7 @@ export class NavbarComponent implements OnInit {
         this.profileService.getProfileInfo().then((profileInfo) => {
             this.inProduction = profileInfo.inProduction;
             this.swaggerEnabled = profileInfo.swaggerEnabled;
-            this.version = this.version + " served by : " + profileInfo.hostname;
+            this.version = this.version + ' served by : ' + profileInfo.hostname;
         });
     }
 
