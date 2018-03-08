@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fullstack
+  namespace: default
+  labels:
+    app: fullstack
+spec:
+  selector:
+    app: fullstack
+  type: LoadBalancer
+  ports:
+  - name: web
+    port: 8080

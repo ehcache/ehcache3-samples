@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-terracotta-server1
+  labels:
+    app: demo-terracotta-server1
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9410
+    name: terracotta-port
+    targetPort: terracotta-port
+    protocol: TCP
+  - port: 9430
+    name: sync-port
+    targetPort: sync-port
+    protocol: TCP
+  selector:
+    app: demo-terracotta-server1
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: demo-terracotta-server1
+  name: demo-terracotta-server1-deployment
+spec:
+  # replica set definition
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: demo-terracotta-server1
+    spec:
+      hostname: demo-terracotta-server1
+      # pod definition
+      containers:
+      - name: terracotta
+        image: terracotta/terracotta-server-oss:5.4.0
+        ports:
+        - containerPort: 9410
+          name: terracotta-port
+        - containerPort: 9430
+          name: sync-port
+        env:
+        - name: OFFHEAP_RESOURCE_SIZE
+          value: "256"
+        - name: OFFHEAP_RESOURCE_UNIT
+          value: "MB"
+        - name: OFFHEAP_RESOURCE_NAME
+          value: "offheap-1"
+        - name: TC_SERVER1
+          value: "demo-terracotta-server1"
+        - name: TC_SERVER2
+          value: "demo-terracotta-server2"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-terracotta-server2
+  labels:
+    app: demo-terracotta-server2
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9410
+    name: terracotta-port
+    targetPort: terracotta-port
+    protocol: TCP
+  - port: 9430
+    name: sync-port
+    targetPort: sync-port
+    protocol: TCP
+  selector:
+    app: demo-terracotta-server2
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: demo-terracotta-server2
+  name: demo-terracotta-server2-deployment
+spec:
+  # replica set definition
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: demo-terracotta-server2
+    spec:
+      hostname: demo-terracotta-server2
+      # pod definition
+      containers:
+      - name: terracotta
+        image: terracotta/terracotta-server-oss:5.4.0
+        ports:
+        - containerPort: 9410
+          name: terracotta-port
+        - containerPort: 9430
+          name: sync-port
+        env:
+        - name: OFFHEAP_RESOURCE_SIZE
+          value: "256"
+        - name: OFFHEAP_RESOURCE_UNIT
+          value: "MB"
+        - name: OFFHEAP_RESOURCE_NAME
+          value: "offheap-1"
+        - name: TC_SERVER1
+          value: "demo-terracotta-server1"
+        - name: TC_SERVER2
+          value: "demo-terracotta-server2"
