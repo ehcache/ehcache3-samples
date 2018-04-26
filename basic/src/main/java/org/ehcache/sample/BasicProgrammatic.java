@@ -15,9 +15,9 @@ public class BasicProgrammatic {
 
   public static void main(String[] args) {
     LOGGER.info("Creating cache manager programmatically");
-    try (CacheManager cacheManager = newCacheManagerBuilder()
+    try (CacheManager cacheManager = new CacheManagerBuilder()
       .withCache("basicCache",
-        newCacheConfigurationBuilder(Long.class, String.class, heap(100).offheap(1, MB)))
+        new CacheConfigurationBuilder(Long.class, String.class, heap(100).offheap(1, MB)))
       .build(true)) {
       Cache<Long, String> basicCache = cacheManager.getCache("basicCache", Long.class, String.class);
 
