@@ -1,0 +1,115 @@
+# Service + StatefulSet for Terracotta, originally from Ravi Chaturvedi, https://github.com/ravichaturvedi
+apiVersion: v1
+kind: Service
+metadata:
+  name: terracotta
+  labels:
+    app: terracotta
+spec:
+  ports:
+    - port: 9410
+      name: server
+    - port: 9430
+      name: replication
+  # This creates the headless service to assign DNS name corresponding to pods matching the selector.
+  # which creates DNS names as "<pod-name>.terracotta". Example: "terracotta-0.terracotta",
+  # which can be used by the terracotta clients to connect to the cluster.
+  # This also ensures even the pod IP gets changes due to rescheduling failure but the DNS name corresponding to the pod remains same.
+  # More details at https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  clusterIP: None
+  selector:
+    app: terracotta
+
+---
+
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: terracotta
+spec:
+  selector:
+    matchLabels:
+      app: terracotta
+  # Referencing the above headless service so that StatefulSet can use it to manage the corresponding pods.
+  serviceName: terracotta
+  # This creates two terracotta pods with name terracotta-0 and terracotta-1 having corresponding DNS entry terracotta-0.terracotta and terracotta-1.terracotta
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: terracotta
+    spec:
+      terminationGracePeriodSeconds: 10
+#      affinity:
+        # Only kubernetes nodes having the "terracotta=true" tag will be able to run the pod.
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#            - matchExpressions:
+#              - key: terracotta
+#                operator: In
+#                values:
+#                  - true
+        # Same kubernetes nodes won't be able to run the terracotta pod.
+#        podAntiAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            - labelSelector:
+#                matchExpressions:
+#                - key: app
+#                  operator: In
+#                  values:
+#                    - terracotta
+#              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: terracotta
+        image: terracotta/terracotta-server-oss:5.4.1
+        command: ["/bin/sh"]
+        args: ["-c", "bin/start-tc-server.sh -f /config/tc-config.xml -n $HOSTNAME"]
+        resources:
+          requests:
+            memory: 1Gi
+        env:
+          - name: ACCEPT_EULA
+            value: "Y"
+        ports:
+          - containerPort: 9410
+            name: server
+          - containerPort: 9430
+            name: replication
+        volumeMounts:
+          - name: config-volume
+            mountPath: /config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: tc-config
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tc-config
+data:
+  tc-config.xml: |
+    <tc-config xmlns="http://www.terracotta.org/config">
+      <plugins>
+        <config xmlns:ohr="http://www.terracotta.org/config/offheap-resource" >
+          <ohr:offheap-resources>
+            <ohr:resource name="offheap-1" unit="MB">512</ohr:resource>
+          </ohr:offheap-resources>
+        </config>
+      </plugins>
+      <servers>
+        <server host="terracotta-0.terracotta" name="terracotta-0">
+          <logs>stdout:</logs>
+          <tsa-port>9410</tsa-port>
+          <tsa-group-port>9430</tsa-group-port>
+        </server>
+        <server host="terracotta-1.terracotta" name="terracotta-1">
+          <logs>stdout:</logs>
+          <tsa-port>9410</tsa-port>
+          <tsa-group-port>9430</tsa-group-port>
+        </server>
+      </servers>
+    </tc-config>

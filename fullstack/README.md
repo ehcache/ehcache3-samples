@@ -225,3 +225,11 @@ Start several webapp instances :
 Verify everything is fine with :
     
     docker service ls
+
+## Kubernetes deployment
+
+With a correctly sized Kubernetes cluster :
+
+    kubectl apply -f src/main/kubernetes
+    
+And open the app, play around, start scaling, etc.    
