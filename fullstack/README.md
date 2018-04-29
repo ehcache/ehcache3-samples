@@ -232,4 +232,4 @@ With a correctly sized Kubernetes cluster :
 
     kubectl apply -f src/main/kubernetes
     
-And oepn the app, play around, start scaling, etc.    
+And open the app, play around, start scaling, etc.    

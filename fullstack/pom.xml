@@ -46,7 +46,7 @@
         <validation-api.version>1.1.0.Final</validation-api.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
         <!-- Use the latest ehcache -->
-        <ehcache3.version>3.5.0</ehcache3.version>
+        <ehcache3.version>3.5.2</ehcache3.version>
 
         <!-- Plugin versions -->
         <maven-clean-plugin.version>2.6.1</maven-clean-plugin.version>

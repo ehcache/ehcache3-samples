@@ -1,0 +1,74 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: fullstack
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fullstack
+    spec:
+      containers:
+      - name: fullstack
+        image: anthonydahanne/ehcache3-fullstack-demo:latest
+        imagePullPolicy: Always
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: prod, k8s
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://fullstack-mysql:3306/demo?useUnicode=true&characterEncoding=utf8&useSSL=false
+        - name: JAVA_OPTS
+          value: "-Xmx1024m -Xms256m"
+        - name: JHIPSTER_SLEEP
+          value: "10"
+        - name: APPLICATION_CLUSTER_URI
+          value: "terracotta://terracotta-0.terracotta:9410,terracotta-1.terracotta:9410/demo-entity"
+        - name: APPLICATION_STUBWEBSERVICES
+          value: "false"
+        - name: APPLICATION_GOOGLEAPIKEY
+          value: "CHANGEME"
+        - name: APPLICATION_DARKSKYAPIKEY
+          value: "CHANGEME"
+        - name: APPLICATION_BIOGRAPHIESREMOTELOCATION
+          value: "http://blog.dahanne.net/wp-content/uploads/biographies.list.gz"
+        - name: MANAGEMENT_SECURITY_ENABLED
+          value: "FALSE"
+        resources:
+          # https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#how-pods-with-resource-limits-are-run
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1"
+        ports:
+        - name: web
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /management/health
+            port: web
+        livenessProbe:
+          httpGet:
+            path: /management/health
+            port: web
+          initialDelaySeconds: 180
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fullstack
+  namespace: default
+  labels:
+    app: fullstack
+spec:
+  selector:
+    app: fullstack
+  type: LoadBalancer
+  ports:
+  - name: web
+    port: 80
+    targetPort: "web"

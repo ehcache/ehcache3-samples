@@ -1,117 +1,115 @@
+# Service + StatefulSet for Terracotta, originally from Ravi Chaturvedi, https://github.com/ravichaturvedi
 apiVersion: v1
 kind: Service
 metadata:
-  name: demo-terracotta-server1
+  name: terracotta
   labels:
-    app: demo-terracotta-server1
+    app: terracotta
 spec:
-  type: ClusterIP
   ports:
-  - port: 9410
-    name: terracotta-port
-    targetPort: terracotta-port
-    protocol: TCP
-  - port: 9430
-    name: sync-port
-    targetPort: sync-port
-    protocol: TCP
+    - port: 9410
+      name: server
+    - port: 9430
+      name: replication
+  # This creates the headless service to assign DNS name corresponding to pods matching the selector.
+  # which creates DNS names as "<pod-name>.terracotta". Example: "terracotta-0.terracotta",
+  # which can be used by the terracotta clients to connect to the cluster.
+  # This also ensures even the pod IP gets changes due to rescheduling failure but the DNS name corresponding to the pod remains same.
+  # More details at https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+  clusterIP: None
   selector:
-    app: demo-terracotta-server1
+    app: terracotta
 
 ---
 
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: apps/v1beta1
+kind: StatefulSet
 metadata:
-  labels:
-    app: demo-terracotta-server1
-  name: demo-terracotta-server1-deployment
+  name: terracotta
 spec:
-  # replica set definition
-  replicas: 1
+  selector:
+    matchLabels:
+      app: terracotta
+  # Referencing the above headless service so that StatefulSet can use it to manage the corresponding pods.
+  serviceName: terracotta
+  # This creates two terracotta pods with name terracotta-0 and terracotta-1 having corresponding DNS entry terracotta-0.terracotta and terracotta-1.terracotta
+  replicas: 2
   template:
     metadata:
       labels:
-        app: demo-terracotta-server1
+        app: terracotta
     spec:
-      hostname: demo-terracotta-server1
-      # pod definition
+      terminationGracePeriodSeconds: 10
+#      affinity:
+        # Only kubernetes nodes having the "terracotta=true" tag will be able to run the pod.
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#            - matchExpressions:
+#              - key: terracotta
+#                operator: In
+#                values:
+#                  - true
+        # Same kubernetes nodes won't be able to run the terracotta pod.
+#        podAntiAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            - labelSelector:
+#                matchExpressions:
+#                - key: app
+#                  operator: In
+#                  values:
+#                    - terracotta
+#              topologyKey: kubernetes.io/hostname
       containers:
       - name: terracotta
-        image: terracotta/terracotta-server-oss:5.4.0
-        ports:
-        - containerPort: 9410
-          name: terracotta-port
-        - containerPort: 9430
-          name: sync-port
+        image: terracotta/terracotta-server-oss:5.4.1
+        command: ["/bin/sh"]
+        args: ["-c", "bin/start-tc-server.sh -f /config/tc-config.xml -n $HOSTNAME"]
+        resources:
+          requests:
+            memory: 1Gi
         env:
-        - name: OFFHEAP_RESOURCE_SIZE
-          value: "256"
-        - name: OFFHEAP_RESOURCE_UNIT
-          value: "MB"
-        - name: OFFHEAP_RESOURCE_NAME
-          value: "offheap-1"
-        - name: TC_SERVER1
-          value: "demo-terracotta-server1"
-        - name: TC_SERVER2
-          value: "demo-terracotta-server2"
+          - name: ACCEPT_EULA
+            value: "Y"
+        ports:
+          - containerPort: 9410
+            name: server
+          - containerPort: 9430
+            name: replication
+        volumeMounts:
+          - name: config-volume
+            mountPath: /config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: tc-config
 
 ---
 
 apiVersion: v1
-kind: Service
+kind: ConfigMap
 metadata:
-  name: demo-terracotta-server2
-  labels:
-    app: demo-terracotta-server2
-spec:
-  type: ClusterIP
-  ports:
-  - port: 9410
-    name: terracotta-port
-    targetPort: terracotta-port
-    protocol: TCP
-  - port: 9430
-    name: sync-port
-    targetPort: sync-port
-    protocol: TCP
-  selector:
-    app: demo-terracotta-server2
-
----
-
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  labels:
-    app: demo-terracotta-server2
-  name: demo-terracotta-server2-deployment
-spec:
-  # replica set definition
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: demo-terracotta-server2
-    spec:
-      hostname: demo-terracotta-server2
-      # pod definition
-      containers:
-      - name: terracotta
-        image: terracotta/terracotta-server-oss:5.4.0
-        ports:
-        - containerPort: 9410
-          name: terracotta-port
-        - containerPort: 9430
-          name: sync-port
-        env:
-        - name: OFFHEAP_RESOURCE_SIZE
-          value: "256"
-        - name: OFFHEAP_RESOURCE_UNIT
-          value: "MB"
-        - name: OFFHEAP_RESOURCE_NAME
-          value: "offheap-1"
-        - name: TC_SERVER1
-          value: "demo-terracotta-server1"
-        - name: TC_SERVER2
-          value: "demo-terracotta-server2"
+  name: tc-config
+data:
+  tc-config.xml: |
+    <tc-config xmlns="http://www.terracotta.org/config">
+      <plugins>
+        <config xmlns:ohr="http://www.terracotta.org/config/offheap-resource" >
+          <ohr:offheap-resources>
+            <ohr:resource name="offheap-1" unit="MB">512</ohr:resource>
+          </ohr:offheap-resources>
+        </config>
+      </plugins>
+      <servers>
+        <server host="terracotta-0.terracotta" name="terracotta-0">
+          <logs>stdout:</logs>
+          <tsa-port>9410</tsa-port>
+          <tsa-group-port>9430</tsa-group-port>
+        </server>
+        <server host="terracotta-1.terracotta" name="terracotta-1">
+          <logs>stdout:</logs>
+          <tsa-port>9410</tsa-port>
+          <tsa-group-port>9430</tsa-group-port>
+        </server>
+      </servers>
+    </tc-config>
