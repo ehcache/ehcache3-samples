@@ -16,7 +16,8 @@ public class ClusteredXML {
 
   public static void main(String[] args) {
     LOGGER.info("Creating clustered cache manager from XML");
-    final URL myUrl = ClusteredXML.class.getResource("/ehcache.xml");
+
+    URL myUrl = ClusteredXML.class.getResource("/ehcache.xml");
     Configuration xmlConfig = new XmlConfiguration(myUrl);
     try (CacheManager cacheManager = newCacheManager(xmlConfig)) {
       cacheManager.init();
