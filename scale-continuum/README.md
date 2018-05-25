@@ -7,7 +7,7 @@ to access the controls.
 
 You can do that with
 
-`mvn verify`
+`mvn verify -Prun`
 
 or 
 
