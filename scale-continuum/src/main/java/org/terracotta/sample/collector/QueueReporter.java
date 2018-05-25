@@ -15,7 +15,7 @@
  */
 package org.terracotta.sample.collector;
 
-import io.rainfall.Reporter;
+import io.rainfall.reporting.Reporter;
 import io.rainfall.statistics.StatisticsHolder;
 import io.rainfall.statistics.StatisticsPeek;
 import io.rainfall.statistics.StatisticsPeekHolder;
@@ -96,7 +96,7 @@ public class QueueReporter extends Reporter<PerformanceMetricsCollector.DaoResul
     Number offHeapSizeInMegabytes = null;
     if (cache != null) {
       try {
-        onHeapCount = findValueStat(cache, "mappingsCount", "onheap-store").value();
+        onHeapCount = (Number) findValueStat(cache, "mappingsCount", "onheap-store").value();
       } catch (Exception e) { /* ignore, not present */ }
       try {
         offHeapSizeInMegabytes = ((Long)findValueStat(cache, "occupiedMemory", "local-offheap").value()) / 1024 / 1024;

@@ -91,7 +91,7 @@ public class PerformanceMetricsCollector {
     long objectCount = config.getDatasetCount();
 
     ObjectGenerator<Long> keyGenerator = new LongGenerator();
-    ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLength((int)config.getValueSizeInBytes());
+    ObjectGenerator<byte[]> valueGenerator = ByteArrayGenerator.fixedLengthByteArray((int)config.getValueSizeInBytes());
     DataService<byte[]> dataService;
     final Cache<Long, byte[]> cache;
     if (config.isCacheEnabled()) {
@@ -134,9 +134,9 @@ public class PerformanceMetricsCollector {
               @Override
               public void exec(StatisticsHolder statisticsHolder, Map<Class<? extends Configuration>, Configuration> map, List<AssertionEvaluator> list) throws TestException {
                 Long key = keyGenerator.generate(randomSequenceGenerator.next());
-                long before = getTimeInNs();
+                long before = System.nanoTime();
                 byte[] bytes = dataService.loadData(key);
-                long after = getTimeInNs();
+                long after = System.nanoTime();
                 statisticsHolder.record(OPERATION_NAME, (after - before), DaoResult.LOAD);
               }
 

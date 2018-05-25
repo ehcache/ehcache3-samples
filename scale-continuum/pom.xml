@@ -17,19 +17,19 @@
     <dependency>
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>3.2.0</version>
+      <version>3.5.2</version>
     </dependency>
 
     <dependency>
       <groupId>org.ehcache</groupId>
       <artifactId>ehcache-clustered</artifactId>
-      <version>3.2.0</version>
+      <version>3.5.2</version>
     </dependency>
 
     <dependency>
       <groupId>io.rainfall</groupId>
       <artifactId>rainfall-ehcache</artifactId>
-      <version>1.2.0</version>
+      <version>1.4.4</version>
     </dependency>
 
     <dependency>
@@ -47,13 +47,13 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.0.7</version>
+      <version>1.2.3</version>
     </dependency>
 
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
-      <version>1.0.7</version>
+      <version>1.2.3</version>
     </dependency>
   </dependencies>
 
