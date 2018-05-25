@@ -20,7 +20,8 @@ public class ClusteredProgrammatic {
 
   public static void main(String[] args) {
     LOGGER.info("Creating clustered cache manager");
-    final URI uri = create("terracotta://localhost:9510/clustered");
+
+    URI uri = create("terracotta://localhost:9410/clustered");
     try (CacheManager cacheManager = newCacheManagerBuilder()
             .with(cluster(uri).autoCreate().defaultServerResource("default-resource"))
             .withCache("basicCache",

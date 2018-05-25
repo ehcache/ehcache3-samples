@@ -9,7 +9,7 @@
 
   <ehcache:service>
     <terracotta:cluster>
-      <terracotta:connection url="terracotta://localhost:9510/clustered"/>
+      <terracotta:connection url="terracotta://localhost:9410/clustered"/>
       <terracotta:server-side-config auto-create="true">
         <terracotta:default-resource from="default-resource"/>
       </terracotta:server-side-config>
