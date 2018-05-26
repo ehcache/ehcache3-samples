@@ -1,0 +1,41 @@
+
+# Compiled source #
+*.class
+dependency-reduced-pom.xml
+bin/
+target/
+out/
+build/
+node_modules/
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# dev gui (eclipse, intelliJ) #
+.project
+.metadata
+.classpath
+.settings/
+bin/**
+*.tmp
+*.bak
+*.swp
+.idea
+*.ipr
+*.iml
+.settings
+
+#log giles
+*.log
+
+#misc
+.DS_Store
+

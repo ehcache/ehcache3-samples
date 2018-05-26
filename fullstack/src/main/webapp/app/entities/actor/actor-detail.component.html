@@ -1,0 +1,38 @@
+
+<div *ngIf="actor">
+    <h2><span>Actor</span> {{actor.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span>First Name</span></dt>
+        <dd>
+            <span>{{actor.firstName}}</span>
+        </dd>
+        <dt><span>Last Name</span></dt>
+        <dd>
+            <span>{{actor.lastName}}</span>
+        </dd>
+        <dt><span>Birth Date</span></dt>
+        <dd>
+            <span>{{actor.birthDate | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span>Birth Location</span></dt>
+        <dd>
+            <span>{{actor.birthLocation}}</span>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'actor/'+ actor.id + '/edit'} }]"
+            replaceUrl="true"
+            queryParamsHandling="merge"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span> Edit</span>
+    </button>
+</div>
