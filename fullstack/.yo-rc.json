@@ -3,7 +3,7 @@
     "promptValues": {
       "packageName": "org.ehcache.sample"
     },
-    "jhipsterVersion": "4.14.1",
+    "jhipsterVersion": "4.14.4",
     "baseName": "demo",
     "packageName": "org.ehcache.sample",
     "packageFolder": "org/ehcache/sample",
