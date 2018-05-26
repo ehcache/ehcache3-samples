@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ehcache.jsr107.EhcacheCachingProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.jcache.JCacheCacheManager;
@@ -32,8 +30,6 @@ import javax.cache.Caching;
 
 @Configuration
 @EnableCaching
-@AutoConfigureAfter(value = { MetricsConfiguration.class })
-@AutoConfigureBefore(value = { WebConfigurer.class, DatabaseConfiguration.class })
 public class CacheConfiguration extends CachingConfigurerSupport {
 
     private final Environment environment;
