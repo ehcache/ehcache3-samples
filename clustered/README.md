@@ -24,11 +24,27 @@ Open a terminal and change into the directory where you have this sample.
 
 Start the Terracotta Server, using the configuration supplied with this sample:
 
-- `<path/to/ehcache-clustered-kit>/server/bin/start-tc-server.sh -f ./tc-config.xml`
+```bash
+$path_to_ehcache_clustered_kit/server/bin/start-tc-server.sh -f ./tc-config.xml
+```
 
 (For Windows environments, use the .bat start script rather than the .sh one).
 
 Wait a few seconds for the Terracotta Server to start up - there will be a clear message in the terminal stating the server is *ACTIVE* and *ready for work*.
+
+### Start the Terracotta Server in High availability
+
+If you want to use high availability, you need to launch two Terracotta Server, one active, one passive.
+
+In case of failure of the active server, the passive will take over automatically.
+You can of course have as many passives as you like.
+Here is an example with two servers:
+
+```bash
+# Launch these two commands from two separated shells
+$path_to_ehcache_clustered_kit/server/bin/start-tc-server.sh -f ./tc-config-ha.xml -n clustered1
+$path_to_ehcache_clustered_kit/server/bin/start-tc-server.sh -f ./tc-config-ha.xml -n clustered2
+```
 
 ### Run the sample clients
 
