@@ -1,9 +1,11 @@
 package org.ehcache.sample.service;
 
+import org.ehcache.sample.config.ApplicationProperties;
 import org.ehcache.sample.domain.Coordinates;
 import org.ehcache.sample.service.dto.ResourceType;
 import org.ehcache.sample.service.util.HttpUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,8 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class CoordinatesService {
 
-    @Value("${application.googleApiKey}")
-    private String googleAPiKey;
+    private final String googleAPiKey;
 
     private final HttpService httpService;
 
@@ -27,10 +28,11 @@ public class CoordinatesService {
 
     private final ResourceCallService resourceCallService;
 
-    public CoordinatesService(HttpService httpService, ObjectMapper objectMapper, ResourceCallService resourceCallService) {
+    public CoordinatesService(HttpService httpService, ObjectMapper objectMapper, ResourceCallService resourceCallService, ApplicationProperties applicationProperties) {
         this.httpService = httpService;
         this.objectMapper = objectMapper;
         this.resourceCallService = resourceCallService;
+        this.googleAPiKey = applicationProperties.getGoogleApiKey();
     }
 
     public Coordinates retrieveCoordinates(String location) {
