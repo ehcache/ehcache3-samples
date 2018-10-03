@@ -216,7 +216,7 @@ Start the mysql service :
 
 Start the terracotta-server service :
 
-    docker service create --name=terracotta-server --replicas=1 --network=my-network terracotta/terracotta-server-oss:5.4.0
+    docker service create --name=terracotta-server --replicas=1 --network=my-network terracotta/terracotta-server-oss:5.5.1
 
 Start several webapp instances :
 
