@@ -1,5 +1,6 @@
 package org.ehcache.sample.service;
 
+import org.ehcache.sample.config.ApplicationProperties;
 import org.ehcache.sample.domain.Coordinates;
 import org.ehcache.sample.service.dto.ResourceCallReport;
 import org.ehcache.sample.service.dto.ResourceType;
@@ -28,11 +29,9 @@ import javax.cache.annotation.CacheResult;
 @Service
 public class WeatherService {
 
-    @Value("${application.stubWebServices}")
-    private boolean stubWebServices;
+    private final boolean stubWebServices;
 
-    @Value("${application.darkSkyApiKey}")
-    private String darkSkyApiKey;
+    private final String darkSkyApiKey;
 
     private final HttpService httpService;
 
@@ -42,11 +41,13 @@ public class WeatherService {
 
     private final ResourceCallService resourceCallService;
 
-    public WeatherService(HttpService httpService, CoordinatesService coordinatesService, ObjectMapper objectMapper, ResourceCallService resourceCallService) {
+    public WeatherService(HttpService httpService, CoordinatesService coordinatesService, ObjectMapper objectMapper, ResourceCallService resourceCallService, ApplicationProperties applicationProperties) {
         this.httpService = httpService;
         this.coordinatesService = coordinatesService;
         this.objectMapper = objectMapper;
         this.resourceCallService = resourceCallService;
+        this.darkSkyApiKey = applicationProperties.getDarkSkyApiKey();
+        this.stubWebServices = applicationProperties.isStubWebServices();
     }
 
     @CacheResult(cacheName = "weatherReports")
