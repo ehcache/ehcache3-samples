@@ -4,7 +4,6 @@
 /target/www/**
 /src/test/javascript/coverage/
 /src/test/javascript/PhantomJS*/
-/biographies.list.gz
 
 ######################
 # Node
