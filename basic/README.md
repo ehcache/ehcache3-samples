@@ -17,5 +17,5 @@ Both instances are identically configured to store up to 100 mappings in heap me
   
 ## Running this sample
 
-  - BasicXML: mvn exec:exec -P xml
-  - BasicProgrammatic: mvn exec:exec -P programmatic
+  - BasicXML: mvn -P xml
+  - BasicProgrammatic: mvn -P programmatic

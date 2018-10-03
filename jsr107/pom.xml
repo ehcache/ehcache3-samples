@@ -35,6 +35,8 @@
   </dependencies>
 
   <build>
+    <defaultGoal>exec:exec</defaultGoal>
+
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -65,7 +67,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
-              <mainClass>org.ehcache.sample.CreateBasicJCacheProgrammatic</mainClass>
+              <commandlineArgs>compile exec:java -Dexec.mainClass=org.ehcache.sample.CreateBasicJCacheProgrammatic</commandlineArgs>
             </configuration>
           </plugin>
         </plugins>
@@ -79,7 +81,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
-              <mainClass>org.ehcache.sample.CreateExtendedJCache</mainClass>
+              <commandlineArgs>compile exec:java -Dexec.mainClass=org.ehcache.sample.CreateExtendedJCache</commandlineArgs>
             </configuration>
           </plugin>
         </plugins>
@@ -93,7 +95,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
-              <mainClass>org.ehcache.sample.CreateBasicJCacheWithXML</mainClass>
+              <commandlineArgs>compile exec:java -Dexec.mainClass=org.ehcache.sample.CreateBasicJCacheWithXML</commandlineArgs>
             </configuration>
           </plugin>
         </plugins>
