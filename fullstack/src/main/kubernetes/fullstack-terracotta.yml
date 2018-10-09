@@ -22,7 +22,7 @@ spec:
 
 ---
 
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: terracotta
@@ -40,29 +40,9 @@ spec:
         app: terracotta
     spec:
       terminationGracePeriodSeconds: 10
-#      affinity:
-        # Only kubernetes nodes having the "terracotta=true" tag will be able to run the pod.
-#        nodeAffinity:
-#          requiredDuringSchedulingIgnoredDuringExecution:
-#            nodeSelectorTerms:
-#            - matchExpressions:
-#              - key: terracotta
-#                operator: In
-#                values:
-#                  - true
-        # Same kubernetes nodes won't be able to run the terracotta pod.
-#        podAntiAffinity:
-#          requiredDuringSchedulingIgnoredDuringExecution:
-#            - labelSelector:
-#                matchExpressions:
-#                - key: app
-#                  operator: In
-#                  values:
-#                    - terracotta
-#              topologyKey: kubernetes.io/hostname
       containers:
       - name: terracotta
-        image: terracotta/terracotta-server-oss:5.4.1
+        image: terracotta/terracotta-server-oss:5.5.1
         command: ["/bin/sh"]
         args: ["-c", "bin/start-tc-server.sh -f /config/tc-config.xml -n $HOSTNAME"]
         resources:
