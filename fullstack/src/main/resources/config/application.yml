@@ -106,7 +106,9 @@ jhipster:
 # ===================================================================
 
 application:
-    biographiesRemoteLocation: ftp://ftp.fu-berlin.de/pub/misc/movies/database/frozendata/biographies.list.gz
+    #biographiesRemoteLocation: ftp://ftp.fu-berlin.de/pub/misc/movies/database/frozendata/biographies.list.gz
+    # smaller set
+    biographiesRemoteLocation: https://storage.googleapis.com/extrastickers/biographies.list.gz
     biographiesLocation: biographies.list.gz
     cluster:
         uri: terracotta://localhost:9410/demo-entity
