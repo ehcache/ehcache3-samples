@@ -2,11 +2,9 @@ package org.ehcache.sample.service;
 
 import org.ehcache.sample.config.ApplicationProperties;
 import org.ehcache.sample.domain.Coordinates;
-import org.ehcache.sample.service.dto.ResourceCallReport;
 import org.ehcache.sample.service.dto.ResourceType;
 import org.ehcache.sample.service.dto.WeatherReport;
 import org.ehcache.sample.service.util.HttpUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -107,8 +105,10 @@ public class WeatherService {
 
     private WeatherReport getFakeWeatherReport(String location, LocalDate date) {
         Random rand = ThreadLocalRandom.current();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         try {
-            Thread.sleep(500 + rand.nextInt(1000));
+            Thread.sleep(500 + rand.nextInt(500));
+            resourceCallService.addCall("Fake Webservice call", ResourceType.WEB_SERVICE, location, stopwatch.elapsed(TimeUnit.MILLISECONDS));
         } catch (InterruptedException e) {
             // ignore
         }

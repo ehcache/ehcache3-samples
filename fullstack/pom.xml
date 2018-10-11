@@ -338,6 +338,54 @@
     <build>
         <defaultGoal>spring-boot:run</defaultGoal>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>jib-resources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/classes/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>target/www</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>0.9.11</version>
+                <configuration>
+                    <from>
+                        <image>openjdk:8-jre-alpine</image>
+                    </from>
+                    <to>
+                        <image>anthonydahanne/test</image>
+                    </to>
+                    <container>
+                        <jvmFlags>
+                            <jvmFlag>-Djava.security.egd=file:/dev/./urandom</jvmFlag>
+                        </jvmFlags>
+                        <ports>
+                            <port>8080</port>
+                        </ports>
+                        <useCurrentTimestamp>true</useCurrentTimestamp>
+                    </container>
+                </configuration>
+            </plugin>
+
+
             <plugin>
                 <groupId>io.gatling</groupId>
                 <artifactId>gatling-maven-plugin</artifactId>
