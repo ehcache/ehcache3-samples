@@ -3,33 +3,34 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class SystemOfRecord {
+public final class SystemOfRecord {
 
-  private Logger LOG = LoggerFactory.getLogger(AsideVsPassthrough.class);
-  private static SystemOfRecord systemOfRecord = new SystemOfRecord();
-  private Map<String, String> records = new HashMap() {{
-    put("key", "value");
-  }};
+  private static final Logger LOG = LoggerFactory.getLogger(AsideVsPassthrough.class);
+  private static final SystemOfRecord systemOfRecord = new SystemOfRecord();
+
+  private final Map<String, String> records = new HashMap();
 
   private SystemOfRecord() {
+    records.put("key", "value");
   }
 
   public String load(String key) {
     LOG.warn("Someone is accessing the slow SoR to load : " + key);
     try {
-      Thread.sleep(30000);
+      TimeUnit.SECONDS.sleep(30);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      // Get out
     }
     return records.get(key);
   }
 
   public void save(String key, String value) {
     try {
-      Thread.sleep(10_000);
+      TimeUnit.SECONDS.sleep(10);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      // Get out
     }
     records.put(key, value);
   }
