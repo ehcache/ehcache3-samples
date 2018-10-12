@@ -13,7 +13,7 @@ import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 
 /**
- * @author Henri Tremblay
+ * Show different caches. Some are correctly used, some requires attention. See the metrics to figure it out.
  */
 public class CacheUsage {
 
