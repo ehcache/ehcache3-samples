@@ -1,49 +1,23 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { DemoSharedModule } from '../../shared';
+import { DemoSharedModule } from 'app/shared';
 import {
-    ActorService,
-    ActorPopupService,
     ActorComponent,
     ActorDetailComponent,
-    ActorDialogComponent,
-    ActorPopupComponent,
+    ActorUpdateComponent,
     ActorDeletePopupComponent,
     ActorDeleteDialogComponent,
     actorRoute,
-    actorPopupRoute,
+    actorPopupRoute
 } from './';
 
-const ENTITY_STATES = [
-    ...actorRoute,
-    ...actorPopupRoute,
-];
+const ENTITY_STATES = [...actorRoute, ...actorPopupRoute];
 
 @NgModule({
-    imports: [
-        DemoSharedModule,
-        RouterModule.forChild(ENTITY_STATES)
-    ],
-    declarations: [
-        ActorComponent,
-        ActorDetailComponent,
-        ActorDialogComponent,
-        ActorDeleteDialogComponent,
-        ActorPopupComponent,
-        ActorDeletePopupComponent,
-    ],
-    entryComponents: [
-        ActorComponent,
-        ActorDialogComponent,
-        ActorPopupComponent,
-        ActorDeleteDialogComponent,
-        ActorDeletePopupComponent,
-    ],
-    providers: [
-        ActorService,
-        ActorPopupService,
-    ],
+    imports: [DemoSharedModule, RouterModule.forChild(ENTITY_STATES)],
+    declarations: [ActorComponent, ActorDetailComponent, ActorUpdateComponent, ActorDeleteDialogComponent, ActorDeletePopupComponent],
+    entryComponents: [ActorComponent, ActorUpdateComponent, ActorDeleteDialogComponent, ActorDeletePopupComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DemoActorModule {}

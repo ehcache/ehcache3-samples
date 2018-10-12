@@ -1,68 +1,71 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="star">
+            <h2>{{star.firstName}} {{star.lastName}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Birth Date</span></dt>
+                <dd>
+                    <span>{{star.birthDate}}</span>
+                </dd>
+                <dt><span>Birth Location</span></dt>
+                <dd>
+                    <span>{{star.birthLocation}}</span>
+                </dd>
+            </dl>
 
-<div *ngIf="star">
-    <h2>{{star.firstName}} {{star.lastName}}</h2>
-    <hr>
-    <jhi-alert-error></jhi-alert-error>
-    <dl class="row-md jh-entity-details">
-        <dt><span>Birth Date</span></dt>
-        <dd>
-            <span>{{star.birthDate | date:'longDate'}}</span>
-        </dd>
-        <dt><span>Birth Location</span></dt>
-        <dd>
-            <span>{{star.birthLocation}}</span>
-        </dd>
-    </dl>
+            <h3>The weather in the world at that moment</h3>
+            <dl *ngFor="let report of star.weatherReports">
+                <dt>{{report.location}}</dt>
+                <dd>{{report.summary}} Minimum {{report.temperatureMin}}. Maximum {{report.temperatureMax}}</dd>
+            </dl>
+            <br>
 
-    <h3>The weather in the world at that moment</h3>
-    <dl *ngFor="let report of star.weatherReports">
-        <dt>{{report.location}}</dt>
-        <dd>{{report.summary}} Minimum {{report.temperatureMin}}. Maximum {{report.temperatureMax}}</dd>
-    </dl>
-    <br>
+            <h3>Performance of resources</h3>
+            <div class="table-responsive">
+                <table class="jh-table table table-striped">
+                    <thead>
+                    <tr>
+                        <th><span>Resource Name</span></th>
+                        <th><span>Type</span></th>
+                        <th><span>Param</span></th>
+                        <th><span>Time spent</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let resource of star.resourceCallReports">
+                        <td>{{resource.resourceName}}</td>
+                        <td>{{resource.resourceType}}</td>
+                        <td>{{resource.param}}</td>
+                        <td>{{resource.elapsed}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <h3>Performance of resources</h3>
-    <div class="table-responsive">
-        <table class="jh-table table table-striped">
-            <thead>
-            <tr>
-                <th><span>Resource Name</span></th>
-                <th><span>Type</span></th>
-                <th><span>Param</span></th>
-                <th><span>Time spent</span></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let resource of star.resourceCallReports">
-                <td>{{resource.resourceName}}</td>
-                <td>{{resource.resourceType}}</td>
-                <td>{{resource.param}}</td>
-                <td>{{resource.elapsed}}</td>
-            </tr>
-            </tbody>
-        </table>
+            <div class="table-responsive">
+                <table class="jh-table table table-striped">
+                    <thead>
+                    <tr>
+                        <th><span>Time spent in resources</span></th>
+                        <th><span>Hostname</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{star.totalTimeSpent}} ms</td>
+                        <td>{{star.hostname}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+        </div>
     </div>
-
-    <div class="table-responsive">
-        <table class="jh-table table table-striped">
-            <thead>
-            <tr>
-                <th><span>Time spent in resources</span></th>
-                <th><span>Hostname</span></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>{{star.totalTimeSpent}} ms</td>
-                <td>{{star.hostname}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <button type="submit"
-            (click)="previousState()"
-            class="btn btn-info">
-        <span class="fa fa-arrow-left"></span>&nbsp;<span> Back</span>
-    </button>
 </div>

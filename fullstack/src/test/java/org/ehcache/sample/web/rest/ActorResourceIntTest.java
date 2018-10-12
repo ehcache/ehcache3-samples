@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 
+
 import static org.ehcache.sample.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -55,7 +56,7 @@ public class ActorResourceIntTest {
 
     @Autowired
     private ActorRepository actorRepository;
-
+    
     @Autowired
     private ActorService actorService;
 
@@ -162,7 +163,7 @@ public class ActorResourceIntTest {
             .andExpect(jsonPath("$.[*].birthDate").value(hasItem(DEFAULT_BIRTH_DATE.toString())))
             .andExpect(jsonPath("$.[*].birthLocation").value(hasItem(DEFAULT_BIRTH_LOCATION.toString())));
     }
-
+    
     @Test
     @Transactional
     public void getActor() throws Exception {
@@ -197,7 +198,7 @@ public class ActorResourceIntTest {
         int databaseSizeBeforeUpdate = actorRepository.findAll().size();
 
         // Update the actor
-        Actor updatedActor = actorRepository.findOne(actor.getId());
+        Actor updatedActor = actorRepository.findById(actor.getId()).get();
         // Disconnect from session so that the updates on updatedActor are not directly saved in db
         em.detach(updatedActor);
         updatedActor
@@ -228,15 +229,15 @@ public class ActorResourceIntTest {
 
         // Create the Actor
 
-        // If the entity doesn't have an ID, it will be created instead of just being updated
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restActorMockMvc.perform(put("/api/actors")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(actor)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         // Validate the Actor in the database
         List<Actor> actorList = actorRepository.findAll();
-        assertThat(actorList).hasSize(databaseSizeBeforeUpdate + 1);
+        assertThat(actorList).hasSize(databaseSizeBeforeUpdate);
     }
 
     @Test

@@ -11,12 +11,18 @@
     <artifactId>demo</artifactId>
     <packaging>war</packaging>
 
+    <repositories>
+        <!-- jhipster-needle-maven-repository -->
+    </repositories>
+
+    <!-- jhipster-needle-distribution-management -->
+
     <properties>
         <!-- Build properties -->
         <maven.version>3.0.0</maven.version>
-        <scala.version>2.12.1</scala.version>
-        <node.version>v8.9.4</node.version>
-        <yarn.version>v1.3.2</yarn.version>
+        <scala.version>2.12.6</scala.version>
+        <node.version>v8.12.0</node.version>
+        <yarn.version>v1.10.1</yarn.version>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -27,56 +33,64 @@
         <!-- These remain empty unless the corresponding profile is active -->
         <profile.no-liquibase />
         <profile.swagger />
+        <profile.tls />
 
         <!-- Dependency versions -->
-        <jhipster-dependencies.version>0.1.12</jhipster-dependencies.version>
+        <jhipster-dependencies.version>2.0.25</jhipster-dependencies.version>
         <!-- The spring-boot version should match the one managed by
         https://mvnrepository.com/artifact/io.github.jhipster/jhipster-dependencies/${jhipster-dependencies.version} -->
-        <spring-boot.version>1.5.13.RELEASE</spring-boot.version>
+        <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
         <!-- The hibernate version should match the one managed by
-        https://mvnrepository.com/artifact/io.github.jhipster/jhipster-dependencies/${jhipster-dependencies.version} -->
-        <hibernate.version>5.2.12.Final</hibernate.version>
+        https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/${spring-boot.version} -->
+        <hibernate.version>5.2.17.Final</hibernate.version>
         <!-- The javassist version should match the one managed by
         https://mvnrepository.com/artifact/org.hibernate/hibernate-core/${hibernate.version} -->
-        <javassist.version>3.20.0-GA</javassist.version>
+        <javassist.version>3.22.0-GA</javassist.version>
         <!-- The liquibase version should match the one managed by
         https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies/${spring-boot.version} -->
         <liquibase.version>3.5.5</liquibase.version>
         <liquibase-hibernate5.version>3.6</liquibase-hibernate5.version>
-        <validation-api.version>1.1.0.Final</validation-api.version>
+        <validation-api.version>2.0.1.Final</validation-api.version>
         <mapstruct.version>1.2.0.Final</mapstruct.version>
 
         <!-- Plugin versions -->
-        <maven-clean-plugin.version>2.6.1</maven-clean-plugin.version>
+        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
-        <maven-enforcer-plugin.version>3.0.0-M1</maven-enforcer-plugin.version>
-        <maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
-        <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
-        <maven-war-plugin.version>2.6</maven-war-plugin.version>
-        <dockerfile-maven-plugin.version>1.3.4</dockerfile-maven-plugin.version>
+        <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+        <maven-war-plugin.version>3.2.2</maven-war-plugin.version>
+        <jib-maven-plugin.version>0.9.11</jib-maven-plugin.version>
         <frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
-        <gatling-maven-plugin.version>2.2.1</gatling-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
-        <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
-        <sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
+        <scala-maven-plugin.version>3.4.2</scala-maven-plugin.version>
+        <sonar-maven-plugin.version>3.5.0.1254</sonar-maven-plugin.version>
+        <git-commit-id-plugin.version>2.2.5</git-commit-id-plugin.version>
 
         <!-- Sonar properties -->
+        <sonar.host.url>http://localhost:9001</sonar.host.url>
         <sonar.exclusions>src/main/webapp/content/**/*.*, src/main/webapp/i18n/*.js, target/www/**/*.*</sonar.exclusions>
-        <sonar.issue.ignore.multicriteria>S3437,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
-        <!-- Rule https://sonarqube.com/coding_rules#rule_key=Web%3ABoldAndItalicTagsCheck is ignored. Even if we agree that using the "i" tag is an awful practice, this is what is recommended by http://fontawesome.io/examples/ -->
+        <sonar.issue.ignore.multicriteria>S3437,S4502,S4684,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
+        <!-- Rule https://sonarcloud.io/coding_rules?open=Web%3ABoldAndItalicTagsCheck&rule_key=Web%3ABoldAndItalicTagsCheck is ignored. Even if we agree that using the "i" tag is an awful practice, this is what is recommended by http://fontawesome.io/examples/ -->
         <sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.resourceKey>src/main/webapp/app/**/*.*</sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.resourceKey>
         <sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.ruleKey>Web:BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.ruleKey>
-        <!-- Rule https://sonarqube.com/coding_rules#rule_key=squid%3AS3437 is ignored, as a JPA-managed field cannot be transient -->
+        <!-- Rule https://sonarcloud.io/coding_rules?open=squid%3AS3437&rule_key=squid%3AS3437 is ignored, as a JPA-managed field cannot be transient -->
         <sonar.issue.ignore.multicriteria.S3437.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.S3437.resourceKey>
         <sonar.issue.ignore.multicriteria.S3437.ruleKey>squid:S3437</sonar.issue.ignore.multicriteria.S3437.ruleKey>
-        <!-- Rule http://sonarqube.com/coding_rules#rule_key=squid%3AUndocumentedApi is ignored, as we want to follow "clean code" guidelines and classes, methods and arguments names should be self-explanatory -->
+        <!-- Rule https://sonarcloud.io/coding_rules?open=squid%3AUndocumentedApi&rule_key=squid%3AUndocumentedApi is ignored, as we want to follow "clean code" guidelines and classes, methods and arguments names should be self-explanatory -->
         <sonar.issue.ignore.multicriteria.UndocumentedApi.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.UndocumentedApi.resourceKey>
         <sonar.issue.ignore.multicriteria.UndocumentedApi.ruleKey>squid:UndocumentedApi</sonar.issue.ignore.multicriteria.UndocumentedApi.ruleKey>
-        <sonar.jacoco.itReportPath>${project.testresult.directory}/coverage/jacoco/jacoco-it.exec</sonar.jacoco.itReportPath>
-        <sonar.jacoco.reportPath>${project.testresult.directory}/coverage/jacoco/jacoco.exec</sonar.jacoco.reportPath>
+        <!-- Rule https://sonarcloud.io/coding_rules?open=squid%3AS4502&rule_key=squid%3AS4502 is ignored, as for JWT tokens we are not subject to CSRF attack -->
+        <sonar.issue.ignore.multicriteria.S4502.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.S4502.resourceKey>
+        <sonar.issue.ignore.multicriteria.S4502.ruleKey>squid:S4502</sonar.issue.ignore.multicriteria.S4502.ruleKey>
+        <!-- Rule https://sonarcloud.io/coding_rules?open=squid%3AS4684&rule_key=squid%3AS4684 -->
+        <sonar.issue.ignore.multicriteria.S4684.resourceKey>src/main/java/**/*</sonar.issue.ignore.multicriteria.S4684.resourceKey>
+        <sonar.issue.ignore.multicriteria.S4684.ruleKey>squid:S4684</sonar.issue.ignore.multicriteria.S4684.ruleKey>
+        <sonar.jacoco.reportPaths>${project.testresult.directory}/coverage/jacoco/jacoco.exec</sonar.jacoco.reportPaths>
         <sonar.java.codeCoveragePlugin>jacoco</sonar.java.codeCoveragePlugin>
-        <sonar.javascript.jstestdriver.reportsPath>${project.testresult.directory}/karma</sonar.javascript.jstestdriver.reportsPath>
-        <sonar.typescript.lcov.reportPaths>${project.testresult.directory}/coverage/report-lcov/lcov.info</sonar.typescript.lcov.reportPaths>
+        <sonar.testExecutionReportPaths>${project.testresult.directory}/jest/TESTS-results-sonar.xml</sonar.testExecutionReportPaths>
+        <sonar.typescript.lcov.reportPaths>${project.testresult.directory}/lcov.info</sonar.typescript.lcov.reportPaths>
         <sonar.sources>${project.basedir}/src/main/</sonar.sources>
         <sonar.surefire.reportsPath>${project.testresult.directory}/surefire-reports</sonar.surefire.reportsPath>
         <sonar.tests>${project.basedir}/src/test/</sonar.tests>
@@ -99,12 +113,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.github.jhipster</groupId>
+            <artifactId>jhipster-framework</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.jhipster</groupId>
-            <artifactId>jhipster</artifactId>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -145,10 +160,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-json-org</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -194,15 +205,6 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.gatling.highcharts</groupId>
-            <artifactId>gatling-charts-highcharts</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jzlib</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
         </dependency>
@@ -231,10 +233,16 @@
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-envers</artifactId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
         <dependency>
@@ -251,25 +259,23 @@
             <version>${mapstruct.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-loader-tools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -293,12 +299,15 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -307,20 +316,28 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.zalando</groupId>
             <artifactId>problem-spring-web</artifactId>
+            <version>0.24.0-RC.0</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
+            <artifactId>jjwt-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <!-- Spring Cloud -->
         <dependency>
@@ -338,81 +355,6 @@
     <build>
         <defaultGoal>spring-boot:run</defaultGoal>
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>jib-resources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/classes/static</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>target/www</directory>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>0.9.11</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:8-jre-alpine</image>
-                    </from>
-                    <to>
-                        <image>anthonydahanne/test</image>
-                    </to>
-                    <container>
-                        <jvmFlags>
-                            <jvmFlag>-Djava.security.egd=file:/dev/./urandom</jvmFlag>
-                        </jvmFlags>
-                        <ports>
-                            <port>8080</port>
-                        </ports>
-                        <useCurrentTimestamp>true</useCurrentTimestamp>
-                    </container>
-                </configuration>
-            </plugin>
-
-
-            <plugin>
-                <groupId>io.gatling</groupId>
-                <artifactId>gatling-maven-plugin</artifactId>
-                <version>${gatling-maven-plugin.version}</version>
-                <configuration>
-                    <configFolder>src/test/gatling/conf</configFolder>
-                    <dataFolder>src/test/gatling/user-files/data</dataFolder>
-                    <resultsFolder>target/gatling/results/${maven.build.timestamp}/</resultsFolder>
-                    <bodiesFolder>src/test/gatling/user-files/bodies</bodiesFolder>
-                    <simulationsFolder>src/test/gatling/user-files/simulations</simulationsFolder>
-                    <!-- If uncommented, these arguments below will be applied to all your gatling tests -->
-                    <!--<jvmArgs>
-                        <jvmArg>-Dusers=100</jvmArg>
-                        <jvmArg>-Dramp=1</jvmArg>
-                    </jvmArgs>-->
-                    <!--
-                    This will run multiple simulations one by one. Useful when doing Gatling
-                    tests in CI.
-                    -->
-                    <runMultipleSimulations>true</runMultipleSimulations>
-                    <!--
-                    To run only one simulation, you need to disable the "runMultipleSimulations"
-                    above, and write the name of your simulation below.
-                    -->
-                    <!--<simulationClass>WriteTheNameOfYourGatlingSimulation</simulationClass>-->
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -506,19 +448,16 @@
                     </execution>
                     <execution>
                         <id>docker-resources</id>
-                        <phase>validate</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>target/</outputDirectory>
+                            <outputDirectory>target/classes/static/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/docker/</directory>
+                                    <directory>target/www</directory>
                                     <filtering>false</filtering>
-                                    <excludes>
-                                        <exclude>**/*.yml</exclude>
-                                    </excludes>
                                 </resource>
                             </resources>
                         </configuration>
@@ -629,25 +568,31 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>${dockerfile-maven-plugin.version}</version>
-                <!--
-                Uncomment the section below to build the docker image with mvn package and and push it with mvn deploy
-                <executions>
-                    <execution>
-                    <id>default</id>
-                    <goals>
-                        <goal>build</goal>
-                        <goal>push</goal>
-                    </goals>
-                    </execution>
-                </executions>
-                -->
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>${jib-maven-plugin.version}</version>
                 <configuration>
-                    <repository>demo</repository>
-                    <tag>latest</tag>
-                    <contextDirectory>${project.build.directory}</contextDirectory>
+                    <from>
+                        <image>openjdk:8-jre-alpine</image>
+                    </from>
+                    <to>
+                        <image>demo:latest</image>
+                    </to>
+                    <container>
+                        <entrypoint>
+                            <shell>sh</shell>
+                            <option>-c</option>
+                            <arg>chmod +x /entrypoint.sh &amp;&amp; sync &amp;&amp; /entrypoint.sh</arg>
+                        </entrypoint>
+                        <ports>
+                            <port>8080</port>
+                        </ports>
+                        <environment>
+                            <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
+                            <JHIPSTER_SLEEP>0</JHIPSTER_SLEEP>
+                        </environment>
+                        <useCurrentTimestamp>true</useCurrentTimestamp>
+                    </container>
                 </configuration>
             </plugin>
             <!-- jhipster-needle-maven-add-plugin -->
@@ -718,7 +663,33 @@
             </properties>
         </profile>
         <profile>
+            <id>tls</id>
+            <properties>
+                <profile.tls>,tls</profile.tls>
+            </properties>
+        </profile>
+        <profile>
             <id>webpack</id>
+            <activation>
+                <file>
+                    <missing>${basedir}/target/www/app/main.bundle.js</missing>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-undertow</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-devtools</artifactId>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -737,6 +708,12 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>yarn install</id>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                            </execution>
+                            <execution>
                                 <id>webpack build dev</id>
                                 <goals>
                                     <goal>yarn</goal>
@@ -749,8 +726,29 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>${maven-war-plugin.version}</version>
+                        <configuration>
+                            <failOnMissingWebXml>false</failOnMissingWebXml>
+                            <warSourceDirectory>target/www/</warSourceDirectory>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/webapp</directory>
+                                    <includes>
+                                        <include>WEB-INF/**</include>
+                                    </includes>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
+            <properties>
+                <!-- default Spring profiles -->
+                <spring.profiles.active>dev${profile.no-liquibase}</spring.profiles.active>
+            </properties>
         </profile>
         <profile>
             <id>dev</id>
@@ -795,7 +793,7 @@
             </build>
             <properties>
                 <!-- default Spring profiles -->
-                <spring.profiles.active>dev${profile.no-liquibase}</spring.profiles.active>
+                <spring.profiles.active>dev${profile.tls}${profile.no-liquibase}</spring.profiles.active>
             </properties>
         </profile>
         <profile>
@@ -903,7 +901,7 @@
                     <plugin>
                         <groupId>pl.project13.maven</groupId>
                         <artifactId>git-commit-id-plugin</artifactId>
-                        <version>2.2.4</version>
+                        <version>${git-commit-id-plugin.version}</version>
                             <executions>
                                 <execution>
                                     <goals>
@@ -934,7 +932,7 @@
                 It allows automatic compilation of Java classes as soon as they are saved.
                 To use it, run in 3 terminals:
                 - './mvnw -Pcc scala:cc' for continuous compilation of your classes
-                - './mvnw -Pcc' for hot reload of Spring boot
+                - './mvnw -Pcc -Pdev' for hot reload of Spring boot
                 - 'npm start/yarn start' for hot reload of the HTML/JavaScript asset
                 Everything should hot reload automatically!
             -->
@@ -1028,41 +1026,9 @@
         </profile>
         <profile>
             <!--
-                Profile for monitoring the application with Graphite.
-            -->
-            <id>graphite</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.dropwizard.metrics</groupId>
-                    <artifactId>metrics-graphite</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <!--
-                Profile for monitoring the application with Prometheus.
-            -->
-            <id>prometheus</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.prometheus</groupId>
-                    <artifactId>simpleclient</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>io.prometheus</groupId>
-                    <artifactId>simpleclient_servlet</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>io.prometheus</groupId>
-                    <artifactId>simpleclient_dropwizard</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <!--
                 Profile for applying IDE-specific configuration.
-                At the moment it only configures MapStruct, which you need when working
-                with DTOs.
+                At the moment it configures MapStruct and Hibernate JPA Metamodel Generator, which you need when working
+                with DTOs and entity filtering.
             -->
             <id>IDE</id>
             <dependencies>
@@ -1070,6 +1036,11 @@
                     <groupId>org.mapstruct</groupId>
                     <artifactId>mapstruct-processor</artifactId>
                     <version>${mapstruct.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-jpamodelgen</artifactId>
+                    <version>${hibernate.version}</version>
                 </dependency>
             </dependencies>
         </profile>

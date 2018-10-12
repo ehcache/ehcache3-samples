@@ -1,26 +1,24 @@
 <div>
-    <h2>
+    <h2 id="page-heading">
         <span>Stars</span>
     </h2>
     <jhi-alert></jhi-alert>
-    <div class="row">
-    </div>
     <br/>
     <div class="table-responsive" *ngIf="stars">
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">
-            <th jhiSortBy="id"><span>ID</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="firstName"><span>First Name</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="lastName"><span>Last Name</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="birthDate"><span>Birth Date</span> <span class="fa fa-sort"></span></th>
-            <th jhiSortBy="birthLocation"><span>Birth Location</span> <span class="fa fa-sort"></span></th>
+            <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="firstName"><span>First Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="lastName"><span>Last Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="birthDate"><span>Birth Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="birthLocation"><span>Birth Location</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
             <tbody infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0">
             <tr *ngFor="let star of stars ;trackBy: trackId">
-                <td><a [routerLink]="['../star', star.id ]">{{star.id}}</a></td>
+                <td><a [routerLink]="['../star', star.id, 'view' ]">{{star.id}}</a></td>
                 <td>{{star.firstName}}</td>
                 <td>{{star.lastName}}</td>
                 <td>{{star.birthDate | date:'mediumDate'}}</td>
@@ -28,9 +26,9 @@
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"
-                                [routerLink]="['../star', star.id ]"
+                                [routerLink]="['../star', star.id, 'view' ]"
                                 class="btn btn-info btn-sm">
-                            <span class="fa fa-eye"></span>
+                            <fa-icon [icon]="'eye'"></fa-icon>
                             <span class="d-none d-md-inline">View</span>
                         </button>
                     </div>

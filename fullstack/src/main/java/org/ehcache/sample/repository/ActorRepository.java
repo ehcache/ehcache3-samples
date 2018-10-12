@@ -1,15 +1,14 @@
 package org.ehcache.sample.repository;
 
 import org.ehcache.sample.domain.Actor;
-import org.springframework.stereotype.Repository;
-
 import org.springframework.data.jpa.repository.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 
 /**
- * Spring Data JPA repository for the Actor entity.
+ * Spring Data  repository for the Actor entity.
  */
 @SuppressWarnings("unused")
 @Repository
