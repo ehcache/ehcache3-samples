@@ -10,10 +10,7 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>aside-versus-through</artifactId>
-
-  <properties>
-  </properties>
+  <artifactId>caching-still-matters</artifactId>
 
   <dependencies>
     <dependency>
