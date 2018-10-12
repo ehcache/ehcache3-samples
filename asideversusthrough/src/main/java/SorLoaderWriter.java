@@ -15,31 +15,31 @@ public class SorLoaderWriter implements CacheLoaderWriter<String, String> {
   }
 
   @Override
-  public String load(String key) throws Exception {
+  public String load(String key) {
     return systemOfRecord.load(key);
   }
 
   @Override
-  public Map<String, String> loadAll(Iterable<? extends String> keys) throws BulkCacheLoadingException, Exception {
+  public Map<String, String> loadAll(Iterable<? extends String> keys) {
     return null;
   }
 
   @Override
-  public void write(String key, String value) throws Exception {
+  public void write(String key, String value) {
   }
 
   @Override
-  public void writeAll(Iterable<? extends Map.Entry<? extends String, ? extends String>> entries) throws BulkCacheWritingException, Exception {
-
-  }
-
-  @Override
-  public void delete(String key) throws Exception {
+  public void writeAll(Iterable<? extends Map.Entry<? extends String, ? extends String>> entries) {
 
   }
 
   @Override
-  public void deleteAll(Iterable<? extends String> keys) throws BulkCacheWritingException, Exception {
+  public void delete(String key) {
+
+  }
+
+  @Override
+  public void deleteAll(Iterable<? extends String> keys) {
 
   }
 }

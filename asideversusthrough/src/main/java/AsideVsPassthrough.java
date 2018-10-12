@@ -3,38 +3,38 @@ import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.ehcache.expiry.Duration;
-import org.ehcache.expiry.Expirations;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-public class AsideVsPassthrough {
+public class AsideVsPassthrough implements AutoCloseable {
 
   public static void main(String[] args) throws InterruptedException {
-    AsideVsPassthrough app = new AsideVsPassthrough();
-    app.initSystemOfRecords();
-    app.initCacheThrough();
+    try(AsideVsPassthrough app = new AsideVsPassthrough()) {
+      app.initSystemOfRecords();
+      app.initCacheThrough();
 //    app.initCacheAside();
 
-    ExecutorService executor = Executors.newFixedThreadPool(10);
-    IntStream.range(0, 9)
-        .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueThrough()));
+      ExecutorService executor = Executors.newFixedThreadPool(10);
+      IntStream.range(0, 9)
+          .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueThrough()));
 //        .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueAside()));
 
-    executor.shutdown();
-    executor.awaitTermination(5, TimeUnit.SECONDS);
-    app.closeCacheManager();
-
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
   }
 
+  private static final Logger LOG = LoggerFactory.getLogger(AsideVsPassthrough.class);
 
-  private static Logger LOG = LoggerFactory.getLogger(AsideVsPassthrough.class);
   private CacheManager cacheManager;
   private SystemOfRecord systemOfRecord;
 
@@ -44,7 +44,7 @@ public class AsideVsPassthrough {
         .newCacheConfigurationBuilder(String.class, String.class, ResourcePoolsBuilder
             .newResourcePoolsBuilder()
             .heap(100))
-        .withExpiry(Expirations.timeToLiveExpiration(new Duration(60, TimeUnit.SECONDS)))
+        .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(60)))
         .build();
 
 
@@ -56,23 +56,17 @@ public class AsideVsPassthrough {
 
   private void initCacheThrough() {
     LOG.info("Init Cache");
-    CacheConfiguration<String, String> cacheConfiguration = CacheConfigurationBuilder
+    CacheConfigurationBuilder<String, String> cacheConfiguration = CacheConfigurationBuilder
         .newCacheConfigurationBuilder(String.class, String.class, ResourcePoolsBuilder
             .newResourcePoolsBuilder()
             .heap(100))
-
-        .withExpiry(Expirations.timeToLiveExpiration(new Duration(60, TimeUnit.SECONDS)))
-        .withLoaderWriter(new SorLoaderWriter(systemOfRecord))
-        .build();
-
+        .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(60)))
+        .withLoaderWriter(new SorLoaderWriter(systemOfRecord));
 
     cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
         .withCache("myCache", cacheConfiguration)
-        .build();
-    cacheManager.init();
+        .build(true);
   }
-
-
 
   private void retrieveAndDisplayTheValueAside() {
 
@@ -101,8 +95,8 @@ public class AsideVsPassthrough {
     systemOfRecord = SystemOfRecord.getSystemOfRecord();
   }
 
-
-  private void closeCacheManager() {
+  @Override
+  public void close() {
     cacheManager.close();
   }
 }
