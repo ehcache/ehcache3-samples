@@ -202,7 +202,7 @@ public class DemoApp {
                             }
                         }
                     } catch (Exception e) {
-                        log.warn("Error loading : " + s, e);
+                        log.warn("Error loading : " + s);
                     }
 
                 });
