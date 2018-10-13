@@ -1,19 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Subscription } from 'rxjs/Subscription';
+import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
-import { Actor } from './actor.model';
+import { IActor } from 'app/shared/model/actor.model';
+import { Principal } from 'app/core';
+
+import { ITEMS_PER_PAGE } from 'app/shared';
 import { ActorService } from './actor.service';
-import { ITEMS_PER_PAGE, Principal } from '../../shared';
 
 @Component({
     selector: 'jhi-actor',
     templateUrl: './actor.component.html'
 })
 export class ActorComponent implements OnInit, OnDestroy {
-
-    actors: Actor[];
+    actors: IActor[];
     currentAccount: any;
     eventSubscriber: Subscription;
     itemsPerPage: number;
@@ -42,14 +43,16 @@ export class ActorComponent implements OnInit, OnDestroy {
     }
 
     loadAll() {
-        this.actorService.query({
-            page: this.page,
-            size: this.itemsPerPage,
-            sort: this.sort()
-        }).subscribe(
-            (res: HttpResponse<Actor[]>) => this.onSuccess(res.body, res.headers),
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.actorService
+            .query({
+                page: this.page,
+                size: this.itemsPerPage,
+                sort: this.sort()
+            })
+            .subscribe(
+                (res: HttpResponse<IActor[]>) => this.paginateActors(res.body, res.headers),
+                (res: HttpErrorResponse) => this.onError(res.message)
+            );
     }
 
     reset() {
@@ -62,9 +65,10 @@ export class ActorComponent implements OnInit, OnDestroy {
         this.page = page;
         this.loadAll();
     }
+
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then((account) => {
+        this.principal.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInActors();
@@ -74,11 +78,12 @@ export class ActorComponent implements OnInit, OnDestroy {
         this.eventManager.destroy(this.eventSubscriber);
     }
 
-    trackId(index: number, item: Actor) {
+    trackId(index: number, item: IActor) {
         return item.id;
     }
+
     registerChangeInActors() {
-        this.eventSubscriber = this.eventManager.subscribe('actorListModification', (response) => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('actorListModification', response => this.reset());
     }
 
     sort() {
@@ -89,15 +94,15 @@ export class ActorComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    private onSuccess(data, headers) {
+    private paginateActors(data: IActor[], headers: HttpHeaders) {
         this.links = this.parseLinks.parse(headers.get('link'));
-        this.totalItems = headers.get('X-Total-Count');
+        this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
         for (let i = 0; i < data.length; i++) {
             this.actors.push(data[i]);
         }
     }
 
-    private onError(error) {
-        this.jhiAlertService.error(error.message, null, null);
+    private onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
     }
 }

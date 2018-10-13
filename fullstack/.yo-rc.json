@@ -3,7 +3,8 @@
     "promptValues": {
       "packageName": "org.ehcache.sample"
     },
-    "jhipsterVersion": "4.14.4",
+    "jhipsterVersion": "5.4.2",
+    "applicationType": "monolith",
     "baseName": "demo",
     "packageName": "org.ehcache.sample",
     "packageFolder": "org/ehcache/sample",
@@ -19,13 +20,11 @@
     "messageBroker": false,
     "serviceDiscoveryType": false,
     "buildTool": "maven",
-    "enableSocialSignIn": false,
     "enableSwaggerCodegen": false,
-    "jwtSecretKey": "c062645393a0b160c8dcfa398c38da3226f0c670",
+    "jwtSecretKey": "MGE3NjY2Y2UwZWEyYjYyZjQzYThhMzk2ODI2YzEzYjQzN2VhMDBiMTMyMjg1OWU3MjU3YTIzYmFkNTcyMmJhMjVjOTE0YmM3NTJkNzdjNWViZGY5OWMxZTFmMWU4NjViYTIyYmQ4MzJmN2JjOTg5ZmY0Mzg1MWZiODliYWE2MDA=",
     "clientFramework": "angularX",
     "useSass": false,
     "clientPackageManager": "yarn",
-    "applicationType": "monolith",
     "testFrameworks": [
       "gatling"
     ],

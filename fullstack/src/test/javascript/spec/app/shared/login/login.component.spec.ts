@@ -3,17 +3,15 @@ import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { LoginService } from '../../../../../../main/webapp/app/shared/login/login.service';
-import { JhiLoginModalComponent } from '../../../../../../main/webapp/app/shared/login/login.component';
-import { StateStorageService } from '../../../../../../main/webapp/app/shared/auth/state-storage.service';
+import { LoginService } from 'app/core/login/login.service';
+import { JhiLoginModalComponent } from 'app/shared/login/login.component';
+import { StateStorageService } from 'app/core/auth/state-storage.service';
 import { DemoTestModule } from '../../../test.module';
 import { MockLoginService } from '../../../helpers/mock-login.service';
 import { MockStateStorageService } from '../../../helpers/mock-state-storage.service';
 
 describe('Component Tests', () => {
-
     describe('LoginComponent', () => {
-
         let comp: JhiLoginModalComponent;
         let fixture: ComponentFixture<JhiLoginModalComponent>;
         let mockLoginService: any;
@@ -22,24 +20,26 @@ describe('Component Tests', () => {
         let mockEventManager: any;
         let mockActiveModal: any;
 
-        beforeEach(async(() => {
-            TestBed.configureTestingModule({
-                imports: [DemoTestModule],
-                declarations: [JhiLoginModalComponent],
-                providers : [
-                    {
-                        provide: LoginService,
-                        useClass: MockLoginService
-                    },
-                    {
-                        provide: StateStorageService,
-                        useClass: MockStateStorageService
-                    }
-                ]
+        beforeEach(
+            async(() => {
+                TestBed.configureTestingModule({
+                    imports: [DemoTestModule],
+                    declarations: [JhiLoginModalComponent],
+                    providers: [
+                        {
+                            provide: LoginService,
+                            useClass: MockLoginService
+                        },
+                        {
+                            provide: StateStorageService,
+                            useClass: MockStateStorageService
+                        }
+                    ]
+                })
+                    .overrideTemplate(JhiLoginModalComponent, '')
+                    .compileComponents();
             })
-            .overrideTemplate(JhiLoginModalComponent, '')
-            .compileComponents();
-        }));
+        );
 
         beforeEach(() => {
             fixture = TestBed.createComponent(JhiLoginModalComponent);
@@ -51,8 +51,10 @@ describe('Component Tests', () => {
             mockActiveModal = fixture.debugElement.injector.get(NgbActiveModal);
         });
 
-        it('should authenticate the user upon login when previous state was set',
-            inject([],
+        it(
+            'should authenticate the user upon login when previous state was set',
+            inject(
+                [],
                 fakeAsync(() => {
                     // GIVEN
                     const credentials = {
@@ -65,7 +67,7 @@ describe('Component Tests', () => {
                     comp.rememberMe = true;
                     comp.credentials = credentials;
                     mockLoginService.setResponse({});
-                    mockStateStorageService.setResponse({redirect: 'dummy'});
+                    mockStateStorageService.setResponse({ redirect: 'dummy' });
 
                     // WHEN/
                     comp.login();
@@ -78,13 +80,15 @@ describe('Component Tests', () => {
                     expect(mockLoginService.loginSpy).toHaveBeenCalledWith(credentials);
                     expect(mockStateStorageService.getUrlSpy).toHaveBeenCalledTimes(1);
                     expect(mockStateStorageService.storeUrlSpy).toHaveBeenCalledWith(null);
-                    expect(mockRouter.navigateSpy).toHaveBeenCalledWith([{redirect: 'dummy'}]);
+                    expect(mockRouter.navigateSpy).toHaveBeenCalledWith([{ redirect: 'dummy' }]);
                 })
             )
         );
 
-        it('should authenticate the user upon login when previous state was not set',
-            inject([],
+        it(
+            'should authenticate the user upon login when previous state was not set',
+            inject(
+                [],
                 fakeAsync(() => {
                     // GIVEN
                     const credentials = {

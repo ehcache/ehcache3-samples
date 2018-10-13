@@ -1,12 +1,12 @@
 import { Component, OnDestroy } from '@angular/core';
 import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'jhi-alert-error',
     template: `
         <div class="alerts" role="alert">
-            <div *ngFor="let alert of alerts"  [ngClass]="{\'alert.position\': true, \'toast\': alert.toast}">
+            <div *ngFor="let alert of alerts" [ngClass]="setClasses(alert)">
                 <ngb-alert *ngIf="alert && alert.type && alert.msg" [type]="alert.type" (close)="alert.close(alerts)">
                     <pre [innerHTML]="alert.msg"></pre>
                 </ngb-alert>
@@ -14,14 +14,14 @@ import { Subscription } from 'rxjs/Subscription';
         </div>`
 })
 export class JhiAlertErrorComponent implements OnDestroy {
-
     alerts: any[];
     cleanHttpErrorListener: Subscription;
-    // tslint:disable-next-line: no-unused-variable
+    /* tslint:disable */
     constructor(private alertService: JhiAlertService, private eventManager: JhiEventManager) {
+        /* tslint:enable */
         this.alerts = [];
 
-        this.cleanHttpErrorListener = eventManager.subscribe('demoApp.httpError', (response) => {
+        this.cleanHttpErrorListener = eventManager.subscribe('demoApp.httpError', response => {
             let i;
             const httpErrorResponse = response.content;
             switch (httpErrorResponse.status) {
@@ -34,10 +34,10 @@ export class JhiAlertErrorComponent implements OnDestroy {
                     const arr = httpErrorResponse.headers.keys();
                     let errorHeader = null;
                     let entityKey = null;
-                    arr.forEach((entry) => {
-                        if (entry.endsWith('app-error')) {
+                    arr.forEach(entry => {
+                        if (entry.toLowerCase().endsWith('app-error')) {
                             errorHeader = httpErrorResponse.headers.get(entry);
-                        } else if (entry.endsWith('app-params')) {
+                        } else if (entry.toLowerCase().endsWith('app-params')) {
                             entityKey = httpErrorResponse.headers.get(entry);
                         }
                     });
@@ -48,15 +48,20 @@ export class JhiAlertErrorComponent implements OnDestroy {
                         const fieldErrors = httpErrorResponse.error.fieldErrors;
                         for (i = 0; i < fieldErrors.length; i++) {
                             const fieldError = fieldErrors[i];
+                            if (['Min', 'Max', 'DecimalMin', 'DecimalMax'].includes(fieldError.message)) {
+                                fieldError.message = 'Size';
+                            }
                             // convert 'something[14].other[4].id' to 'something[].other[].id' so translations can be written to it
                             const convertedField = fieldError.field.replace(/\[\d*\]/g, '[]');
-                            const fieldName = convertedField.charAt(0).toUpperCase() +
-                                convertedField.slice(1);
-                            this.addErrorAlert(
-                                'Error on field "' + fieldName + '"', 'error.' + fieldError.message, { fieldName });
+                            const fieldName = convertedField.charAt(0).toUpperCase() + convertedField.slice(1);
+                            this.addErrorAlert('Error on field "' + fieldName + '"', 'error.' + fieldError.message, { fieldName });
                         }
                     } else if (httpErrorResponse.error !== '' && httpErrorResponse.error.message) {
-                        this.addErrorAlert(httpErrorResponse.error.message, httpErrorResponse.error.message, httpErrorResponse.error.params);
+                        this.addErrorAlert(
+                            httpErrorResponse.error.message,
+                            httpErrorResponse.error.message,
+                            httpErrorResponse.error.params
+                        );
                     } else {
                         this.addErrorAlert(httpErrorResponse.error);
                     }
@@ -74,6 +79,13 @@ export class JhiAlertErrorComponent implements OnDestroy {
                     }
             }
         });
+    }
+
+    setClasses(alert) {
+        return {
+            toast: !!alert.toast,
+            [alert.position]: true
+        };
     }
 
     ngOnDestroy() {

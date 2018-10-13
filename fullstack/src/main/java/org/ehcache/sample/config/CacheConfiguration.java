@@ -10,20 +10,22 @@ import org.ehcache.clustered.common.Consistency;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
+
+import io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory;
+
 import org.ehcache.config.units.MemoryUnit;
 import org.ehcache.core.config.DefaultConfiguration;
-
-import java.net.URI;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.ehcache.jsr107.EhcacheCachingProvider;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+
+import java.net.URI;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.cache.CacheManager;
 import javax.cache.Caching;
@@ -37,9 +39,23 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     private final ApplicationProperties applicationProperties;
 
     public CacheConfiguration(Environment environment, JHipsterProperties jHipsterProperties, ApplicationProperties applicationProperties) {
+        BeanClassLoaderAwareJCacheRegionFactory.setBeanClassLoader(getClassLoader());
         this.environment = environment;
         this.jHipsterProperties = jHipsterProperties;
         this.applicationProperties = applicationProperties;
+    }
+
+    /**
+     * Return the class loader to use to retrieve the CacheManager from the Caching Provider
+     *
+     * @return class loader to use
+     */
+    private ClassLoader getClassLoader() {
+        return this.getClass().getClassLoader();
+    }
+
+    private CacheManager getCacheManager(EhcacheCachingProvider provider, DefaultConfiguration configuration) {
+        return provider.getCacheManager(provider.getDefaultURI(), configuration);
     }
 
     @Bean
@@ -55,7 +71,6 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
         org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration = CacheConfigurationBuilder
             .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder
-                .newResourcePoolsBuilder()
                 .heap(cacheSize))
             .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ttl)))
             .build();
@@ -63,8 +78,8 @@ public class CacheConfiguration extends CachingConfigurerSupport {
         Map<String, org.ehcache.config.CacheConfiguration<?, ?>> caches = createCacheConfigurations(cacheConfiguration);
 
         EhcacheCachingProvider provider = getCachingProvider();
-        DefaultConfiguration configuration = new DefaultConfiguration(caches, provider.getDefaultClassLoader());
-        return provider.getCacheManager(provider.getDefaultURI(), configuration);
+        DefaultConfiguration configuration = new DefaultConfiguration(caches, getClassLoader());
+        return getCacheManager(provider, configuration);
     }
 
     private CacheManager createClusteredCacheManager() {
@@ -84,7 +99,6 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
         org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration = CacheConfigurationBuilder
             .newCacheConfigurationBuilder(Object.class, Object.class, ResourcePoolsBuilder
-                .newResourcePoolsBuilder()
                 .heap(heapCacheSize)
                 .with(ClusteredResourcePoolBuilder.clusteredDedicated(clusteredCacheSize, MemoryUnit.MB)))
             .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(ttl)))
@@ -93,8 +107,8 @@ public class CacheConfiguration extends CachingConfigurerSupport {
         Map<String, org.ehcache.config.CacheConfiguration<?, ?>> caches = createCacheConfigurations(cacheConfiguration);
 
         EhcacheCachingProvider provider = getCachingProvider();
-        DefaultConfiguration configuration = new DefaultConfiguration(caches, provider.getDefaultClassLoader(), serverSideConfigurationBuilder.build());
-        return provider.getCacheManager(provider.getDefaultURI(), configuration);
+        DefaultConfiguration configuration = new DefaultConfiguration(caches, getClassLoader(), serverSideConfigurationBuilder.build());
+        return getCacheManager(provider, configuration);
     }
 
     private Map<String, org.ehcache.config.CacheConfiguration<?, ?>> createCacheConfigurations(org.ehcache.config.CacheConfiguration<Object, Object> cacheConfiguration) {

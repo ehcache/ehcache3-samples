@@ -5,19 +5,16 @@ import { ProfileInfo } from './profile-info.model';
 @Component({
     selector: 'jhi-page-ribbon',
     template: `<div class="ribbon" *ngIf="ribbonEnv"><a href="">{{ribbonEnv}}</a></div>`,
-    styleUrls: [
-        'page-ribbon.css'
-    ]
+    styleUrls: ['page-ribbon.css']
 })
 export class PageRibbonComponent implements OnInit {
-
     profileInfo: ProfileInfo;
     ribbonEnv: string;
 
     constructor(private profileService: ProfileService) {}
 
     ngOnInit() {
-        this.profileService.getProfileInfo().then((profileInfo) => {
+        this.profileService.getProfileInfo().then(profileInfo => {
             this.profileInfo = profileInfo;
             this.ribbonEnv = profileInfo.ribbonEnv;
         });

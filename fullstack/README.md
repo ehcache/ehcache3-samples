@@ -1,5 +1,5 @@
 # demo
-This application was generated using JHipster 4.14.4, you can find documentation and help at [http://www.jhipster.tech/documentation-archive/v4.14.4](http://www.jhipster.tech/documentation-archive/v4.14.4).
+This application was generated using JHipster 5.4.2, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v5.4.2](https://www.jhipster.tech/documentation-archive/v5.4.2).
 
 ## Development
 
@@ -17,14 +17,13 @@ You will only need to run this command when dependencies change in [package.json
 
 We use yarn scripts and [Webpack][] as our build system.
 
-
 Run the following commands in two separate terminals to create a blissful development experience where your browser
 auto-refreshes when files change on your hard drive.
 
     ./mvnw
     yarn start
 
-[Yarn][] is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
+Yarn is also used to manage CSS and JavaScript dependencies used in this application. You can upgrade dependencies by
 specifying a newer version in [package.json](package.json). You can also run `yarn update` and `yarn install` to manage dependencies.
 Add the `help` flag on any command to see how you can use it. For example, `yarn help update`.
 
@@ -40,13 +39,13 @@ Service workers are commented by default, to enable them please uncomment the fo
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
-        .register('./sw.js')
+        .register('./service-worker.js')
         .then(function() { console.log('Service Worker Registered'); });
     }
 </script>
 ```
 
-Note: workbox creates the respective service worker and dynamically generate the `sw.js`
+Note: workbox creates the respective service worker and dynamically generate the `service-worker.js`
 
 ### Managing dependencies
 
@@ -110,18 +109,34 @@ To launch your application's tests, run:
 
 ### Client tests
 
-Unit tests are run by [Karma][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
+Unit tests are run by [Jest][] and written with [Jasmine][]. They're located in [src/test/javascript/](src/test/javascript/) and can be run with:
 
     yarn test
 
 
 ### Other tests
 
-Performance tests are run by [Gatling][] and written in Scala. They're located in [src/test/gatling](src/test/gatling) and can be run with:
+Performance tests are run by [Gatling][] and written in Scala. They're located in [src/test/gatling](src/test/gatling).
 
-    ./mvnw gatling:execute
+To use those tests, you must install Gatling from [https://gatling.io/](https://gatling.io/).
 
 For more information, refer to the [Running tests page][].
+
+### Code quality
+
+Sonar is used to analyse code quality. You can start a local Sonar server (accessible on http://localhost:9001) with:
+
+```
+docker-compose -f src/main/docker/sonar.yml up -d
+```
+
+Then, run a Sonar analysis:
+
+```
+./mvnw -Pprod clean test sonar:sonar
+```
+
+For more information, refer to the [Code quality page][].
 
 ## Using Docker to simplify development (optional)
 
@@ -138,7 +153,7 @@ To stop it and remove the container, run:
 You can also fully dockerize your application and all the services that it depends on.
 To achieve this, first build a docker image of your app by running:
 
-    ./mvnw verify -Pprod dockerfile:build
+    ./mvnw package -Pprod jib:dockerBuild
 
 Then run:
 

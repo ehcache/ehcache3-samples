@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
-import { Actor } from './actor.model';
-import { ActorPopupService } from './actor-popup.service';
+import { IActor } from 'app/shared/model/actor.model';
 import { ActorService } from './actor.service';
 
 @Component({
@@ -13,22 +12,16 @@ import { ActorService } from './actor.service';
     templateUrl: './actor-delete-dialog.component.html'
 })
 export class ActorDeleteDialogComponent {
+    actor: IActor;
 
-    actor: Actor;
-
-    constructor(
-        private actorService: ActorService,
-        public activeModal: NgbActiveModal,
-        private eventManager: JhiEventManager
-    ) {
-    }
+    constructor(private actorService: ActorService, public activeModal: NgbActiveModal, private eventManager: JhiEventManager) {}
 
     clear() {
         this.activeModal.dismiss('cancel');
     }
 
     confirmDelete(id: number) {
-        this.actorService.delete(id).subscribe((response) => {
+        this.actorService.delete(id).subscribe(response => {
             this.eventManager.broadcast({
                 name: 'actorListModification',
                 content: 'Deleted an actor'
@@ -43,22 +36,30 @@ export class ActorDeleteDialogComponent {
     template: ''
 })
 export class ActorDeletePopupComponent implements OnInit, OnDestroy {
+    private ngbModalRef: NgbModalRef;
 
-    routeSub: any;
-
-    constructor(
-        private route: ActivatedRoute,
-        private actorPopupService: ActorPopupService
-    ) {}
+    constructor(private activatedRoute: ActivatedRoute, private router: Router, private modalService: NgbModal) {}
 
     ngOnInit() {
-        this.routeSub = this.route.params.subscribe((params) => {
-            this.actorPopupService
-                .open(ActorDeleteDialogComponent as Component, params['id']);
+        this.activatedRoute.data.subscribe(({ actor }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(ActorDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+                this.ngbModalRef.componentInstance.actor = actor;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
         });
     }
 
     ngOnDestroy() {
-        this.routeSub.unsubscribe();
+        this.ngbModalRef = null;
     }
 }

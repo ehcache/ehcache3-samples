@@ -4,11 +4,13 @@ import org.ehcache.sample.domain.Actor;
 import org.ehcache.sample.repository.ActorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 
 /**
  * Service Implementation for managing Actor.
@@ -48,6 +50,7 @@ public class ActorService {
         return actorRepository.findAll(pageable);
     }
 
+
     /**
      * Get one actor by id.
      *
@@ -55,9 +58,9 @@ public class ActorService {
      * @return the entity
      */
     @Transactional(readOnly = true)
-    public Actor findOne(Long id) {
+    public Optional<Actor> findOne(Long id) {
         log.debug("Request to get Actor : {}", id);
-        return actorRepository.findOne(id);
+        return actorRepository.findById(id);
     }
 
     /**
@@ -67,6 +70,6 @@ public class ActorService {
      */
     public void delete(Long id) {
         log.debug("Request to delete Actor : {}", id);
-        actorRepository.delete(id);
+        actorRepository.deleteById(id);
     }
 }

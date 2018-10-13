@@ -6,14 +6,14 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <p>Are you sure you want to delete this Actor?</p>
+        <p id="jhi-delete-actor-heading">Are you sure you want to delete this Actor?</p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
-            <span class="fa fa-ban"></span>&nbsp;<span>Cancel</span>
+            <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span>Cancel</span>
         </button>
-        <button type="submit" class="btn btn-danger">
-            <span class="fa fa-remove"></span>&nbsp;<span>Delete</span>
+        <button id="jhi-confirm-delete-actor" type="submit" class="btn btn-danger">
+            <fa-icon [icon]="'times'"></fa-icon>&nbsp;<span>Delete</span>
         </button>
     </div>
 </form>

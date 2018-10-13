@@ -1,17 +1,14 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
-import { DemoSharedModule } from '../shared';
+import { DemoSharedModule } from 'app/shared';
 /* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */
 
 import {
     adminState,
     AuditsComponent,
     UserMgmtComponent,
-    UserDialogComponent,
-    UserDeleteDialogComponent,
     UserMgmtDetailComponent,
-    UserMgmtDialogComponent,
+    UserMgmtUpdateComponent,
     UserMgmtDeleteDialogComponent,
     LogsComponent,
     JhiMetricsMonitoringModalComponent,
@@ -19,30 +16,20 @@ import {
     JhiHealthModalComponent,
     JhiHealthCheckComponent,
     JhiConfigurationComponent,
-    JhiDocsComponent,
-    AuditsService,
-    JhiConfigurationService,
-    JhiHealthService,
-    JhiMetricsService,
-    LogsService,
-    UserResolvePagingParams,
-    UserResolve,
-    UserModalService
+    JhiDocsComponent
 } from './';
 
 @NgModule({
     imports: [
         DemoSharedModule,
-        RouterModule.forChild(adminState),
+        RouterModule.forChild(adminState)
         /* jhipster-needle-add-admin-module - JHipster will add admin modules here */
     ],
     declarations: [
         AuditsComponent,
         UserMgmtComponent,
-        UserDialogComponent,
-        UserDeleteDialogComponent,
         UserMgmtDetailComponent,
-        UserMgmtDialogComponent,
+        UserMgmtUpdateComponent,
         UserMgmtDeleteDialogComponent,
         LogsComponent,
         JhiConfigurationComponent,
@@ -52,22 +39,7 @@ import {
         JhiMetricsMonitoringComponent,
         JhiMetricsMonitoringModalComponent
     ],
-    entryComponents: [
-        UserMgmtDialogComponent,
-        UserMgmtDeleteDialogComponent,
-        JhiHealthModalComponent,
-        JhiMetricsMonitoringModalComponent,
-    ],
-    providers: [
-        AuditsService,
-        JhiConfigurationService,
-        JhiHealthService,
-        JhiMetricsService,
-        LogsService,
-        UserResolvePagingParams,
-        UserResolve,
-        UserModalService
-    ],
+    entryComponents: [UserMgmtDeleteDialogComponent, JhiHealthModalComponent, JhiMetricsMonitoringModalComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DemoAdminModule {}

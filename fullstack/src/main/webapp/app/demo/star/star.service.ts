@@ -1,56 +1,45 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { SERVER_API_URL } from '../../app.constants';
+import * as moment from 'moment';
+import { DATE_FORMAT } from 'app/shared/constants/input.constants';
+import { map } from 'rxjs/operators';
 
-import { JhiDateUtils } from 'ng-jhipster';
-
+import { SERVER_API_URL } from 'app/app.constants';
+import { createRequestOption } from 'app/shared';
 import { Star } from './star.model';
-import { createRequestOption } from '../../shared';
 
-export type EntityResponseType = HttpResponse<Star>;
+type EntityResponseType = HttpResponse<Star>;
+type EntityArrayResponseType = HttpResponse<Star[]>;
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class StarService {
+    private resourceUrl = SERVER_API_URL + 'api/stars';
 
-    private resourceUrl =  SERVER_API_URL + 'api/stars';
-    private actorUrl =  SERVER_API_URL + 'api/actors';
-
-    constructor(private http: HttpClient, private dateUtils: JhiDateUtils) { }
+    constructor(private http: HttpClient) {}
 
     find(id: number): Observable<EntityResponseType> {
-        return this.http.get<Star>(`${this.resourceUrl}/${id}`, { observe: 'response'})
-            .map((res: EntityResponseType) => this.convertResponse(res));
+        return this.http
+            .get<Star>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
-    query(req?: any): Observable<HttpResponse<Star[]>> {
+    query(req?: any): Observable<EntityArrayResponseType> {
         const options = createRequestOption(req);
-        return this.http.get<Star[]>(this.actorUrl, { params: options, observe: 'response' })
-            .map((res: HttpResponse<Star[]>) => this.convertArrayResponse(res));
+        return this.http
+            .get<Star[]>(this.resourceUrl, { params: options, observe: 'response' })
+            .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
     }
 
-    private convertResponse(res: EntityResponseType): EntityResponseType {
-        const body: Star = this.convertItemFromServer(res.body);
-        return res.clone({body});
+    private convertDateFromServer(res: EntityResponseType): EntityResponseType {
+        res.body.birthDate = res.body.birthDate != null ? moment(res.body.birthDate) : null;
+        return res;
     }
 
-    private convertArrayResponse(res: HttpResponse<Star[]>): HttpResponse<Star[]> {
-        const jsonResponse: Star[] = res.body;
-        const body: Star[] = [];
-        for (let i = 0; i < jsonResponse.length; i++) {
-            body.push(this.convertItemFromServer(jsonResponse[i]));
-        }
-        return res.clone({body});
+    private convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+        res.body.forEach((star: Star) => {
+            star.birthDate = star.birthDate != null ? moment(star.birthDate) : null;
+        });
+        return res;
     }
-
-    /**
-     * Convert a returned JSON object to Star.
-     */
-    private convertItemFromServer(star: Star): Star {
-        const copy: Star = Object.assign({}, star);
-        copy.birthDate = this.dateUtils
-            .convertLocalDateFromServer(star.birthDate);
-        return copy;
-    }
-
 }

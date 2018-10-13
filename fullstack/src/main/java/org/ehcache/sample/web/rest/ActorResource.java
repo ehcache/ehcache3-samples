@@ -73,7 +73,7 @@ public class ActorResource {
     public ResponseEntity<Actor> updateActor(@RequestBody Actor actor) throws URISyntaxException {
         log.debug("REST request to update Actor : {}", actor);
         if (actor.getId() == null) {
-            return createActor(actor);
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Actor result = actorService.save(actor);
         return ResponseEntity.ok()
@@ -106,8 +106,8 @@ public class ActorResource {
     @Timed
     public ResponseEntity<Actor> getActor(@PathVariable Long id) {
         log.debug("REST request to get Actor : {}", id);
-        Actor actor = actorService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(actor));
+        Optional<Actor> actor = actorService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(actor);
     }
 
     /**

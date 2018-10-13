@@ -1,18 +1,19 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { JhiEventManager, JhiParseLinks, JhiAlertService } from 'ng-jhipster';
 
 import { Star } from './star.model';
+import { Principal } from 'app/core';
+
+import { ITEMS_PER_PAGE } from 'app/shared';
 import { StarService } from './star.service';
-import { ITEMS_PER_PAGE, Principal } from '../../shared';
 
 @Component({
     selector: 'jhi-star',
     templateUrl: './star.component.html'
 })
 export class StarComponent implements OnInit, OnDestroy {
-
     stars: Star[];
     currentAccount: any;
     eventSubscriber: Subscription;
@@ -42,14 +43,16 @@ export class StarComponent implements OnInit, OnDestroy {
     }
 
     loadAll() {
-        this.starService.query({
-            page: this.page,
-            size: this.itemsPerPage,
-            sort: this.sort()
-        }).subscribe(
-            (res: HttpResponse<Star[]>) => this.onSuccess(res.body, res.headers),
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
+        this.starService
+            .query({
+                page: this.page,
+                size: this.itemsPerPage,
+                sort: this.sort()
+            })
+            .subscribe(
+                (res: HttpResponse<Star[]>) => this.paginateStars(res.body, res.headers),
+                (res: HttpErrorResponse) => this.onError(res.message)
+            );
     }
 
     reset() {
@@ -64,7 +67,7 @@ export class StarComponent implements OnInit, OnDestroy {
     }
     ngOnInit() {
         this.loadAll();
-        this.principal.identity().then((account) => {
+        this.principal.identity().then(account => {
             this.currentAccount = account;
         });
         this.registerChangeInStars();
@@ -77,8 +80,9 @@ export class StarComponent implements OnInit, OnDestroy {
     trackId(index: number, item: Star) {
         return item.id;
     }
+
     registerChangeInStars() {
-        this.eventSubscriber = this.eventManager.subscribe('starListModification', (response) => this.reset());
+        this.eventSubscriber = this.eventManager.subscribe('starListModification', response => this.reset());
     }
 
     sort() {
@@ -89,9 +93,9 @@ export class StarComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    private onSuccess(data, headers) {
+    private paginateStars(data, headers) {
         this.links = this.parseLinks.parse(headers.get('link'));
-        this.totalItems = headers.get('X-Total-Count');
+        this.totalItems = parseInt(headers.get('X-Total-Count'), 10);
         for (let i = 0; i < data.length; i++) {
             this.stars.push(data[i]);
         }

@@ -1,55 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HttpResponse } from '@angular/common/http';
-import { Subscription } from 'rxjs/Subscription';
-import { JhiEventManager } from 'ng-jhipster';
 
-import { Actor } from './actor.model';
-import { ActorService } from './actor.service';
+import { IActor } from 'app/shared/model/actor.model';
 
 @Component({
     selector: 'jhi-actor-detail',
     templateUrl: './actor-detail.component.html'
 })
-export class ActorDetailComponent implements OnInit, OnDestroy {
+export class ActorDetailComponent implements OnInit {
+    actor: IActor;
 
-    actor: Actor;
-    private subscription: Subscription;
-    private eventSubscriber: Subscription;
-
-    constructor(
-        private eventManager: JhiEventManager,
-        private actorService: ActorService,
-        private route: ActivatedRoute
-    ) {
-    }
+    constructor(private activatedRoute: ActivatedRoute) {}
 
     ngOnInit() {
-        this.subscription = this.route.params.subscribe((params) => {
-            this.load(params['id']);
+        this.activatedRoute.data.subscribe(({ actor }) => {
+            this.actor = actor;
         });
-        this.registerChangeInActors();
     }
 
-    load(id) {
-        this.actorService.find(id)
-            .subscribe((actorResponse: HttpResponse<Actor>) => {
-                this.actor = actorResponse.body;
-            });
-    }
     previousState() {
         window.history.back();
-    }
-
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-        this.eventManager.destroy(this.eventSubscriber);
-    }
-
-    registerChangeInActors() {
-        this.eventSubscriber = this.eventManager.subscribe(
-            'actorListModification',
-            (response) => this.load(this.actor.id)
-        );
     }
 }
