@@ -60,6 +60,6 @@
     <module>fullstack</module>
     <module>jsr107</module>
     <module>scale-continuum</module>
-    <module>asideversusthrough</module>
+    <module>caching-still-matters</module>
   </modules>
 </project>

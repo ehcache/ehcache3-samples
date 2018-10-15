@@ -20,13 +20,13 @@ public class AsideVsPassthrough implements AutoCloseable {
   public static void main(String[] args) throws InterruptedException {
     try(AsideVsPassthrough app = new AsideVsPassthrough()) {
       app.initSystemOfRecords();
-      app.initCacheThrough();
 //    app.initCacheAside();
+      app.initCacheThrough();
 
       ExecutorService executor = Executors.newFixedThreadPool(10);
       IntStream.range(0, 9)
-          .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueThrough()));
 //        .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueAside()));
+          .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueThrough()));
 
       executor.shutdown();
       executor.awaitTermination(5, TimeUnit.SECONDS);
@@ -42,7 +42,6 @@ public class AsideVsPassthrough implements AutoCloseable {
     LOG.info("Init Cache");
     CacheConfiguration<String, String> cacheConfiguration = CacheConfigurationBuilder
         .newCacheConfigurationBuilder(String.class, String.class, ResourcePoolsBuilder
-            .newResourcePoolsBuilder()
             .heap(100))
         .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(60)))
         .build();
@@ -58,7 +57,6 @@ public class AsideVsPassthrough implements AutoCloseable {
     LOG.info("Init Cache");
     CacheConfigurationBuilder<String, String> cacheConfiguration = CacheConfigurationBuilder
         .newCacheConfigurationBuilder(String.class, String.class, ResourcePoolsBuilder
-            .newResourcePoolsBuilder()
             .heap(100))
         .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(60)))
         .withLoaderWriter(new SorLoaderWriter(systemOfRecord));
