@@ -2,67 +2,68 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: terracotta
-  labels:
-    app: terracotta
+    name: terracotta
+    labels:
+        app: terracotta
+    annotations:
+        # see https://github.com/kubernetes/kubernetes/issues/39363 , to have dns entries available immediately
+        service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
 spec:
-  ports:
-    - port: 9410
-      name: server
-    - port: 9430
-      name: replication
-  # This creates the headless service to assign DNS name corresponding to pods matching the selector.
-  # which creates DNS names as "<pod-name>.terracotta". Example: "terracotta-0.terracotta",
-  # which can be used by the terracotta clients to connect to the cluster.
-  # This also ensures even the pod IP gets changes due to rescheduling failure but the DNS name corresponding to the pod remains same.
-  # More details at https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
-  clusterIP: None
-  selector:
-    app: terracotta
+    ports:
+    - name: terracotta-port
+      port: 9410
+    - name: sync-port
+      port: 9430
+    clusterIP: None
+    selector:
+        app: terracotta
 
 ---
 
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: terracotta
+    name: terracotta
 spec:
-  selector:
-    matchLabels:
-      app: terracotta
-  # Referencing the above headless service so that StatefulSet can use it to manage the corresponding pods.
-  serviceName: terracotta
-  # This creates two terracotta pods with name terracotta-0 and terracotta-1 having corresponding DNS entry terracotta-0.terracotta and terracotta-1.terracotta
-  replicas: 2
-  template:
-    metadata:
-      labels:
-        app: terracotta
-    spec:
-      terminationGracePeriodSeconds: 10
-      containers:
-      - name: terracotta
-        image: terracotta/terracotta-server-oss:5.5.1
-        command: ["/bin/sh"]
-        args: ["-c", "bin/start-tc-server.sh -f /config/tc-config.xml -n $HOSTNAME"]
-        resources:
-          requests:
-            memory: 1Gi
-        env:
-          - name: ACCEPT_EULA
-            value: "Y"
-        ports:
-          - containerPort: 9410
-            name: server
-          - containerPort: 9430
-            name: replication
-        volumeMounts:
-          - name: config-volume
-            mountPath: /config
-      volumes:
-      - name: config-volume
-        configMap:
-          name: tc-config
+    selector:
+        matchLabels:
+            app: terracotta
+    serviceName: terracotta
+    replicas: 2
+    template:
+        metadata:
+            labels:
+                app: terracotta
+        spec:
+            initContainers:
+            - name: init-terracotta
+                # be careful with busybox versions : https://github.com/docker-library/busybox/issues/48
+              image: busybox:1.28
+                # check service name resolution works fine; if it can't resolve the service, a split brain could occur
+              command: ['sh', '-c', 'until nslookup terracotta; do echo "waiting for terracotta to resolve"; sleep 2; done;']
+            containers:
+            - name: terracotta
+              image: terracotta/terracotta-server-oss:5.5.1
+              command: ["bin/start-tc-server.sh"]
+              args: ["-f", "/config/tc-config.xml", "-n", "$(POD_NAME)"]
+              imagePullPolicy: Always
+              env:
+              - name: POD_NAME
+                valueFrom:
+                    fieldRef:
+                        fieldPath: metadata.name
+              ports:
+              - containerPort: 9410
+                name: terracotta-port
+              - containerPort: 9430
+                name: sync-port
+              volumeMounts:
+              - name: config-volume
+                mountPath: /config
+            volumes:
+            - name: config-volume
+              configMap:
+                  name: tc-config
 
 ---
 
@@ -71,25 +72,28 @@ kind: ConfigMap
 metadata:
   name: tc-config
 data:
-  tc-config.xml: |
-    <tc-config xmlns="http://www.terracotta.org/config">
-      <plugins>
-        <config xmlns:ohr="http://www.terracotta.org/config/offheap-resource" >
-          <ohr:offheap-resources>
-            <ohr:resource name="offheap-1" unit="MB">512</ohr:resource>
-          </ohr:offheap-resources>
-        </config>
-      </plugins>
-      <servers>
-        <server host="terracotta-0.terracotta" name="terracotta-0">
-          <logs>stdout:</logs>
-          <tsa-port>9410</tsa-port>
-          <tsa-group-port>9430</tsa-group-port>
-        </server>
-        <server host="terracotta-1.terracotta" name="terracotta-1">
-          <logs>stdout:</logs>
-          <tsa-port>9410</tsa-port>
-          <tsa-group-port>9430</tsa-group-port>
-        </server>
-      </servers>
-    </tc-config>
+    tc-config.xml: |
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <tc-config xmlns="http://www.terracotta.org/config">
+            <plugins>
+                <config>
+                    <ohr:offheap-resources xmlns:ohr="http://www.terracotta.org/config/offheap-resource">
+                        <ohr:resource name="offheap-1" unit="MB">512</ohr:resource>
+                        <ohr:resource name="offheap-2" unit="MB">128</ohr:resource>
+                    </ohr:offheap-resources>
+                </config>
+            </plugins>
+            <servers>
+                <server host="terracotta-0.terracotta" name="terracotta-0" bind="0.0.0.0">
+                    <logs>stdout:</logs>
+                    <tsa-port bind="0.0.0.0">9410</tsa-port>
+                    <tsa-group-port bind="0.0.0.0">9430</tsa-group-port>
+                </server>
+                <server host="terracotta-1.terracotta" name="terracotta-1" bind="0.0.0.0">
+                    <logs>/stdout:</logs>
+                    <tsa-port bind="0.0.0.0">9410</tsa-port>
+                    <tsa-group-port bind="0.0.0.0">9430</tsa-group-port>
+                </server>
+                <client-reconnect-window>120</client-reconnect-window>
+            </servers>
+        </tc-config>

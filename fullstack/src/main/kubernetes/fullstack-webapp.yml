@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: fullstack
-        image: anthonydahanne/ehcache3-fullstack-demo:latest
+        image: anthonydahanne/fullstack:prod
         imagePullPolicy: Always
         env:
         - name: SPRING_PROFILES_ACTIVE
@@ -28,21 +28,25 @@ spec:
         - name: APPLICATION_STUBWEBSERVICES
           value: "false"
         - name: APPLICATION_GOOGLEAPIKEY
-          value: "CHANGEME"
+          valueFrom:
+              secretKeyRef:
+                  name: api-keys
+                  key: application.googleApiKey
         - name: APPLICATION_DARKSKYAPIKEY
-          value: "CHANGEME"
-        - name: APPLICATION_BIOGRAPHIESREMOTELOCATION
-          value: "http://blog.dahanne.net/wp-content/uploads/biographies.list.gz"
+          valueFrom:
+              secretKeyRef:
+                  name: api-keys
+                  key: application.darkskyApiKey
         - name: MANAGEMENT_SECURITY_ENABLED
           value: "FALSE"
-        resources:
+        resources: {}
           # https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#how-pods-with-resource-limits-are-run
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "1024Mi"
-            cpu: "1"
+#          requests:
+#            memory: "256Mi"
+#            cpu: "100m"
+#          limits:
+#            memory: "1024Mi"
+#            cpu: "1"
         ports:
         - name: web
           containerPort: 8080
