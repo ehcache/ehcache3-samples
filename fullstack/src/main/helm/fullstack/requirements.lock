@@ -1,0 +1,9 @@
+dependencies:
+- name: mysql
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 0.10.1
+- name: terracotta
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 1.0.0
+digest: sha256:70c26b64d7c71e8d2391cf307741bb523aa6c7c8e169f26db1e641edf004ba04
+generated: 2018-10-16T14:26:00.403898-04:00
