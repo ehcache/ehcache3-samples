@@ -1,0 +1,69 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "fullstack.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "fullstack.name" . }}
+    helm.sh/chart: {{ include "fullstack.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "fullstack.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "fullstack.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+        containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: prod, k8s
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:mysql://{{ .Release.Name }}-mysql:3306/demo?useUnicode=true&characterEncoding=utf8&useSSL=false
+          - name: JAVA_OPTS
+            value: "-Xmx1024m -Xms256m"
+          - name: JHIPSTER_SLEEP
+            value: "10"
+          - name: APPLICATION_CLUSTER_URI
+            value: "terracotta://{{ .Release.Name }}-terracotta-0.{{ .Release.Name }}-terracotta:9410,{{ .Release.Name }}-terracotta-1.{{ .Release.Name }}-terracotta:9410/demo-entity"
+          - name: APPLICATION_STUBWEBSERVICES
+            value: "false"
+          - name: APPLICATION_GOOGLEAPIKEY
+            value:  "{{ .Values.keys.googleApiKey }}"
+          - name: APPLICATION_DARKSKYAPIKEY
+            value:  "{{ .Values.keys.darkskyApiKey }}"
+          - name: MANAGEMENT_SECURITY_ENABLED
+            value: "FALSE"
+          resources: {}
+            # https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#how-pods-with-resource-limits-are-run
+            #          requests:
+            #            memory: "256Mi"
+            #            cpu: "100m"
+            #          limits:
+            #            memory: "1024Mi"
+            #            cpu: "1"
+          ports:
+          - name: http
+            containerPort: 8080
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

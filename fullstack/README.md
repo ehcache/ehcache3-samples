@@ -245,6 +245,12 @@ Verify everything is fine with :
 
 With a correctly sized Kubernetes cluster :
 
+Create a secret for the api keys :
+
+    kubectl create secret generic api-keys --from-literal=application.googleApiKey=XXX  --from-literal=application.darkskyApiKey=YYY
+
+And then deploy :
+
     kubectl apply -f src/main/kubernetes
     
 And open the app, play around, start scaling, etc.    
