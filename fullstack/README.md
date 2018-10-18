@@ -267,4 +267,5 @@ Check everything works fine using , in another term :
 ## Helm deployment
 
     cd src/main/helm/
+    helm dependency build fullstack/
     helm install --name fullstack --set keys.googleApiKey=XXX --set keys.darkskyApiKey=XXX fullstack/
