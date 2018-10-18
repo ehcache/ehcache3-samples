@@ -254,3 +254,17 @@ And then deploy :
     kubectl apply -f src/main/kubernetes
     
 And open the app, play around, start scaling, etc.    
+
+## Use Skaffold to deploy to Kubernetes
+
+    cd src/main/skaffold/
+    skaffold dev
+
+Check everything works fine using , in another term :
+
+    watch kubect get all
+
+## Helm deployment
+
+    cd src/main/helm/
+    helm install --name fullstack --set keys.googleApiKey=XXX --set keys.darkskyApiKey=XXX fullstack/
