@@ -241,6 +241,11 @@ Verify everything is fine with :
     
     docker service ls
 
+## Building the docker image with jib
+
+    ./mvnw -PskipTestsAndYarn,prod install jib:build --image=anthonydahanne/fullstack
+
+
 ## Kubernetes deployment
 
 With a correctly sized Kubernetes cluster :
