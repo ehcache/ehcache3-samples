@@ -588,7 +588,7 @@
                         <image>openjdk:8-jre-alpine</image>
                     </from>
                     <to>
-                        <image>demo:latest</image>
+                        <image>anthonydahanne/fullstack:latest</image>
                     </to>
                     <container>
                         <entrypoint>
@@ -1055,6 +1055,13 @@
                     <version>${hibernate.version}</version>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>skipTestsAndYarn</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+                <skip.yarn>true</skip.yarn>
+            </properties>
         </profile>
         <!-- jhipster-needle-maven-add-profile -->
     </profiles>

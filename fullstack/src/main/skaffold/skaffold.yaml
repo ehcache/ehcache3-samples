@@ -1,0 +1,8 @@
+apiVersion: skaffold/v1alpha4
+kind: Config
+build:
+  artifacts:
+  - image: anthonydahanne/test
+    context: ../../../
+    jibMaven:
+        profile: "dev,skipTestsAndYarn"

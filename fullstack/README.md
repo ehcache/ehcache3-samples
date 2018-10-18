@@ -241,6 +241,11 @@ Verify everything is fine with :
     
     docker service ls
 
+## Building the docker image with jib
+
+    ./mvnw -PskipTestsAndYarn,prod install jib:build --image=anthonydahanne/fullstack
+
+
 ## Kubernetes deployment
 
 With a correctly sized Kubernetes cluster :
@@ -254,3 +259,18 @@ And then deploy :
     kubectl apply -f src/main/kubernetes
     
 And open the app, play around, start scaling, etc.    
+
+## Use Skaffold to deploy to Kubernetes
+
+    cd src/main/skaffold/
+    skaffold dev
+
+Check everything works fine using , in another term :
+
+    watch kubect get all
+
+## Helm deployment
+
+    cd src/main/helm/
+    helm dependency build fullstack/
+    helm install --name fullstack --set keys.googleApiKey=XXX --set keys.darkskyApiKey=XXX fullstack/
