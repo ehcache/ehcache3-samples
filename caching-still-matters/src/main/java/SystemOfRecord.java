@@ -22,35 +22,31 @@ public final class SystemOfRecord {
 
   public String load(String key) {
     LOG.warn("Someone is accessing the slow SoR to load : " + key);
-    acquireConnection();
-    try {
-      TimeUnit.SECONDS.sleep(30);
-    } catch (InterruptedException e) {
-      // Get out
+    if(!acquireConnection()) {
+      throw new IllegalStateException("No connection available");
     }
-    releaseConnection();
-    return records.get(key);
-  }
-
-  private synchronized void acquireConnection() {
-    if(activeConnections++ >= MAX_CONNECTIONS) {
-      LOG.error("No connections available");
-    };
-  }
-
-  private void releaseConnection() {
-    activeConnections--;
-  }
-
-  public void save(String key, String value) {
-    acquireConnection();
     try {
       TimeUnit.SECONDS.sleep(10);
+      return records.get(key);
     } catch (InterruptedException e) {
       // Get out
+      return null;
+    } finally {
+      releaseConnection();
     }
-    releaseConnection();
-    records.put(key, value);
+  }
+
+  synchronized boolean acquireConnection() {
+    if(activeConnections >= MAX_CONNECTIONS) {
+      LOG.error("No connections available");
+      return false;
+    };
+    activeConnections++;
+    return true;
+  }
+
+  synchronized void releaseConnection() {
+    activeConnections--;
   }
 
   public static SystemOfRecord getSystemOfRecord() {

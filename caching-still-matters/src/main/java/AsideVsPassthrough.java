@@ -20,16 +20,16 @@ public class AsideVsPassthrough implements AutoCloseable {
   public static void main(String[] args) throws InterruptedException {
     try(AsideVsPassthrough app = new AsideVsPassthrough()) {
       app.initSystemOfRecords();
-//    app.initCacheAside();
-      app.initCacheThrough();
+      app.initCacheAside();
+//      app.initCacheThrough();
 
       ExecutorService executor = Executors.newFixedThreadPool(10);
-      IntStream.range(0, 9)
-//        .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueAside()));
-          .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueThrough()));
+      IntStream.range(0, 10)
+        .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueAside()));
+//        .forEach(iteration -> executor.submit(() -> app.retrieveAndDisplayTheValueThrough()));
 
       executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+      executor.awaitTermination(20, TimeUnit.SECONDS);
     }
   }
 
@@ -45,7 +45,6 @@ public class AsideVsPassthrough implements AutoCloseable {
             .heap(100))
         .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(60)))
         .build();
-
 
     cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
         .withCache("myCache", cacheConfiguration)
@@ -72,7 +71,12 @@ public class AsideVsPassthrough implements AutoCloseable {
 
     String value = myCache.get("key");
     if (value == null) {
-      value = systemOfRecord.load("key");
+      try {
+        value = systemOfRecord.load("key");
+      } catch(IllegalStateException e) {
+        LOG.error("Fail to access SoR");
+        return;
+      }
       myCache.put("key", value);
     }
 
