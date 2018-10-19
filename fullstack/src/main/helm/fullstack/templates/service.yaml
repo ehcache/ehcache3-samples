@@ -1,6 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/prometheusMetrics'
   name: {{ include "fullstack.fullname" . }}
   labels:
     app.kubernetes.io/name: {{ include "fullstack.name" . }}

@@ -5,7 +5,23 @@
 public class JvmCaching {
 
   public static void main(String[] args) {
-    assert Integer.valueOf(512) == Integer.valueOf(512);
+    if(Integer.valueOf(100) == Integer.valueOf(100)) {
+      System.out.println("Same instance");
+    } else {
+      System.err.println("Not the same!");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    for (int i = -140; i < 150 ; i++) {
 //      boolean cached = Integer.valueOf(i) == Integer.valueOf(i);

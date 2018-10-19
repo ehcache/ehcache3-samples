@@ -67,6 +67,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/prometheusMetrics'
   name: fullstack
   namespace: default
   labels:

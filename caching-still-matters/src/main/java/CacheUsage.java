@@ -57,7 +57,7 @@ public class CacheUsage {
       IntStream.range(0, 1000).forEach(i -> notthatused.put(i, "" + i));
       notthatused.get(0);
 
-      TimeUnit.MINUTES.sleep(5L);
+      TimeUnit.MINUTES.sleep(10L);
     }
 
   }
