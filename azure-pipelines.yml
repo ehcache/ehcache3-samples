@@ -22,7 +22,7 @@ resources:
   repositories:
     - repository: templates
       type: git   
-      name: terracotta
+      name: TerracottaCI/terracotta
 
 jobs:
 - template: build-templates/maven-common.yml@templates  
