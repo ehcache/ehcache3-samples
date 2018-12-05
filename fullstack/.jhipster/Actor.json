@@ -1,0 +1,28 @@
+{
+    "fluentMethods": true,
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "firstName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "lastName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "birthDate",
+            "fieldType": "LocalDate"
+        },
+        {
+            "fieldName": "birthLocation",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20180306005136",
+    "dto": "no",
+    "service": "serviceClass",
+    "entityTableName": "actor",
+    "jpaMetamodelFiltering": false,
+    "pagination": "infinite-scroll"
+}
