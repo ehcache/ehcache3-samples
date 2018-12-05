@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tc-config xmlns="http://www.terracotta.org/config"
+           xmlns:ohr="http://www.terracotta.org/config/offheap-resource"
+           xmlns:data="http://www.terracottatech.com/config/data-roots"
+           xmlns:persistence="http://www.terracottatech.com/config/platform-persistence">
+
+  <plugins>
+    <config>
+      <ohr:offheap-resources>
+        <ohr:resource name="default-resource" unit="MB">512</ohr:resource>
+      </ohr:offheap-resources>
+    </config>
+  </plugins>
+
+  <servers>
+    <server host="localhost" name="clustered1">
+      <tsa-port>9410</tsa-port>
+      <logs>terracotta/server1-logs</logs>
+    </server>
+    <server host="localhost" name="clustered2">
+      <tsa-port>9510</tsa-port>
+      <logs>terracotta/server2-logs</logs>
+    </server>
+  </servers>
+
+  <failover-priority>
+    <availability/>
+  </failover-priority>
+</tc-config>
