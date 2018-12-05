@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot, Routes } from '@angular/router';
 import { UserRouteAccessService } from 'app/core';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { Actor } from 'app/shared/model/actor.model';
 import { ActorService } from './actor.service';
 import { ActorComponent } from './actor.component';
@@ -16,10 +16,12 @@ import { IActor } from 'app/shared/model/actor.model';
 export class ActorResolve implements Resolve<IActor> {
     constructor(private service: ActorService) {}
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Actor> {
         const id = route.params['id'] ? route.params['id'] : null;
         if (id) {
-            return this.service.find(id).pipe(map((actor: HttpResponse<Actor>) => actor.body));
+            return this.service
+                .find(id)
+                .pipe(filter((response: HttpResponse<Actor>) => response.ok), map((actor: HttpResponse<Actor>) => actor.body));
         }
         return of(new Actor());
     }

@@ -56,7 +56,7 @@ public class ActorResourceIntTest {
 
     @Autowired
     private ActorRepository actorRepository;
-    
+
     @Autowired
     private ActorService actorService;
 

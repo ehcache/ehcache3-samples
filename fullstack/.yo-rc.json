@@ -3,7 +3,7 @@
     "promptValues": {
       "packageName": "org.ehcache.sample"
     },
-    "jhipsterVersion": "5.4.2",
+    "jhipsterVersion": "5.7.0",
     "applicationType": "monolith",
     "baseName": "demo",
     "packageName": "org.ehcache.sample",
@@ -29,6 +29,7 @@
       "gatling"
     ],
     "jhiPrefix": "jhi",
-    "enableTranslation": false
+    "enableTranslation": false,
+    "otherModules": []
   }
 }
