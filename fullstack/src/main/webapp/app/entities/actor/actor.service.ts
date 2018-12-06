@@ -14,7 +14,7 @@ type EntityArrayResponseType = HttpResponse<IActor[]>;
 
 @Injectable({ providedIn: 'root' })
 export class ActorService {
-    private resourceUrl = SERVER_API_URL + 'api/actors';
+    public resourceUrl = SERVER_API_URL + 'api/actors';
 
     constructor(private http: HttpClient) {}
 
@@ -49,22 +49,26 @@ export class ActorService {
         return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
 
-    private convertDateFromClient(actor: IActor): IActor {
+    protected convertDateFromClient(actor: IActor): IActor {
         const copy: IActor = Object.assign({}, actor, {
             birthDate: actor.birthDate != null && actor.birthDate.isValid() ? actor.birthDate.format(DATE_FORMAT) : null
         });
         return copy;
     }
 
-    private convertDateFromServer(res: EntityResponseType): EntityResponseType {
-        res.body.birthDate = res.body.birthDate != null ? moment(res.body.birthDate) : null;
+    protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
+        if (res.body) {
+            res.body.birthDate = res.body.birthDate != null ? moment(res.body.birthDate) : null;
+        }
         return res;
     }
 
-    private convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
-        res.body.forEach((actor: IActor) => {
-            actor.birthDate = actor.birthDate != null ? moment(actor.birthDate) : null;
-        });
+    protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+        if (res.body) {
+            res.body.forEach((actor: IActor) => {
+                actor.birthDate = actor.birthDate != null ? moment(actor.birthDate) : null;
+            });
+        }
         return res;
     }
 }

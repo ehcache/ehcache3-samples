@@ -22,7 +22,7 @@ management:
                 include: ["configprops", "env", "health", "info", "threaddump", "logfile" ]
     endpoint:
         health:
-            show-details: when_authorized
+            show-details: when-authorized
     info:
         git:
             mode: full
@@ -42,6 +42,8 @@ spring:
         active: #spring.profiles.active#
     jpa:
         open-in-view: false
+        properties:
+            hibernate.jdbc.time_zone: UTC
         hibernate:
             ddl-auto: none
             naming:
@@ -98,9 +100,6 @@ jhipster:
         contact-email:
         license:
         license-url:
-
-logging:
-    file: target/demo.log
 
 # ===================================================================
 # Application specific properties

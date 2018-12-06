@@ -108,11 +108,15 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter implements Se
             reporter.start(jHipsterProperties.getMetrics().getLogs().getReportFrequency(), TimeUnit.SECONDS);
         }
     }
+
     @Override
     public void onStartup(ServletContext servletContext) {
+
         if (jHipsterProperties.getMetrics().getPrometheus().isEnabled()) {
             String endpoint = jHipsterProperties.getMetrics().getPrometheus().getEndpoint();
+
             log.debug("Initializing prometheus metrics exporting via {}", endpoint);
+
             CollectorRegistry.defaultRegistry.register(new DropwizardExports(metricRegistry));
             servletContext
                 .addServlet("prometheusMetrics", new MetricsServlet(CollectorRegistry.defaultRegistry))
