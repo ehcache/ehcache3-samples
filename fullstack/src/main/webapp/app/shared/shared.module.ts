@@ -12,4 +12,10 @@ import { DemoSharedLibsModule, DemoSharedCommonModule, JhiLoginModalComponent, H
     exports: [DemoSharedCommonModule, JhiLoginModalComponent, HasAnyAuthorityDirective],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class DemoSharedModule {}
+export class DemoSharedModule {
+    static forRoot() {
+        return {
+            ngModule: DemoSharedModule
+        };
+    }
+}
