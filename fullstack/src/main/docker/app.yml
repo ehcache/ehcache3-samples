@@ -1,7 +1,7 @@
 version: '2'
 services:
     demo-app:
-        image: demo
+        image: anthonydahanne/fullstack
         environment:
             - _JAVA_OPTIONS=-Xmx512m -Xms256m
             - SPRING_PROFILES_ACTIVE=prod
