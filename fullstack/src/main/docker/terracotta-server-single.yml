@@ -3,7 +3,7 @@ services:
     demo-terracotta-server1:
         hostname: demo-terracotta-server1
         container_name: demo-terracotta-server1
-        image: terracotta/terracotta-server-oss:5.5.1
+        image: terracotta/terracotta-server-oss:5.6.0
         environment:
             - OFFHEAP_RESOURCE_SIZE=256
             - OFFHEAP_RESOURCE_UNIT=MB

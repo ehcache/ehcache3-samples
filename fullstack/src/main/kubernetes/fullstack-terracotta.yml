@@ -43,7 +43,7 @@ spec:
               command: ['sh', '-c', 'until nslookup terracotta; do echo "waiting for terracotta to resolve"; sleep 2; done;']
             containers:
             - name: terracotta
-              image: terracotta/terracotta-server-oss:5.5.1
+              image: terracotta/terracotta-server-oss:5.6.0
               command: ["bin/start-tc-server.sh"]
               args: ["-f", "/config/tc-config.xml", "-n", "$(POD_NAME)"]
               imagePullPolicy: Always
