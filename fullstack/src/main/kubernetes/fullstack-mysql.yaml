@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: mysql:5.7.23
+        image: mysql:5.7.25
         env:
         - name: MYSQL_USER
           value: "root"

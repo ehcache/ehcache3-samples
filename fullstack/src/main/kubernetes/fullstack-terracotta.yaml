@@ -96,4 +96,7 @@ data:
                 </server>
                 <client-reconnect-window>120</client-reconnect-window>
             </servers>
+            <failover-priority>
+              <availability/>
+            </failover-priority>
         </tc-config>

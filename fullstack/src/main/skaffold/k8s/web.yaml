@@ -4,8 +4,9 @@ metadata:
   name: web
 spec:
   ports:
-  - port: 8080
-    name: http
+  - name: web
+    port: 80
+    targetPort: "web"
   type: LoadBalancer
   selector:
     app: web
@@ -26,4 +27,7 @@ spec:
       containers:
       - name: web
         image: anthonydahanne/test
+        ports:
+        - name: web
+          containerPort: 8080
 

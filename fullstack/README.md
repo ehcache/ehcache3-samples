@@ -243,8 +243,7 @@ Verify everything is fine with :
 
 ## Building the docker image with jib
 
-    ./mvnw -PskipTestsAndYarn,prod install jib:build --image=anthonydahanne/fullstack
-
+    ./mvnw -PskipTestsAndYarn,prod install jib:build -Dimage=anthonydahanne/fullstack:prod
 
 ## Kubernetes deployment
 
